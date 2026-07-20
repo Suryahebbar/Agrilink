@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Supplier Authentication</title>
+    <link rel="stylesheet" href="fix-supplier-auth.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Supplier Authentication Fix</h1>
+        
+        <div class="info">
+            <h3>Problem Identified:</h3>
+            <p>The "Failed to fetch orders" error occurs because you're not properly authenticated as a supplier in the system.</p>
+            
+            <h3>Solution:</h3>
+            <p>Click the button below to simulate a supplier login. This will set the proper authentication cookies needed to access the supplier dashboard.</p>
+        </div>
+
+        <button onclick="simulateSupplierLogin()">Simulate Supplier Login</button>
+        <button onclick="goToOrders()">Go to Orders Page</button>
+        
+        <div id="result"></div>
+
+        <div class="info info-mt">
+            <h4>After fixing authentication:</h4>
+            <ul>
+                <li>You'll be able to access the supplier dashboard</li>
+                <li>The orders page will load properly</li>
+                <li>Inventory management will work</li>
+                <li>All supplier features will be functional</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function simulateSupplierLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Processing...';
+            
+            try {
+                const response = await fetch('/api/supplier/simulate-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="success">✅ Supplier login simulated successfully! You can now access the supplier dashboard.</div>`;
+                    console.log('Supplier login successful:', data);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Failed to simulate login: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error simulating login:', error);
+            }
+        }
+        
+        function goToOrders() {
+            window.location.href = '/dashboard/supplier/orders';
+        }
+    </script>
+</body>
+</html>

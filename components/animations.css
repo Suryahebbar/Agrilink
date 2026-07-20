@@ -1,0 +1,404 @@
+/* Animation System for BPFIS */
+
+/* CSS Custom Properties for Animations */
+:root {
+  --animation-duration-fast: 120ms;
+  --animation-duration-medium: 180ms;
+  --animation-duration-slow: 250ms;
+  
+  --animation-ease: ease-out;
+  --animation-fade-distance: 4px;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Core Animations */
+@keyframes fade-in {
+  from { 
+    opacity: 0; 
+  }
+  to { 
+    opacity: 1; 
+  }
+}
+
+@keyframes fade-out {
+  from { 
+    opacity: 1; 
+  }
+  to { 
+    opacity: 0; 
+  }
+}
+
+@keyframes slide-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(var(--animation-fade-distance)); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slide-down {
+  from { 
+    opacity: 0; 
+    transform: translateY(calc(-1 * var(--animation-fade-distance))); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slide-left {
+  from { 
+    opacity: 0; 
+    transform: translateX(var(--animation-fade-distance)); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes slide-right {
+  from { 
+    opacity: 0; 
+    transform: translateX(calc(-1 * var(--animation-fade-distance))); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes scale-in {
+  from { 
+    opacity: 0; 
+    transform: scale(0.96); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes scale-out {
+  from { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  to { 
+    opacity: 0; 
+    transform: scale(0.96); 
+  }
+}
+
+@keyframes progress-indeterminate {
+  0% { 
+    transform: translateX(-50%) scaleX(0.4); 
+  }
+  50% { 
+    transform: translateX(30%) scaleX(0.7); 
+  }
+  100% { 
+    transform: translateX(100%) scaleX(0.4); 
+  }
+}
+
+@keyframes spin {
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+@keyframes pulse-gentle {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.7; 
+  }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-2px); 
+  }
+}
+
+@keyframes shake-gentle {
+  0%, 100% { 
+    transform: translateX(0); 
+  }
+  25% { 
+    transform: translateX(-2px); 
+  }
+  75% { 
+    transform: translateX(2px); 
+  }
+}
+
+/* Animation Utility Classes */
+.animate-fade-in {
+  animation: fade-in var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-fade-out {
+  animation: fade-out var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-slide-up {
+  animation: slide-up var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-slide-down {
+  animation: slide-down var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-slide-left {
+  animation: slide-left var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-slide-right {
+  animation: slide-right var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-scale-in {
+  animation: scale-in var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-scale-out {
+  animation: scale-out var(--animation-duration-medium) var(--animation-ease);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 2s ease-in-out infinite;
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 1s ease-in-out infinite;
+}
+
+.animate-shake-gentle {
+  animation: shake-gentle 0.3s ease-in-out;
+}
+
+/* Duration Variants */
+.animate-duration-fast {
+  animation-duration: var(--animation-duration-fast);
+}
+
+.animate-duration-medium {
+  animation-duration: var(--animation-duration-medium);
+}
+
+.animate-duration-slow {
+  animation-duration: var(--animation-duration-slow);
+}
+
+/* Transition Utilities */
+.transition-all {
+  transition: all var(--animation-duration-medium) var(--animation-ease);
+}
+
+.transition-colors {
+  transition: color var(--animation-duration-medium) var(--animation-ease),
+              background-color var(--animation-duration-medium) var(--animation-ease),
+              border-color var(--animation-duration-medium) var(--animation-ease);
+}
+
+.transition-opacity {
+  transition: opacity var(--animation-duration-medium) var(--animation-ease);
+}
+
+.transition-transform {
+  transition: transform var(--animation-duration-medium) var(--animation-ease);
+}
+
+/* Hover Animations */
+.hover-lift {
+  transition: transform var(--animation-duration-fast) var(--animation-ease);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.hover-scale {
+  transition: transform var(--animation-duration-fast) var(--animation-ease);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-fade {
+  transition: opacity var(--animation-duration-fast) var(--animation-ease);
+}
+
+.hover-fade:hover {
+  opacity: 0.8;
+}
+
+/* Focus Animations */
+.focus-ring {
+  transition: box-shadow var(--animation-duration-fast) var(--animation-ease);
+}
+
+.focus-ring:focus {
+  box-shadow: 0 0 0 2px #1A9B9A;
+}
+
+/* Loading Animations */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-skeleton 1.5s infinite;
+}
+
+@keyframes loading-skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.progress-indeterminate {
+  animation: progress-indeterminate 1.5s ease-in-out infinite;
+}
+
+/* Modal Animations */
+.modal-backdrop {
+  animation: fade-in var(--animation-duration-medium) var(--animation-ease);
+}
+
+.modal-content {
+  animation: scale-in var(--animation-duration-medium) var(--animation-ease);
+}
+
+/* Dropdown Animations */
+.dropdown-enter {
+  animation: slide-down var(--animation-duration-fast) var(--animation-ease);
+}
+
+.dropdown-exit {
+  animation: slide-up var(--animation-duration-fast) var(--animation-ease);
+}
+
+/* Tooltip Animations */
+.tooltip-enter {
+  animation: scale-in var(--animation-duration-fast) var(--animation-ease);
+}
+
+/* Notification Animations */
+.notification-enter {
+  animation: slide-right var(--animation-duration-medium) var(--animation-ease);
+}
+
+.notification-exit {
+  animation: slide-left var(--animation-duration-fast) var(--animation-ease);
+}
+
+/* Page Transitions */
+.page-enter {
+  animation: fade-in var(--animation-duration-slow) var(--animation-ease);
+}
+
+.page-exit {
+  animation: fade-out var(--animation-duration-medium) var(--animation-ease);
+}
+
+/* Stagger Animations */
+.stagger-fade-in > * {
+  animation: fade-in var(--animation-duration-medium) var(--animation-ease);
+  animation-fill-mode: both;
+}
+
+.stagger-fade-in > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-fade-in > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-fade-in > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-fade-in > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-fade-in > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-fade-in > *:nth-child(6) { animation-delay: 250ms; }
+
+/* Animation Delay Utilities */
+.animation-delay-0 { animation-delay: 0ms; }
+.animation-delay-50 { animation-delay: 50ms; }
+.animation-delay-100 { animation-delay: 100ms; }
+.animation-delay-150 { animation-delay: 150ms; }
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-250 { animation-delay: 250ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-350 { animation-delay: 350ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-450 { animation-delay: 450ms; }
+.animation-delay-500 { animation-delay: 500ms; }
+.animation-delay-550 { animation-delay: 550ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+.animation-delay-650 { animation-delay: 650ms; }
+.animation-delay-700 { animation-delay: 700ms; }
+.animation-delay-750 { animation-delay: 750ms; }
+.animation-delay-800 { animation-delay: 800ms; }
+.animation-delay-850 { animation-delay: 850ms; }
+.animation-delay-900 { animation-delay: 900ms; }
+.animation-delay-950 { animation-delay: 950ms; }
+.animation-delay-1000 { animation-delay: 1000ms; }
+
+/* Custom Property Animation Delay */
+.animate-delay-custom {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-slide-left,
+  .animate-slide-right,
+  .animate-scale-in,
+  .animate-scale-out,
+  .animate-pulse-gentle,
+  .animate-bounce-gentle,
+  .animate-shake-gentle,
+  .loading-skeleton,
+  .modal-backdrop,
+  .modal-content,
+  .dropdown-enter,
+  .dropdown-exit,
+  .tooltip-enter,
+  .notification-enter,
+  .notification-exit,
+  .page-enter,
+  .page-exit {
+    animation: none;
+  }
+  
+  .stagger-fade-in > * {
+    animation: none;
+    animation-delay: 0ms;
+  }
+}

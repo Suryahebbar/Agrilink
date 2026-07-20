@@ -1,0 +1,259 @@
+// farmland_tool.js
+// Single-file interactive tool: click polygon on an uploaded sketch image,
+// supply centroid and side-lengths, compute lat/lon for each vertex so centroid matches given coordinates,
+// draw result on Leaflet and export GeoJSON.
+
+// Requires: leaflet (include in HTML)
+// Usage: include this script in a simple HTML body. The script will create UI elements.
+
+(function(){
+  // --- Helpers ---
+  function $(id){return document.getElementById(id);}
+  function el(tag, attrs={}, parent=document.body){
+    const e = document.createElement(tag);
+    for(const k in attrs) if(k!=='text') e.setAttribute(k, attrs[k]);
+    if(attrs.text) e.textContent = attrs.text;
+    parent.appendChild(e);
+    return e;
+  }
+  function toMeters(vals, unit){
+    if(unit==='feet') return vals.map(v=>v*0.3048);
+    return vals.slice();
+  }
+  function addMeters(lat, lon, dx, dy){
+    // dx east, dy north in meters -> lat/lon
+    const R = 6378137;
+    const newLat = lat + (dy / R) * (180 / Math.PI);
+    const newLon = lon + (dx / (R * Math.cos(lat * Math.PI/180))) * (180 / Math.PI);
+    return [newLat, newLon];
+  }
+  function download(filename, text){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], {type:'text/json'}));
+    a.download = filename;
+    a.click();
+  }
+
+  // --- Build UI ---
+  const wrap = el('div', {style:'display:flex;gap:12px;padding:12px;font-family:Arial;'});
+  const left = el('div', {style:'width:520px;'});
+  const right = el('div', {style:'flex:1;min-width:320px;'});
+
+  // Canvas & image loader
+  el('h3', {text:'Sketch (click vertices clockwise or ccw)'}, left);
+  const fileInput = el('input', {type:'file', accept:'image/*', style:'width:100%'}, left);
+  const canvas = el('canvas', {style:'border:1px solid #ccc;margin-top:8px;cursor:crosshair;max-width:100%;'}, left);
+  canvas.width = 500; canvas.height = 700;
+  const ctx = canvas.getContext('2d');
+
+  // Controls
+  el('h4', {text:'Controls'}, left);
+  const btnClear = el('button', {text:'Clear Points', style:'margin-right:8px;'}, left);
+  const btnComplete = el('button', {text:'Complete Polygon'}, left);
+  el('div', {text:'(Click to add vertices. Click "Complete Polygon" when done.)'}, left);
+
+  // Inputs: centroid + lengths + units
+  el('h4', {text:'Inputs'}, left);
+  el('label', {text:'Centroid Latitude'}); const inputLat = el('input', {type:'number', step:'0.0000001', style:'width:100%'} , left);
+  el('label', {text:'Centroid Longitude'}); const inputLon = el('input', {type:'number', step:'0.0000001', style:'width:100%'} , left);
+  el('label', {text:'Side lengths (comma-separated, same order as polygon edges)'}); 
+  const inputLens = el('textarea', {rows:3, style:'width:100%;'}, left);
+  el('label', {text:'Units'}); 
+  const selectUnit = el('select', {style:'width:100%;'}, left);
+  el('option', {value:'feet', text:'feet'}, selectUnit); el('option', {value:'meters', text:'meters'}, selectUnit);
+
+  const btnCompute = el('button', {text:'Compute Coordinates', style:'margin-top:8px;width:100%;'}, left);
+
+  // Output
+  el('h4', {text:'Output'}, right);
+  const outText = el('pre', {style:'height:220px;overflow:auto;border:1px solid #ddd;padding:8px;background:#fafafa;'}, right);
+
+  const btnDownload = el('button', {text:'Download GeoJSON', style:'display:block;margin-top:8px;'}, right);
+
+  // Map container
+  el('h4', {text:'Map'}, right);
+  const mapDiv = el('div', {id:'ft-map', style:'height:400px;border:1px solid #ccc;'}, right);
+
+  // --- Leaflet init ---
+  let map, baseLayer, parcelLayer;
+  function initMap(){
+    if(map) return;
+    map = L.map(mapDiv, {center:[12.97,77.59], zoom:13});
+    baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:22});
+    baseLayer.addTo(map);
+  }
+  initMap();
+
+  // --- Canvas drawing & point capture ---
+  let img = null;
+  let points = []; // pixel points [x,y]
+  let polygonClosed = false;
+
+  function drawCanvas(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(img){
+      // scale image to fit canvas while maintaining aspect
+      const ar = img.width / img.height;
+      const cw = canvas.width, ch = canvas.height;
+      let dw = cw, dh = cw / ar;
+      if(dh > ch){ dh = ch; dw = ch * ar; }
+      const ox = (cw - dw)/2, oy = (ch - dh)/2;
+      ctx.drawImage(img, 0,0,img.width,img.height, ox,oy, dw,dh);
+      canvas._imgOffset = {ox, oy, dw, dh};
+    } else {
+      canvas._imgOffset = {ox:0, oy:0, dw:canvas.width, dh:canvas.height};
+    }
+
+    // draw existing points & poly
+    ctx.strokeStyle = '#222'; ctx.lineWidth = 2; ctx.fillStyle = '#000';
+    if(points.length>0){
+      ctx.beginPath();
+      for(let i=0;i<points.length;i++){
+        const [x,y]=points[i];
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      if(polygonClosed) ctx.closePath();
+      ctx.stroke();
+      // points
+      for(const [x,y] of points){
+        ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+      }
+    }
+  }
+
+  fileInput.addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      img = new Image();
+      img.onload = function(){ 
+        // resize canvas to image aspect (max width 520)
+        const maxW = 520; const scale = Math.min(maxW / img.width, 1);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        drawCanvas();
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+
+  canvas.addEventListener('click', function(e){
+    if(polygonClosed) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    points.push([x,y]);
+    drawCanvas();
+  });
+
+  btnClear.addEventListener('click', function(){ points=[]; polygonClosed=false; drawCanvas(); outText.textContent=''; if(parcelLayer) map.removeLayer(parcelLayer); });
+
+  btnComplete.addEventListener('click', function(){
+    if(points.length<3){ alert('Add at least 3 vertices'); return; }
+    polygonClosed = true; drawCanvas();
+  });
+
+  // --- Core compute routine ---
+  function computeCoordinates(){
+    if(!polygonClosed){ alert('Complete the polygon first.'); return; }
+    const latC = parseFloat(inputLat.value);
+    const lonC = parseFloat(inputLon.value);
+    if(isNaN(latC)||isNaN(lonC)){ alert('Enter valid centroid lat/lon'); return; }
+
+    // parse lengths
+    const rawLens = inputLens.value.split(',').map(s=>s.trim()).filter(s=>s!=='');
+    if(rawLens.length === 0){ alert('Enter side lengths'); return; }
+    const lens = rawLens.map(v=>parseFloat(v));
+    if(lens.some(isNaN)){ alert('Side lengths must be numeric'); return; }
+
+    // edges in pixel space according to clicked points
+    const pixEdges = [];
+    for(let i=0;i<points.length;i++){
+      const [x1,y1]=points[i];
+      const [x2,y2]=points[(i+1)%points.length];
+      pixEdges.push(Math.hypot(x2-x1, y2-y1));
+    }
+
+    if(lens.length !== pixEdges.length){
+      // allow rotate alignment: try to match by cyclic shift if counts same but ordering maybe different
+      if(lens.length === pixEdges.length){
+        // ok
+      } else {
+        alert('Number of measured sides must equal number of clicked edges. You clicked '+pixEdges.length+' points but provided '+lens.length+' lengths.');
+        return;
+      }
+    }
+
+    const unit = selectUnit.value;
+    const measuredMeters = toMeters(lens, unit);
+
+    // compute uniform scale factor by perimeter ratio
+    const sumPix = pixEdges.reduce((a,b)=>a+b,0);
+    const sumMeters = measuredMeters.reduce((a,b)=>a+b,0);
+    if(sumPix === 0){ alert('Invalid polygon pixels'); return; }
+    const scale = sumMeters / sumPix; // meters per pixel
+
+    // compute pixel centroid
+    let cx=0, cy=0;
+    for(const p of points){ cx+=p[0]; cy+=p[1]; }
+    cx /= points.length; cy /= points.length;
+
+    // compute offsets from centroid (meters)
+    const offsets = points.map(([x,y])=>{
+      const dx_px = x - cx; // east positive in image space? image x to right -> east
+      const dy_px = cy - y; // invert y: image y down -> north positive
+      return [dx_px * scale, dy_px * scale]; // [east_m, north_m]
+    });
+
+    // convert offsets to lat/lon
+    const latlons = offsets.map(([dx,dy])=>{
+      const [lat, lon] = addMeters(latC, lonC, dx, dy);
+      // addMeters returns [lat, lon] - ensure order [lat, lon]
+      return [lat, lon];
+    });
+
+    // compute polygon centroid in lat/lon to verify
+    let latSum=0, lonSum=0;
+    for(const v of latlons){ latSum+=v[0]; lonSum+=v[1]; }
+    const latMean = latSum/latlons.length, lonMean = lonSum/latlons.length;
+
+    // Build GeoJSON
+    const coords = latlons.map(v=>[v[1], v[0]]); // lon,lat
+    coords.push(coords[0]);
+    const geojson = {
+      type:'FeatureCollection',
+      features:[{
+        type:'Feature',
+        properties:{},
+        geometry:{type:'Polygon', coordinates:[coords]}
+      }]
+    };
+
+    // Display output
+    let out = 'Vertices (lat, lon):\n';
+    latlons.forEach((p,i)=> out += `${i+1}: ${p[0].toFixed(7)}, ${p[1].toFixed(7)}\n`);
+    out += '\nComputed polygon centroid mean: ' + latMean.toFixed(7) + ', ' + lonMean.toFixed(7) + '\n';
+    out += '\nGeoJSON:\n' + JSON.stringify(geojson, null, 2);
+    outText.textContent = out;
+
+    // Draw on map
+    if(parcelLayer) map.removeLayer(parcelLayer);
+    parcelLayer = L.geoJSON(geojson, {style:{color:'#e63946', weight:2, fillOpacity:0.25}}).addTo(map);
+    // mark centroid anchor
+    const anchorMarker = L.circleMarker([latC, lonC], {radius:6, color:'blue'}).addTo(map);
+    map.fitBounds(parcelLayer.getBounds());
+
+    btnDownload.onclick = ()=> download('parcel.geojson', JSON.stringify(geojson, null, 2));
+  }
+
+  btnCompute.addEventListener('click', computeCoordinates);
+
+  // initial instructions
+  outText.textContent = "Instructions:\\n1) Load sketch image.\\n2) Click polygon vertices in order.\\n3) Click 'Complete Polygon'.\\n4) Enter centroid lat/lon and measured side lengths (comma separated).\\n5) Select units and click 'Compute Coordinates'.\\n";
+
+  // initial draw
+  drawCanvas();
+
+})();

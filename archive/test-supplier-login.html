@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supplier Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .button { background: #166534; color: white; padding: 10px 20px; border: none; cursor: pointer; margin: 10px; }
+        .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Supplier Authentication Test</h1>
+        <p>This page tests the supplier authentication system for product creation.</p>
+        
+        <h3>Step 1: Simulate Supplier Login</h3>
+        <button class="button" onclick="simulateLogin()">Simulate Login</button>
+        
+        <h3>Step 2: Test Product Creation</h3>
+        <button class="button" onclick="testProductCreation()">Test Create Product</button>
+        
+        <h3>Step 3: Check Current Status</h3>
+        <button class="button" onclick="checkStatus()">Check Status</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function simulateLogin() {
+            try {
+                const response = await fetch('/api/supplier/simulate-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store seller info in localStorage
+                    localStorage.setItem('sellerInfo', JSON.stringify(data.seller));
+                    showResult('Login simulated successfully! Seller info stored in localStorage.', 'success');
+                } else {
+                    showResult('Login simulation failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function testProductCreation() {
+            try {
+                // Get seller ID from localStorage
+                const sellerInfo = localStorage.getItem('sellerInfo');
+                let sellerId = 'temp-seller-id';
+                
+                if (sellerInfo) {
+                    try {
+                        const seller = JSON.parse(sellerInfo);
+                        sellerId = seller.id || seller._id || 'temp-seller-id';
+                    } catch (err) {
+                        console.error('Error parsing seller info:', err);
+                    }
+                }
+                
+                // Create test product data
+                const formData = new FormData();
+                formData.append('name', 'Test Product');
+                formData.append('sku', 'TEST-001');
+                formData.append('description', 'Test product description');
+                formData.append('category', 'seeds');
+                formData.append('price', '99.99');
+                formData.append('stockQuantity', '100');
+                formData.append('reorderThreshold', '10');
+                formData.append('tags', '[]');
+                formData.append('dimensions', '{}');
+                
+                const response = await fetch('/api/supplier/products', {
+                    method: 'POST',
+                    headers: {
+                        'x-seller-id': sellerId
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('✅ Product created successfully! ' + data.message, 'success');
+                } else {
+                    showResult('❌ Product creation failed: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showResult('Error: ' + error.message, 'error');
+            }
+        }
+        
+        function checkStatus() {
+            const sellerInfo = localStorage.getItem('sellerInfo');
+            let sellerId = 'temp-seller-id';
+            
+            if (sellerInfo) {
+                try {
+                    const seller = JSON.parse(sellerInfo);
+                    sellerId = seller.id || seller._id || 'temp-seller-id';
+                } catch (err) {
+                    console.error('Error parsing seller info:', err);
+                }
+            }
+            
+            const status = `
+                <h4>Current Status:</h4>
+                <p><strong>localStorage has sellerInfo:</strong> ${sellerInfo ? 'YES' : 'NO'}</p>
+                <p><strong>Seller ID:</strong> ${sellerId}</p>
+                <p><strong>Will product creation work?</strong> ${sellerId === 'temp-seller-id' ? '❌ NO - Will show "Cannot create products with temporary seller ID"' : '✅ YES - Should work'}</p>
+                <p><strong>Seller Info:</strong> <pre>${sellerInfo || 'None'}</pre></p>
+            `;
+            
+            showResult(status, sellerId === 'temp-seller-id' ? 'error' : 'success');
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        // Check status on page load
+        window.onload = checkStatus;
+    </script>
+</body>
+</html>

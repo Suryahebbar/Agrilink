@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Supplier Flow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .button { background: #166534; color: white; padding: 10px 20px; border: none; cursor: pointer; margin: 10px; }
+        .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 Complete Supplier Authentication & Product Creation Test</h1>
+        <p>This test simulates the complete flow from supplier login to product creation.</p>
+        
+        <h3>Step 1: Simulate Supplier Login</h3>
+        <button class="button" onclick="simulateLogin()">🔐 Simulate Login</button>
+        
+        <h3>Step 2: Check Authentication Status</h3>
+        <button class="button" onclick="checkAuth()">👤 Check Auth Status</button>
+        
+        <h3>Step 3: Test Product Creation</h3>
+        <button class="button" onclick="testProductCreation()">📦 Create Test Product</button>
+        
+        <h3>Step 4: Test Product Listing</h3>
+        <button class="button" onclick="testProductListing()">📋 List Products</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function simulateLogin() {
+            try {
+                const response = await fetch('/api/supplier/simulate-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store seller info in localStorage (this is what the real app does)
+                    localStorage.setItem('sellerInfo', JSON.stringify(data.seller));
+                    showResult('✅ Login simulated successfully! Seller info stored in localStorage.', 'success');
+                    showResult('Seller Info: <pre>' + JSON.stringify(data.seller, null, 2) + '</pre>', 'info');
+                } else {
+                    showResult('❌ Login simulation failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function testProductCreation() {
+            try {
+                // Get seller ID using the same logic as the frontend
+                const sellerInfo = localStorage.getItem('sellerInfo');
+                let sellerId = 'temp-seller-id';
+                
+                if (sellerInfo) {
+                    try {
+                        const seller = JSON.parse(sellerInfo);
+                        sellerId = seller.id || seller._id || 'temp-seller-id';
+                    } catch (err) {
+                        console.error('Error parsing seller info:', err);
+                    }
+                }
+                
+                if (sellerId === 'temp-seller-id') {
+                    showResult('❌ Cannot create product - no valid seller ID found. Please login first.', 'error');
+                    return;
+                }
+                
+                // Create test product data (same as frontend)
+                const formData = new FormData();
+                formData.append('name', 'Test Product - ' + new Date().toISOString());
+                formData.append('sku', 'TEST-' + Date.now());
+                formData.append('description', 'Test product created via automated test');
+                formData.append('category', 'seeds');
+                formData.append('price', '99.99');
+                formData.append('stockQuantity', '100');
+                formData.append('reorderThreshold', '10');
+                formData.append('tags', '[]');
+                formData.append('dimensions', '{}');
+                
+                const response = await fetch('/api/supplier/products', {
+                    method: 'POST',
+                    headers: {
+                        'x-seller-id': sellerId
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('✅ Product created successfully!', 'success');
+                    showResult('Product Details: <pre>' + JSON.stringify(data, null, 2) + '</pre>', 'info');
+                } else {
+                    showResult('❌ Product creation failed: ' + (data.error || 'Unknown error'), 'error');
+                    showResult('Error Details: <pre>' + JSON.stringify(data, null, 2) + '</pre>', 'error');
+                }
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function testProductListing() {
+            try {
+                // Get seller ID using the same logic as the frontend
+                const sellerInfo = localStorage.getItem('sellerInfo');
+                let sellerId = 'temp-seller-id';
+                
+                if (sellerInfo) {
+                    try {
+                        const seller = JSON.parse(sellerInfo);
+                        sellerId = seller.id || seller._id || 'temp-seller-id';
+                    } catch (err) {
+                        console.error('Error parsing seller info:', err);
+                    }
+                }
+                
+                if (sellerId === 'temp-seller-id') {
+                    showResult('❌ Cannot list products - no valid seller ID found. Please login first.', 'error');
+                    return;
+                }
+                
+                const response = await fetch('/api/supplier/products', {
+                    headers: {
+                        'x-seller-id': sellerId
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('✅ Products retrieved successfully!', 'success');
+                    showResult('Products (' + data.products.length + ' items): <pre>' + JSON.stringify(data, null, 2) + '</pre>', 'info');
+                } else {
+                    showResult('❌ Product listing failed: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        function checkAuth() {
+            const sellerInfo = localStorage.getItem('sellerInfo');
+            let sellerId = 'temp-seller-id';
+            
+            if (sellerInfo) {
+                try {
+                    const seller = JSON.parse(sellerInfo);
+                    sellerId = seller.id || seller._id || 'temp-seller-id';
+                } catch (err) {
+                    console.error('Error parsing seller info:', err);
+                }
+            }
+            
+            const status = `
+                <h4>🔍 Authentication Status:</h4>
+                <p><strong>localStorage has sellerInfo:</strong> ${sellerInfo ? '✅ YES' : '❌ NO'}</p>
+                <p><strong>Seller ID:</strong> ${sellerId}</p>
+                <p><strong>Will product creation work?</strong> ${sellerId === 'temp-seller-id' ? '❌ NO - Will show "Cannot create products with temporary seller ID"' : '✅ YES - Should work'}</p>
+                <p><strong>Seller Info:</strong> <pre>${sellerInfo || 'None'}</pre></p>
+            `;
+            
+            showResult(status, sellerId === 'temp-seller-id' ? 'error' : 'success');
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        // Check status on page load
+        window.onload = checkAuth;
+    </script>
+</body>
+</html>

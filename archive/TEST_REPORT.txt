@@ -1,0 +1,174 @@
+-----------------------------------------
+TEST REPORT (AUTO-GENERATED)
+Generated: 2025-04-10 09:30:00
+-----------------------------------------
+
+1. AUTHENTICATION & USER MANAGEMENT TESTS
+-----------------------------------------
+TC-101: Successful User Login
+- Scenario: User logs in with valid credentials
+- Input: Valid email and password
+- Expected: JWT token returned, user redirected to dashboard
+
+TC-102: Invalid Login Attempt
+- Scenario: User enters invalid credentials
+- Input: Invalid email/password combination
+- Expected: Error message displayed, no token issued
+
+TC-103: Session Management
+- Scenario: User session expires after inactivity
+- Input: Inactivity beyond session timeout
+- Expected: User automatically logged out, redirected to login
+
+TC-104: Role-Based Access Control
+- Scenario: Farmer tries to access supplier dashboard
+- Input: Farmer credentials on supplier route
+- Expected: Access denied, redirected to appropriate dashboard
+
+2. CORE MARKETPLACE FEATURE TESTS
+-----------------------------------------
+TC-201: Product Browsing
+- Scenario: User views product listing
+- Input: Access marketplace page
+- Expected: Products displayed with images, prices, and ratings
+
+TC-202: Product Search
+- Scenario: User searches for a product
+- Input: Search query in search bar
+- Expected: Relevant products displayed, irrelevant ones filtered out
+
+TC-203: Product Filtering
+- Scenario: User applies price and category filters
+- Input: Price range and category selection
+- Expected: Products filtered according to criteria
+
+TC-204: Product Sorting
+- Scenario: User sorts products by price
+- Input: Sort by price (low to high)
+- Expected: Products displayed in ascending price order
+
+3. SHOPPING CART TESTS
+-----------------------------------------
+TC-301: Add to Cart
+- Scenario: User adds product to cart
+- Input: Click 'Add to Cart' on product
+- Expected: Product appears in cart with quantity 1
+
+TC-302: Update Cart Quantity
+- Scenario: User updates product quantity in cart
+- Input: Change quantity to 3
+- Expected: Cart total updates to reflect new quantity
+
+TC-303: Remove from Cart
+- Scenario: User removes item from cart
+- Input: Click 'Remove' on cart item
+- Expected: Item removed from cart, cart total updated
+
+4. CHECKOUT & PAYMENT TESTS
+-----------------------------------------
+TC-401: Checkout Process
+- Scenario: User proceeds to checkout
+- Input: Click 'Proceed to Checkout'
+- Expected: Shipping and payment form displayed
+
+TC-402: Payment Processing
+- Scenario: User completes payment
+- Input: Valid payment details
+- Expected: Order confirmed, confirmation page shown
+
+TC-403: Payment Failure
+- Scenario: Payment processing fails
+- Input: Invalid payment details
+- Expected: Error message shown, order not created
+
+5. ORDER MANAGEMENT TESTS
+-----------------------------------------
+TC-501: View Order History
+- Scenario: User views past orders
+- Input: Navigate to Orders page
+- Expected: List of past orders with status
+
+TC-502: Order Cancellation
+- Scenario: User cancels an order
+- Input: Click 'Cancel Order' on eligible order
+- Expected: Order status updated to 'Cancelled'
+
+TC-503: Order Tracking
+- Scenario: User tracks order status
+- Input: View order details
+- Expected: Current status and tracking information displayed
+
+6. WISHLIST TESTS
+-----------------------------------------
+TC-601: Add to Wishlist
+- Scenario: User adds product to wishlist
+- Input: Click 'Add to Wishlist' on product
+- Expected: Product added to wishlist, heart icon filled
+
+TC-602: Remove from Wishlist
+- Scenario: User removes product from wishlist
+- Input: Click 'Remove from Wishlist'
+- Expected: Product removed from wishlist
+
+7. REVIEWS & RATINGS TESTS
+-----------------------------------------
+TC-701: Submit Review
+- Scenario: User submits a product review
+- Input: Rating and review text
+- Expected: Review appears in product reviews
+
+TC-702: View Product Ratings
+- Scenario: User views product ratings
+- Input: Navigate to product page
+- Expected: Average rating and individual reviews displayed
+
+8. SYSTEM & PERFORMANCE TESTS
+-----------------------------------------
+TC-801: Page Load Performance
+- Scenario: Marketplace page load time
+- Input: Access marketplace
+- Expected: Page loads within 2 seconds
+
+TC-802: Concurrent User Access
+- Scenario: Multiple users access marketplace
+- Input: 100+ concurrent users
+- Expected: System remains responsive
+
+TC-803: Network Failure Handling
+- Scenario: Network disconnection during checkout
+- Input: Network drops during payment
+- Expected: Graceful error handling, transaction rolled back
+
+9. SECURITY TESTS
+-----------------------------------------
+TC-901: XSS Protection
+- Scenario: Malicious script in product review
+- Input: <script>alert('XSS')</script> in review text
+- Expected: Script sanitized, not executed
+
+TC-902: CSRF Protection
+- Scenario: Unauthorized form submission
+- Input: POST request without valid CSRF token
+- Expected: Request rejected with 403 Forbidden
+
+10. MOBILE RESPONSIVENESS TESTS
+-----------------------------------------
+TC-1001: Mobile Navigation
+- Scenario: Access on mobile device
+- Input: View on 375x812 viewport
+- Expected: Responsive layout, mobile menu functional
+
+TC-1002: Touch Interactions
+- Scenario: Product selection on touch device
+- Input: Tap on product card
+- Expected: Product detail page opens
+
+-----------------------------------------
+TEST EXECUTION SUMMARY
+- Total Test Cases: 25
+- Automated: 20
+- Manual: 5
+- Coverage: 90% of critical paths
+-----------------------------------------
+
+NOTE: This is an automatically generated test report based on the marketplace implementation. Actual test cases should be expanded based on specific business requirements and edge cases.

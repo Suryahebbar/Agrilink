@@ -1,0 +1,511 @@
+/* Accessibility Utilities for BPFIS */
+
+/* CSS Custom Properties for Accessibility */
+:root {
+  --min-contrast-text: 4.5;
+  --min-contrast-large-text: 3.0;
+  --focus-ring: 2px solid #1A9B9A;
+}
+
+/* Screen Reader Only Text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip to Content Link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #1A9B9A;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-to-content:focus {
+  top: 6px;
+}
+
+/* Focus Indicators */
+.focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.focus-ring-primary {
+  outline: 2px solid #1A9B9A;
+  outline-offset: 2px;
+}
+
+.focus-ring-error {
+  outline: 2px solid #D93025;
+  outline-offset: 2px;
+}
+
+.focus-ring-warning {
+  outline: 2px solid #FF9900;
+  outline-offset: 2px;
+}
+
+.focus-ring-success {
+  outline: 2px solid #0F9D58;
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .focus-visible,
+  .focus-ring-primary,
+  .focus-ring-error,
+  .focus-ring-warning,
+  .focus-ring-success {
+    outline-width: 3px;
+  }
+  
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus Management for Interactive Elements */
+.interactive-element {
+  position: relative;
+}
+
+.interactive-element:focus-within {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Accessible Color Combinations */
+.text-high-contrast {
+  color: #000000;
+}
+
+.text-high-contrast-bg {
+  background-color: #FFFFFF;
+}
+
+.text-brand-contrast {
+  color: #1A9B9A;
+}
+
+.bg-brand-contrast {
+  background-color: #1A9B9A;
+  color: #FFFFFF;
+}
+
+/* Error States with Accessible Colors */
+.error-text {
+  color: #D93025;
+  font-weight: 500;
+}
+
+.error-border {
+  border-color: #D93025;
+}
+
+.error-bg {
+  background-color: #FDECEC;
+}
+
+/* Success States with Accessible Colors */
+.success-text {
+  color: #0F9D58;
+  font-weight: 500;
+}
+
+.success-border {
+  border-color: #0F9D58;
+}
+
+.success-bg {
+  background-color: #E6F4EA;
+}
+
+/* Warning States with Accessible Colors */
+.warning-text {
+  color: #FF9900;
+  font-weight: 500;
+}
+
+.warning-border {
+  border-color: #FF9900;
+}
+
+.warning-bg {
+  background-color: #FFF7E6;
+}
+
+/* Accessible Form Labels */
+.form-label-required {
+  position: relative;
+}
+
+.form-label-required::after {
+  content: '*';
+  color: #D93025;
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+/* Accessible Tables */
+.accessible-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.accessible-table caption {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  text-align: left;
+}
+
+.accessible-table th,
+.accessible-table td {
+  border: 1px solid #E5E7EB;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.accessible-table th {
+  background-color: #F3F4F6;
+  font-weight: 600;
+}
+
+/* Accessible Links */
+.accessible-link {
+  color: #1A9B9A;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.accessible-link:hover,
+.accessible-link:focus {
+  color: #147878;
+  text-decoration: underline;
+}
+
+.accessible-link:focus {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Accessible Buttons */
+.accessible-button {
+  position: relative;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background-color: #1A9B9A;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.accessible-button:hover:not(:disabled) {
+  background-color: #178A89;
+  border-color: #147878;
+}
+
+.accessible-button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.accessible-button:disabled {
+  background-color: #9CA3AF;
+  color: #6B7280;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Accessible Icon Buttons */
+.accessible-icon-button {
+  position: relative;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accessible-icon-button:hover:not(:disabled) {
+  background-color: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+.accessible-icon-button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.accessible-icon-button:disabled {
+  color: #9CA3AF;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Accessible Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #6B7280;
+}
+
+.modal-close-button:hover,
+.modal-close-button:focus {
+  color: #374151;
+  background-color: #F3F4F6;
+  border-radius: 4px;
+}
+
+/* Accessible Tooltips */
+.tooltip-trigger {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #111827;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tooltip-trigger:hover .tooltip-content,
+.tooltip-trigger:focus .tooltip-content {
+  opacity: 1;
+}
+
+/* Accessible Loading States */
+.loading-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E5E7EB;
+  border-top: 2px solid #1A9B9A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessible Progress Indicators */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #E5E7EB;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #1A9B9A;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Accessible Tabs */
+.tab-list {
+  display: flex;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.tab-list[role="tablist"] {
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.tab-button {
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  color: #6B7280;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  min-height: 44px;
+}
+
+.tab-button:hover:not([disabled]) {
+  color: #374151;
+  background-color: #F9FAFB;
+}
+
+.tab-button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.tab-button[aria-selected="true"] {
+  color: #1A9B9A;
+  border-bottom: 2px solid #1A9B9A;
+}
+
+.tab-panel {
+  padding: 16px;
+}
+
+.tab-panel[role="tabpanel"] {
+  padding: 16px;
+}
+
+/* Accessible Dropdowns */
+.dropdown-trigger {
+  position: relative;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.dropdown-trigger[role="button"] {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.dropdown-menu[role="menu"] {
+  outline: none;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  color: #374151;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #F3F4F6;
+  color: #111827;
+}
+
+.dropdown-item:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: -2px;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  * {
+    color: black !important;
+    background: white !important;
+  }
+}

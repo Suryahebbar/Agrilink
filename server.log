@@ -1,0 +1,78 @@
+
+> bpfis_main@0.1.0 dev
+> next dev
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.5 (Turbopack)
+   - Local:         http://localhost:3000
+   - Network:       http://10.11.31.101:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 866ms
+ GET /api/supplier/analytics 200 in 6.9s (compile: 491ms, render: 6.4s)
+[SupplierAuth] Header cookie payload {
+  context: '/api/supplier/analytics',
+  hasPayload: false,
+  role: undefined,
+  sub: undefined
+}
+[SupplierAuth] Authorization header present { context: '/api/supplier/analytics', hasAuthHeader: false }
+[SupplierAuth] x-seller-id header { context: '/api/supplier/analytics', hasSellerIdHeader: false }
+Error fetching analytics: Error: Authentication required
+    at requireAuth (lib/supplier-auth-middleware.ts:181:11)
+    at async GET (app/api/supplier/analytics/route.ts:11:18)
+  179 |   
+  180 |   if (!auth) {
+> 181 |     throw new Error('Authentication required');
+      |           ^
+  182 |   }
+  183 |
+  184 |   // Verify supplierId in route matches authenticated user
+ GET /api/supplier/analytics 500 in 309ms (compile: 138ms, render: 172ms)
+[SupplierAuth] Header cookie payload {
+  context: '/api/supplier/analytics',
+  hasPayload: false,
+  role: undefined,
+  sub: undefined
+}
+[SupplierAuth] Authorization header present { context: '/api/supplier/analytics', hasAuthHeader: false }
+[SupplierAuth] x-seller-id header { context: '/api/supplier/analytics', hasSellerIdHeader: false }
+Error fetching analytics: Error: Authentication required
+    at requireAuth (lib/supplier-auth-middleware.ts:181:11)
+    at async GET (app/api/supplier/analytics/route.ts:11:18)
+  179 |   
+  180 |   if (!auth) {
+> 181 |     throw new Error('Authentication required');
+      |           ^
+  182 |   }
+  183 |
+  184 |   // Verify supplierId in route matches authenticated user
+ GET /api/supplier/analytics 500 in 168ms (compile: 44ms, render: 125ms)
+🔐 Supplier Login Request: { email: 'newtest@supplier.com', hasPassword: true }
+❌ Seller not found: newtest@supplier.com
+ POST /api/supplier/login 401 in 242ms (compile: 132ms, render: 110ms)
+🔐 Supplier Login Request: { email: 'test@supplier.com', hasPassword: true }
+❌ Invalid password
+ POST /api/supplier/login 401 in 442ms (compile: 2ms, render: 440ms)
+ POST /api/auth/admin/login 200 in 191ms (compile: 178ms, render: 13ms)
+ GET /api/admin/suppliers 200 in 493ms (compile: 154ms, render: 339ms)
+🔐 Supplier Login Request: { email: 'agroworks@gmail.com', hasPassword: true }
+❌ Invalid password
+ POST /api/supplier/login 401 in 167ms (compile: 2ms, render: 165ms)
+🔐 Supplier Login Request: { email: 'agroworks@gmail.com', hasPassword: true }
+✅ Login successful: {
+  id: new ObjectId('6943dbe2510b0eba55296189'),
+  companyName: 'agroworks',
+  email: 'agroworks@gmail.com',
+  verificationStatus: 'verified'
+}
+ POST /api/supplier/login 200 in 179ms (compile: 1712µs, render: 177ms)
+[SupplierAuth] Cookie payload {
+  context: '/api/supplier/analytics',
+  hasPayload: true,
+  role: 'supplier',
+  sub: '6943dbe2510b0eba55296189'
+}
+[SupplierAuth] Cookie seller lookup { context: '/api/supplier/analytics', found: true, by: 'cookieToken' }
+ GET /api/supplier/analytics 200 in 91ms (compile: 2ms, render: 89ms)

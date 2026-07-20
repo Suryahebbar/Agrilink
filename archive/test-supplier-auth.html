@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Supplier Authentication</title>
+</head>
+<body>
+    <h1>Supplier Authentication Test</h1>
+    <button onclick="testSupplierAuth()">Test Supplier Product Creation</button>
+    <div id="result"></div>
+
+    <script>
+        function testSupplierAuth() {
+            // Simulate a logged-in supplier by setting localStorage
+            const testSellerInfo = {
+                id: '65a1b2c3d4e5f6789012345', // Mock ObjectId
+                companyName: 'Test Supplier Company',
+                email: 'test@supplier.com'
+            };
+            
+            localStorage.setItem('sellerInfo', JSON.stringify(testSellerInfo));
+            
+            // Test the getSellerId function
+            const sellerInfo = localStorage.getItem('sellerInfo');
+            let sellerId = 'temp-seller-id';
+            
+            if (sellerInfo) {
+                try {
+                    const seller = JSON.parse(sellerInfo);
+                    sellerId = seller.id || seller._id || 'temp-seller-id';
+                } catch (err) {
+                    console.error('Error parsing seller info:', err);
+                }
+            }
+            
+            document.getElementById('result').innerHTML = `
+                <h3>Test Results:</h3>
+                <p><strong>Seller Info in localStorage:</strong> ${sellerInfo}</p>
+                <p><strong>Extracted Seller ID:</strong> ${sellerId}</p>
+                <p><strong>Is temp ID?</strong> ${sellerId === 'temp-seller-id' ? 'YES - This will cause the error' : 'NO - This should work'}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+/* Tab Component Styles */
+
+/* Base tab transition */
+.tab-transition {
+  transition: all 0.18s ease-out;
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  /* Fallback for older browsers */
+  overflow: -moz-scrollbars-none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Tab focus states */
+.tab-focus {
+  outline: none;
+}
+
+.tab-focus:focus {
+  box-shadow: 0 0 0 2px #1A9B9A;
+  box-shadow: 0 0 0 2px var(--tab-indicator);
+}
+
+/* Basic tab styles */
+.tab-basic {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-basic:hover {
+  color: #374151;
+  border-bottom-color: #D1D5DB;
+}
+
+.tab-basic.active {
+  color: #1A9B9A;
+  border-bottom-color: #1A9B9A;
+}
+
+.tab-basic.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Rounded tab styles */
+.tab-rounded {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+}
+
+.tab-rounded:hover {
+  background-color: #FFFFFF;
+  color: #1F2937;
+}
+
+.tab-rounded.active {
+  background-color: #FFFFFF;
+  color: #1A9B9A;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.tab-rounded.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Icon tab styles */
+.tab-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-icon:hover {
+  color: #374151;
+  border-bottom-color: #D1D5DB;
+}
+
+.tab-icon.active {
+  color: #1A9B9A;
+  border-bottom-color: #1A9B9A;
+}
+
+.tab-icon.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Card tab styles */
+.tab-card {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.375rem;
+}
+
+.tab-card:hover {
+  background-color: #F9FAFB;
+}
+
+.tab-card.active {
+  border-color: #1A9B9A;
+  background-color: #E6F7F7;
+  color: #147878;
+}
+
+.tab-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Pill tab styles */
+.tab-pill {
+  padding: 0.375rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  border-radius: 9999px;
+}
+
+.tab-pill:hover {
+  background-color: #E5E7EB;
+}
+
+.tab-pill.active {
+  background-color: #1A9B9A;
+  color: #FFFFFF;
+}
+
+.tab-pill.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Tab container styles */
+.tab-container-basic {
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.tab-container-rounded {
+  display: flex;
+  gap: 0.5rem;
+  background-color: #F3F4F6;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.tab-container-icon {
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.tab-container-card {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.tab-container-pill {
+  display: flex;
+  gap: 0.5rem;
+}
