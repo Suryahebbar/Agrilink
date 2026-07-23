@@ -5,7 +5,8 @@ import bcrypt from 'bcryptjs';
 export enum UserRole {
   FARMER = 'farmer',
   SUPPLIER = 'supplier',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
+  FCO = 'fco'
 }
 
 export interface IUser extends Document {
@@ -17,6 +18,13 @@ export interface IUser extends Document {
   phone?: string;
   address?: string;
   profilePicture?: string;
+  // FCO Profile details
+  employeeId?: string;
+  username?: string;
+  qualification?: string;
+  experience?: number;
+  createdBy?: string;
+  status?: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -69,6 +77,12 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: '',
     },
+    employeeId: { type: String, unique: true, sparse: true, index: true },
+    username: { type: String, unique: true, sparse: true, index: true },
+    qualification: { type: String },
+    experience: { type: Number },
+    createdBy: { type: String },
+    status: { type: String, enum: ['active', 'suspended', 'inactive'], default: 'active' },
   },
   {
     timestamps: true,
@@ -103,7 +117,9 @@ userSchema.methods.comparePassword = async function (
 };
 
 // Create and export the model
-const User = (mongoose.models.User as UserModel) || 
-  mongoose.model<IUser, UserModel>('User', userSchema);
+if (mongoose.models.User) {
+  delete (mongoose.models as any).User;
+}
+const User = mongoose.model<IUser, UserModel>('User', userSchema);
 
 export default User;

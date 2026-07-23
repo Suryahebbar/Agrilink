@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export type UserRole = 'farmer' | 'supplier';
+export type UserRole = 'farmer' | 'supplier' | 'admin' | 'fco';
 
 export interface IUser extends Document {
   role: UserRole;
@@ -23,13 +23,29 @@ export interface IUser extends Document {
   verificationStatus?: 'pending' | 'verified' | 'rejected'; // Admin verification status
   verifiedAt?: Date; // When admin verified the supplier
   rejectionReason?: string; // Reason for rejection if applicable
+  // New Admin fields for Farmers & Suppliers & FCO
+  status?: 'active' | 'suspended' | 'inactive';
+  approvedBy?: string;
+  approvedAt?: Date;
+  rejectedBy?: string;
+  rejectedAt?: Date;
+  suspensionReason?: string;
+  suspendedAt?: Date;
+  suspendedBy?: string;
+  // FCO Profile details
+  employeeId?: string;
+  username?: string;
+  qualification?: string;
+  experience?: number;
+  address?: string;
+  createdBy?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const UserSchema = new Schema<IUser>(
   {
-    role: { type: String, enum: ['farmer', 'supplier'], required: true },
+    role: { type: String, enum: ['farmer', 'supplier', 'admin', 'fco'], required: true },
     fullName: { type: String },
     email: { type: String, required: true, unique: true },
     phone: { type: String },
@@ -49,9 +65,28 @@ const UserSchema = new Schema<IUser>(
     verificationStatus: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },
     verifiedAt: { type: Date },
     rejectionReason: { type: String },
+    // Admin workflows
+    status: { type: String, enum: ['active', 'suspended', 'inactive'], default: 'active' },
+    approvedBy: { type: String },
+    approvedAt: { type: Date },
+    rejectedBy: { type: String },
+    rejectedAt: { type: Date },
+    suspensionReason: { type: String },
+    suspendedAt: { type: Date },
+    suspendedBy: { type: String },
+    // FCO Profile details
+    employeeId: { type: String, unique: true, sparse: true, index: true },
+    username: { type: String, unique: true, sparse: true, index: true },
+    qualification: { type: String },
+    experience: { type: Number },
+    address: { type: String },
+    createdBy: { type: String },
   },
   { timestamps: true }
 );
 
-export const User =
-  mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+if (mongoose.models.User) {
+  delete (mongoose.models as any).User;
+}
+
+export const User = mongoose.model<IUser>('User', UserSchema);

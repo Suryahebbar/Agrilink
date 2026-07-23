@@ -1,38 +1,57 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { withAdminAuth } from '@/lib/withAdminAuth';
-import { connectDB } from '@/lib/db';
-import { User } from '@/lib/models/User';
+import { FarmerService } from '@/lib/services/farmer.service';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdminAuth(async (request: NextRequest) => {
+  return withAdminAuth(async (req: NextRequest) => {
     try {
       const { id } = await params;
-      await connectDB();
+      const body = await req.json().catch(() => ({}));
+      const { action = 'approve', reason = '', newPassword = '' } = body;
       
-      const user = await User.findByIdAndUpdate(
-        id,
-        { isVerified: true },
-        { new: true }
-      ).select('-password');
+      const adminEmail = (req as any).admin?.email || 'admin@bpfis.com';
 
-      if (!user) {
-        return NextResponse.json(
-          { error: 'Farmer not found' },
-          { status: 404 }
-        );
+      let result;
+
+      switch (action) {
+        case 'reject':
+          if (!reason) {
+            return NextResponse.json({ error: 'Rejection reason is required' }, { status: 400 });
+          }
+          result = await FarmerService.rejectFarmer(id, adminEmail, reason);
+          break;
+        case 'suspend':
+          if (!reason) {
+            return NextResponse.json({ error: 'Suspension reason is required' }, { status: 400 });
+          }
+          result = await FarmerService.suspendFarmer(id, adminEmail, reason);
+          break;
+        case 'reactivate':
+          result = await FarmerService.reactivateFarmer(id, adminEmail);
+          break;
+        case 'reset_password':
+          if (!newPassword) {
+            return NextResponse.json({ error: 'New password is required' }, { status: 400 });
+          }
+          result = await FarmerService.resetPassword(id, adminEmail, newPassword);
+          break;
+        case 'approve':
+        default:
+          result = await FarmerService.approveFarmer(id, adminEmail);
+          break;
       }
 
       return NextResponse.json({
         success: true,
-        data: user,
+        data: result,
       });
     } catch (error) {
-      console.error('Error verifying farmer:', error);
+      console.error('Error in farmer admin action:', error);
       return NextResponse.json(
-        { error: 'Internal server error' },
+        { error: error instanceof Error ? error.message : 'Internal server error' },
         { status: 500 }
       );
     }

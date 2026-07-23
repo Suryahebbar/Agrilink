@@ -11,9 +11,10 @@ export default function Header() {
   const router = useRouter();
   const [farmerName, setFarmerName] = useState<string>('');
 
-  const isDashboard = pathname?.startsWith('/dashboard');
+  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/fco');
   const isFarmer = pathname?.startsWith('/dashboard/farmer');
   const isSupplier = pathname?.startsWith('/dashboard/supplier');
+  const isFco = pathname?.startsWith('/fco');
   const userId = searchParams.get('userId');
 
   const buildDashboardHref = (baseHref: string) => {
@@ -81,6 +82,12 @@ export default function Header() {
               >
                 Log In
               </Link>
+              <Link 
+                href="/login?role=fco" 
+                className="text-[#374151] hover:text-[#166534] hover:bg-[#f0fdf4] px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              >
+                Login as FCO
+              </Link>
               <Link
                 href="/register"
                 className="ml-2 bg-gradient-to-r from-[#166534] to-[#15803d] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:shadow-lg hover:scale-105 transition-all"
@@ -98,7 +105,8 @@ export default function Header() {
                 <span className="text-sm font-semibold text-[#166534]">
                   {isFarmer && '🌾 Farmer Dashboard'}
                   {isSupplier && '📦 Supplier Dashboard'}
-                  {!isFarmer && !isSupplier && 'Dashboard'}
+                  {isFco && '🤝 FCO Dashboard'}
+                  {!isFarmer && !isSupplier && !isFco && 'Dashboard'}
                 </span>
               </div>
 

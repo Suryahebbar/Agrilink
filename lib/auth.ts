@@ -4,7 +4,7 @@ const AUTH_COOKIE_NAME = 'agro_session';
 
 export type AuthTokenPayload = JWTPayload & {
   sub: string; // user id
-  role: 'farmer' | 'supplier' | 'supplier';
+  role: 'farmer' | 'supplier' | 'fco';
   email: string;
 };
 

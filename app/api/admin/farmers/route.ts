@@ -1,84 +1,40 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { withAdminAuth } from '@/lib/withAdminAuth';
-import { connectDB } from '@/lib/db';
-import { User } from '@/lib/models/User';
-
-interface QueryParams {
-  page?: string;
-  limit?: string;
-  search?: string;
-  status?: 'all' | 'verified' | 'pending';
-  sortBy?: 'newest' | 'oldest' | 'name';
-}
+import { FarmerService } from '@/lib/services/farmer.service';
 
 export async function GET(request: NextRequest) {
-  return withAdminAuth(async (request: NextRequest) => {
+  return withAdminAuth(async (req: NextRequest) => {
     try {
-      await connectDB();
+      const { searchParams } = new URL(req.url);
       
-      // Parse query parameters
-      const { searchParams } = new URL(request.url);
-      const params: QueryParams = Object.fromEntries(searchParams.entries());
-      
-      const page = parseInt(params.page || '1', 10);
-      const limit = parseInt(params.limit || '10', 10);
-      const skip = (page - 1) * limit;
+      const page = parseInt(searchParams.get('page') || '1', 10);
+      const limit = parseInt(searchParams.get('limit') || '10', 10);
+      const search = searchParams.get('search') || '';
+      const status = searchParams.get('status') || '';
+      const aadhaarStatus = searchParams.get('aadhaarStatus') || '';
+      const rtcStatus = searchParams.get('rtcStatus') || '';
+      const district = searchParams.get('district') || '';
+      const taluk = searchParams.get('taluk') || '';
+      const village = searchParams.get('village') || '';
+      const sortBy = searchParams.get('sortBy') || 'newest';
 
-      // Build query
-      const query: any = { role: 'farmer' };
-
-      // Apply search filter
-      if (params.search) {
-        const searchRegex = new RegExp(params.search, 'i');
-        query.$or = [
-          { name: { $regex: searchRegex } },
-          { email: { $regex: searchRegex } },
-          { phone: { $regex: searchRegex } },
-          { address: { $regex: searchRegex } }
-        ];
-      }
-
-      // Apply status filter
-      if (params.status === 'verified') {
-        query.isVerified = true;
-      } else if (params.status === 'pending') {
-        query.isVerified = false;
-      }
-
-      // Build sort
-      let sort = {};
-      switch (params.sortBy) {
-        case 'oldest':
-          sort = { createdAt: 1 };
-          break;
-        case 'name':
-          sort = { name: 1 };
-          break;
-        case 'newest':
-        default:
-          sort = { createdAt: -1 };
-          break;
-      }
-
-      // Execute count and find queries in parallel
-      const [total, farmers] = await Promise.all([
-        User.countDocuments(query),
-        User.find(query)
-          .select('-password -__v')
-          .sort(sort)
-          .skip(skip)
-          .limit(limit)
-      ]);
+      const data = await FarmerService.getFarmers({
+        page,
+        limit,
+        search,
+        status,
+        aadhaarStatus,
+        rtcStatus,
+        district,
+        taluk,
+        village,
+        sortBy
+      });
 
       return NextResponse.json({
         success: true,
-        data: farmers,
-        pagination: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit)
-        }
+        data: data.farmers,
+        pagination: data.pagination
       });
     } catch (error) {
       console.error('Error fetching farmers:', error);

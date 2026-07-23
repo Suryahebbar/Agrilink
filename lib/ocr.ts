@@ -1,33 +1,50 @@
-// Simple PDF extraction without OCR/AI - using pdftotext
-import { execSync } from 'child_process';
+// Simple PDF extraction without OCR/AI - using pdfjs-dist
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 
-const TMP = "/tmp/simple_extract.txt";
-
-// Extract raw text from PDF using pdftotext
+// Extract raw text from PDF using pdfjs-dist
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
   try {
-    // Write buffer to temporary file
-    const tempPdf = TMP.replace('.txt', '.pdf');
-    fs.writeFileSync(tempPdf, buffer);
+    const workerPath = path.resolve(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pathToFileURL(workerPath).href;
+
+    const loadingTask = pdfjsLib.getDocument({
+      data: new Uint8Array(buffer),
+      useSystemFonts: true,
+      disableFontFace: true,
+    });
+    const pdf = await loadingTask.promise;
+    let fullText = '';
     
-    // Extract text using pdftotext
-    execSync(`pdftotext -layout -nopgbrk "${tempPdf}" "${TMP}"`);
-    const text = fs.readFileSync(TMP, "utf8")
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      
+      const items = textContent.items;
+      let lastY = null;
+      let pageText = '';
+      
+      for (const item of items) {
+        if ('str' in item) {
+          const cleanStr = item.str.replace(/\u0000/g, '');
+          if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+            pageText += '\n';
+          }
+          pageText += cleanStr;
+          lastY = item.transform[5];
+        }
+      }
+      fullText += pageText + '\n';
+    }
+    
+    return fullText
       .replace(/\u00A0/g, " ")
       .replace(/[ ]{2,}/g, " ")
       .trim();
-    
-    // Clean up temp files
-    try { 
-      fs.unlinkSync(TMP); 
-      fs.unlinkSync(tempPdf); 
-    } catch {}
-    
-    return text;
   } catch (e) {
-    console.warn('pdftotext extraction failed', e);
+    console.warn('pdfjs-dist extraction failed', e);
     return '';
   }
 }

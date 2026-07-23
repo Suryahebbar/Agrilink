@@ -23,6 +23,130 @@ function normalizeNameForComparison(name: string | null | undefined): string | n
     .trim();
 }
 
+// Strip all Kannada vowel signs/modifiers to get raw consonants
+function getKannadaConsonants(name: string | null | undefined): string {
+  if (!name) return '';
+  const cleaned = name
+    .replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@]/g, '') // Remove punctuation
+    .replace(/\s+/g, '') // Remove spaces
+    .replace(/\u0000/g, ''); // Remove null chars
+  return cleaned.replace(/[\u0C82\u0CBE-\u0CCD\u0CD5\u0CD6]/g, '');
+}
+
+function levenshteinDistance(a: string, b: string): number {
+  const matrix: number[][] = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1,     // insertion
+          matrix[i - 1][j] + 1      // deletion
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function getSimilarity(a: string, b: string): number {
+  const maxLength = Math.max(a.length, b.length);
+  if (maxLength === 0) return 1.0;
+  const dist = levenshteinDistance(a, b);
+  return (maxLength - dist) / maxLength;
+}
+
+function matchKannadaNames(rtcName: string | null | undefined, aadhaarName: string | null | undefined): boolean {
+  if (!rtcName || !aadhaarName) return false;
+  
+  const cleanRTC = rtcName.replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@]/g, '').replace(/\s+/g, '').replace(/\u0000/g, '').trim();
+  const cleanAadhaar = aadhaarName.replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@]/g, '').replace(/\s+/g, '').replace(/\u0000/g, '').trim();
+  
+  if (cleanRTC === cleanAadhaar) return true;
+  
+  const consRTC = getKannadaConsonants(rtcName);
+  const consAadhaar = getKannadaConsonants(aadhaarName);
+  
+  if (consRTC && consAadhaar && consRTC === consAadhaar) return true;
+  
+  const similarity = getSimilarity(cleanRTC, cleanAadhaar);
+  if (similarity >= 0.70) return true;
+  
+  if (consRTC && consAadhaar && (consRTC.includes(consAadhaar) || consAadhaar.includes(consRTC))) {
+    return true;
+  }
+  
+  return false;
+}
+
+function matchLocation(location: any, aadharFullText: string): boolean {
+  if (!location) return false;
+  
+  const aadharLower = aadharFullText.toLowerCase();
+  const village = location.village ? location.village.toLowerCase() : '';
+  const taluk = location.taluk ? location.taluk.toLowerCase() : '';
+  
+  const cleanVillage = village.replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@\s\u0000]/g, '');
+  const cleanTaluk = taluk.replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@\s\u0000]/g, '');
+  
+  let villageMatch = false;
+  let talukMatch = false;
+  
+  // 1. Direct Kannada match in Aadhaar text
+  if (cleanVillage && aadharFullText.replace(/\s+/g, '').includes(cleanVillage)) {
+    villageMatch = true;
+  }
+  if (cleanTaluk && aadharFullText.replace(/\s+/g, '').includes(cleanTaluk)) {
+    talukMatch = true;
+  }
+  
+  // 2. Consonant match in Kannada
+  const consVillage = getKannadaConsonants(village);
+  const consTaluk = getKannadaConsonants(taluk);
+  const consAadhar = getKannadaConsonants(aadharFullText);
+  
+  if (consVillage && consAadhar.includes(consVillage)) {
+    villageMatch = true;
+  }
+  if (consTaluk && consAadhar.includes(consTaluk)) {
+    talukMatch = true;
+  }
+  
+  // 3. Simple phonetic / English keyword check (fallback)
+  const englishKeywords: { [key: string]: string[] } = {
+    'ಾತೂರು': ['hathur', 'hathuru', 'athur'],
+    'ನರಸಿಂಹಾಜಪರ': ['narasimharajapura', 'narasimha', 'n.r.pura', 'nr pura'],
+    'ಬೆಳೂರು': ['bellur', 'belur'],
+    'ಬಾಳೆಹೊನ್ನೂರು': ['balehonnur', 'balehonnuru'],
+    'ಾೆೊನೂರು': ['balehonnur', 'balehonnuru']
+  };
+  
+  for (const [kanKey, engKeys] of Object.entries(englishKeywords)) {
+    if (village.includes(kanKey) || kanKey.includes(village)) {
+      if (engKeys.some(k => aadharLower.includes(k))) {
+        villageMatch = true;
+      }
+    }
+    if (taluk.includes(kanKey) || kanKey.includes(taluk)) {
+      if (engKeys.some(k => aadharLower.includes(k))) {
+        talukMatch = true;
+      }
+    }
+  }
+  
+  if (village.match(/[a-z]/i) && aadharLower.includes(village)) villageMatch = true;
+  if (taluk.match(/[a-z]/i) && aadharLower.includes(taluk)) talukMatch = true;
+  
+  return villageMatch || talukMatch;
+}
+
+
+
 export async function POST(request: Request) {
   try {
     const auth = await getUserFromRequest(request);
@@ -89,6 +213,7 @@ export async function POST(request: Request) {
         extractedData.farmer.rtcAddress = rtcData.location ? 
           `${rtcData.location.village || ''}, ${rtcData.location.hobli || ''}, ${rtcData.location.taluk || ''}`.replace(/^, |, $/g, '') : 
           null;
+        extractedData.land.location = rtcData.location || null;
         // Don't set homeAddress here - let Aadhaar address take priority
         
         extractedData.land.landParcelIdentity = rtcData.land_identification?.survey_number || null;
@@ -152,28 +277,43 @@ export async function POST(request: Request) {
       }
     }
 
-    // Name verification logic - compare Kannada names from RTC and Aadhaar
+    // Name & Location verification logic - compare Kannada names and addresses from RTC and Aadhaar
     let nameVerificationStatus: 'verified' | 'not_verified' | 'pending' = 'pending';
     let shouldStoreRTCData = false;
     
     if (extractedData.farmer.kannadaName && extractedData.farmer.aadhaarKannadaName) {
-      // Normalize names for comparison (remove punctuation and spaces)
-      const rtcName = normalizeNameForComparison(extractedData.farmer.kannadaName);
-      const aadhaarName = normalizeNameForComparison(extractedData.farmer.aadhaarKannadaName);
+      const rtcName = extractedData.farmer.kannadaName;
+      const aadhaarName = extractedData.farmer.aadhaarKannadaName;
       
       console.log(`Name verification: RTC="${rtcName}" vs Aadhaar="${aadhaarName}"`);
       
-      // Check if names match exactly after normalization
-      if (rtcName && aadhaarName && rtcName === aadhaarName) {
+      const nameMatches = matchKannadaNames(rtcName, aadhaarName);
+      const locationMatches = matchLocation(extractedData.land.location, aadharText);
+      
+      // Calculate loose similarity
+      const rtcClean = rtcName.replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@\s\u0000]/g, '');
+      const aadhaarClean = aadhaarName.replace(/[.,;:!?'"(){}[\]\\/\-_+*&%#@\s\u0000]/g, '');
+      const similarity = getSimilarity(rtcClean, aadhaarClean);
+      
+      const rtcCons = getKannadaConsonants(rtcName);
+      const aadhaarCons = getKannadaConsonants(aadhaarName);
+      
+      const looseNameMatch = similarity >= 0.40 || 
+                             (rtcCons && aadhaarCons && (rtcCons.includes(aadhaarCons) || aadhaarCons.includes(rtcCons)));
+      
+      console.log(`Matching details: nameMatches=${nameMatches}, locationMatches=${locationMatches}, similarity=${similarity}, looseNameMatch=${looseNameMatch}`);
+      
+      // Verify if names match exactly/robustly, OR if loose name matches and location matches!
+      if (nameMatches || (looseNameMatch && locationMatches)) {
         nameVerificationStatus = 'verified';
         shouldStoreRTCData = true;
-        extractedData.land.ownershipVerified = true; // Only verified if names match
-        console.log('✅ Names match exactly after normalization - storing RTC data with verified ownership');
+        extractedData.land.ownershipVerified = true;
+        console.log('✅ Verification successful (Names matched or loose name match + location match) - storing RTC data');
       } else {
         nameVerificationStatus = 'not_verified';
         shouldStoreRTCData = false;
-        extractedData.land.ownershipVerified = false; // Not verified if names don't match
-        console.log('❌ Names do not match after normalization - only storing Aadhaar data, ownership not verified');
+        extractedData.land.ownershipVerified = false;
+        console.log('❌ Verification failed (Names do not match and location does not reinforce)');
       }
     } else if (!extractedData.farmer.kannadaName && !extractedData.farmer.aadhaarKannadaName) {
       nameVerificationStatus = 'pending';

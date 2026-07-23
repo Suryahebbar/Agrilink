@@ -1,54 +1,69 @@
-import { execSync } from 'child_process';
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
+import { pathToFileURL } from 'url';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 function isHttpUrl(value: string): boolean {
   return /^https?:\/\//i.test(value);
 }
 
-async function downloadToTempFile(url: string): Promise<string> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to download PDF (${res.status} ${res.statusText})`);
-  }
-
-  const buffer = Buffer.from(await res.arrayBuffer());
-  const tmpPdf = path.join(os.tmpdir(), `bpfis_pdf_${Date.now()}_${Math.random().toString(16).slice(2)}.pdf`);
-  fs.writeFileSync(tmpPdf, buffer);
-  return tmpPdf;
-}
-
-// STEP 1 — Extract raw text from PDF using pdftotext
+// STEP 1 — Extract raw text from PDF using pdfjs-dist
 async function extractRaw(pdfPath: string): Promise<string> {
   if (!pdfPath || typeof pdfPath !== 'string') {
     throw new Error('Invalid PDF path provided');
   }
 
-  let localPdfPath: string | null = null;
-  let tmpTxtPath: string | null = null;
-
   try {
-    localPdfPath = isHttpUrl(pdfPath) ? await downloadToTempFile(pdfPath) : pdfPath;
-    tmpTxtPath = path.join(os.tmpdir(), `bpfis_pdftotext_${Date.now()}_${Math.random().toString(16).slice(2)}.txt`);
+    let buffer: Buffer;
+    if (isHttpUrl(pdfPath)) {
+      const res = await fetch(pdfPath);
+      if (!res.ok) {
+        throw new Error(`Failed to download PDF (${res.status} ${res.statusText})`);
+      }
+      buffer = Buffer.from(await res.arrayBuffer());
+    } else {
+      buffer = fs.readFileSync(pdfPath);
+    }
 
-    execSync(`pdftotext -layout -nopgbrk "${localPdfPath}" "${tmpTxtPath}"`);
-    const text = fs.readFileSync(tmpTxtPath, "utf8")
+    const workerPath = path.resolve(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pathToFileURL(workerPath).href;
+
+    const loadingTask = pdfjsLib.getDocument({
+      data: new Uint8Array(buffer),
+      useSystemFonts: true,
+      disableFontFace: true,
+    });
+    const pdf = await loadingTask.promise;
+    let fullText = '';
+    
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      
+      const items = textContent.items;
+      let lastY = null;
+      let pageText = '';
+      
+      for (const item of items) {
+        if ('str' in item) {
+          const cleanStr = item.str.replace(/\u0000/g, '');
+          if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+            pageText += '\n';
+          }
+          pageText += cleanStr;
+          lastY = item.transform[5];
+        }
+      }
+      fullText += pageText + '\n';
+    }
+    
+    return fullText
       .replace(/\u00A0/g, " ")
       .replace(/[ ]{2,}/g, " ")
       .trim();
-
-    return text;
   } catch (error) {
-    console.error('pdftotext extraction failed:', error);
+    console.error('pdfjs-dist extraction failed:', error);
     return '';
-  } finally {
-    if (tmpTxtPath) {
-      try { fs.unlinkSync(tmpTxtPath); } catch {}
-    }
-    if (localPdfPath && localPdfPath !== pdfPath) {
-      try { fs.unlinkSync(localPdfPath); } catch {}
-    }
   }
 }
 
@@ -62,11 +77,13 @@ function parseRTC(lines: string[]) {
   console.log('RTC lines for debugging:', lines);
   
   // Try to find location lines with actual place names (not just "ನಂಬರ್")
+  // Try to find location lines with actual place names (not just "ನಂಬರ್")
   const locationLines = lines.filter(l => 
     l.includes('ತಾಲ್ಲೂಕು') || l.includes('ಹೋಬಳಿ') || 
     l.includes('ಗ್ರಾಮ') || l.includes('ವಿಳಾಸ') ||
     (l.includes('ತಾಲ್ಲೂ') && l.includes('ಕು:')) ||
-    l.includes('ಹೋಬಳಿ') || l.includes('ಗ್ರಾ')
+    l.includes('ಹೋಬಳಿ') || l.includes('ಗ್ರಾ') ||
+    l.includes('ಾಲೂ') || l.includes('ೂೕಬಳಿ') || l.includes('ಾ ಮ')
   );
   
   console.log('Found location lines:', locationLines);
@@ -78,48 +95,42 @@ function parseRTC(lines: string[]) {
     const locLine = locationLines[0]; // Use first location line
     console.log('Using location line:', locLine);
     
-    // Simple extraction: value comes after colon
     const parts = locLine.split(':').map(p => p.trim());
     console.log('Colon-separated parts:', parts);
     
-    // Extract based on position after colons
     if (parts.length >= 2) {
-      // First part before first colon contains taluk label
-      const firstPart = parts[0]; // "ತಾಲ್ಲೂ ಕು"
-      const secondPart = parts[1]; // "ತೀರ್ಥಹಳ್ಳಿ ಹೋಬಳಿ"
-      const thirdPart = parts.length >= 3 ? parts[2] : null; // "ಮಂಡಗದ್ದೆ ಗ್ರಾ ಮ ಚಿಕ್ಸಿಕೆಂಚಿಗುಡ್ಡೆ"
-      
-      // Extract taluk from second part (word before "ಹೋಬಳಿ")
-      // because format is: ತಾಲ್ಲೂ ಕು: [TALUK_NAME] ಹೋಬಳಿ
-      const secondPartWords = secondPart.split(' ');
-      const hobliIndex = secondPartWords.findIndex(w => w.includes('ಹೋಬಳಿ'));
-      if (hobliIndex > 0) {
-        taluk = secondPartWords[hobliIndex - 1]; // "ತೀರ್ಥಹಳ್ಳಿ" (Thirthahalli)
+      // Taluk name is in parts[1], before "ಹೋಬಳಿ" or "ೆ ೂೕಬಳಿ"
+      const talukPart = parts[1];
+      const hobliLabelIdx = talukPart.search(/ಹೋಬಳಿ|ೆ\s*ೂೕಬಳಿ|ೂೕಬಳಿ/);
+      if (hobliLabelIdx !== -1) {
+        taluk = talukPart.substring(0, hobliLabelIdx).trim().replace(/\s+/g, '');
+      } else {
+        taluk = talukPart.trim().replace(/\s+/g, '');
       }
       
-      // Extract hobli and village from third part
-      if (thirdPart) {
-        const thirdPartWords = thirdPart.split(' ');
-        const graIndex = thirdPartWords.findIndex(w => w.includes('ಗ್ರಾ'));
-        if (graIndex > 0) {
-          // Hobli is word before "ಗ್ರಾ"
-          hobli = thirdPartWords[graIndex - 1]; // "ಮಂಡಗದ್ದೆ" (Mandagade)
+      // Hobli & Village are in parts[2]
+      if (parts.length >= 3) {
+        const remaining = parts[2]; // "ಾೆೊನೂ ರು ಾ ಮ ಾತೂರು ಸೆ ೕ ನಂಬ್ 1/*/3 ..."
+        const graLabelIdx = remaining.search(/ಗ್ರಾಮ|ಾ\s*ಮ/);
+        if (graLabelIdx !== -1) {
+          hobli = remaining.substring(0, graLabelIdx).trim().replace(/\s+/g, '');
           
-          // Village is word after "ಗ್ರಾ ಮ"
-          if (graIndex + 1 < thirdPartWords.length && thirdPartWords[graIndex + 1] === 'ಮ' && graIndex + 2 < thirdPartWords.length) {
-            village = thirdPartWords[graIndex + 2]; // "ಚಿಕ್ಸಿಕೆಂಚಿಗುಡ್ಡೆ"
-          } else if (graIndex + 1 < thirdPartWords.length) {
-            village = thirdPartWords[graIndex + 1];
+          const afterGra = remaining.substring(graLabelIdx).replace(/^(ಗ್ರಾಮ|ಾ\s*ಮ)/, '').trim();
+          const numLabelIdx = afterGra.search(/ಸರ್ವೆ|ಸೆ\s*ೕ|ನಂಬರ್|ನಂಬ್/);
+          if (numLabelIdx !== -1) {
+            village = afterGra.substring(0, numLabelIdx).trim().replace(/\s+/g, '');
+          } else {
+            village = afterGra.trim().replace(/\s+/g, '');
           }
         }
       }
-      
-      // Extract survey number from the last part
-      const surveyMatch = locLine.match(/(\d+\/\S+|\d+\*\/\d+)/);
-      survey_number = surveyMatch ? surveyMatch[1] : null;
     }
     
-    console.log('Simple colon extraction result:', { taluk, hobli, village, survey_number });
+    // Extract survey number from the last part
+    const surveyMatch = locLine.match(/(\d+\/\S+|\d+\*\/\d+|\d+\/\*\/\d+)/);
+    survey_number = surveyMatch ? surveyMatch[1] : null;
+    
+    console.log('Robust location extraction result:', { taluk, hobli, village, survey_number });
   }
   
   // Fallback to original logic if no location lines found

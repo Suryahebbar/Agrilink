@@ -67,6 +67,14 @@ export async function POST(request: Request) {
     }
 
     const account: any = user || legacyUser || raw;
+    
+    if (account?.role === 'fco' && account?.status === 'inactive') {
+      return NextResponse.json(
+        { message: 'Your FCO account is inactive. Please contact your administrator.' },
+        { status: 403 }
+      );
+    }
+
     const isEmailVerified = (account?.emailVerified ?? account?.isVerified ?? true) as boolean;
     const enforceVerification = process.env.ENFORCE_EMAIL_VERIFICATION === 'true';
     if (enforceVerification && !isEmailVerified) {
