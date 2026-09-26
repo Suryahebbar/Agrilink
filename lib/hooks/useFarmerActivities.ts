@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface Activity {
-  id: string;
+  id?: string;
+  _id?: string;
   type: string;
   title: string;
   description: string;

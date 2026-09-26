@@ -281,3 +281,80 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    
+    // Verify admin token
+    const token = request.headers.get('cookie')?.split('; ')
+      .find(row => row.startsWith('admin-token='))
+      ?.split('=')[1];
+
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const payload = await verifyAdminToken(token);
+    if (!payload) {
+      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+    }
+
+    await connectDB();
+    const farmerObjectId = new mongoose.Types.ObjectId(id);
+
+    // Find user first to make sure they are a farmer
+    const user = await User.findOne({ _id: farmerObjectId, role: 'farmer' });
+    if (!user) {
+      return NextResponse.json({ error: 'Farmer user not found' }, { status: 404 });
+    }
+
+    // Clean up all related data
+    await Promise.all([
+      // 1. Delete FarmerProfile
+      FarmerProfile.deleteMany({ $or: [{ user: farmerObjectId }, { userId: id }] }),
+      // 2. Delete LandDetails
+      LandDetails.deleteMany({ $or: [{ user: farmerObjectId }, { userId: id }] }),
+      // 3. Delete LandIntegration
+      LandIntegration.deleteMany({ $or: [{ requestingUser: farmerObjectId }, { targetUser: farmerObjectId }] }),
+      // 4. Delete FarmerSchemeProfile
+      FarmerSchemeProfile.deleteMany({ userId: farmerObjectId }),
+      // 5. Delete Products owned by farmer
+      Product.deleteMany({ farmerId: farmerObjectId }),
+      // 6. Delete FarmerOrders owned by farmer
+      FarmerOrder.deleteMany({ farmerId: farmerObjectId }),
+      // 7. Delete main User record
+      User.deleteOne({ _id: farmerObjectId })
+    ]);
+
+    // Optional: Log to AdminAuditLog if it exists
+    try {
+      const { AdminAuditLog } = await import('@/lib/models/AdminAuditLog');
+      await AdminAuditLog.create({
+        action: 'delete_farmer',
+        entityType: 'farmer',
+        entityId: farmerObjectId,
+        entityName: user.name || user.email,
+        details: { performedBy: payload.email, deletedAt: new Date() },
+        performedBy: payload.email,
+        timestamp: new Date()
+      });
+    } catch (e) {
+      console.warn('Failed to write admin audit log:', e);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Farmer account and all related data deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting farmer:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete farmer account' },
+      { status: 500 }
+    );
+  }
+}

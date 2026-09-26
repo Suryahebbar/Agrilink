@@ -6,6 +6,8 @@ import { User as LibUser } from '@/lib/models/User';
 import { AUTH_COOKIE_NAME, signAuthToken } from '../../../../lib/auth';
 import { Seller } from '@/lib/models/supplier';
 import mongoose from 'mongoose';
+import { auditLog } from '@/lib/auditLogger';
+import { ActivityAction, ActivityStatus, LogModule, ResourceType } from '@/lib/auditTypes';
 
 export async function POST(request: Request) {
   try {
@@ -21,14 +23,19 @@ export async function POST(request: Request) {
 
     await connectDB();
 
-    // Select both potential hashed password fields since some schemas use `password` (select: false) and others `passwordHash`
-    const user: any = await User.findOne({ email }).select('+password +passwordHash');
+    const query = {
+      $or: [
+        { email: email },
+        { phone: email }
+      ]
+    };
+    const user: any = await User.findOne(query).select('+password +passwordHash');
     let legacyUser: any = null;
     if (!user) {
-      legacyUser = await LibUser.findOne({ email });
+      legacyUser = await LibUser.findOne(query);
     }
     // Always fetch raw to avoid schema drift issues
-    const raw: any = await mongoose.connection.collection('users').findOne({ email });
+    const raw: any = await mongoose.connection.collection('users').findOne(query);
     if (!user && !legacyUser && !raw) {
       return NextResponse.json(
         { message: 'Invalid email or password' },
@@ -60,6 +67,19 @@ export async function POST(request: Request) {
 
     const ok = await bcrypt.compare(password, hashed);
     if (!ok) {
+      // Audit: login failed
+      void auditLog({
+        action: ActivityAction.LOGIN_FAILED,
+        module: LogModule.SECURITY,
+        resourceType: ResourceType.USER,
+        resourceId: raw?._id?.toString() || email,
+        resourceName: email,
+        userEmail: email,
+        userRole: raw?.role || 'unknown',
+        status: ActivityStatus.FAILED,
+        remarks: `Failed login attempt for ${email} — incorrect password`,
+        request,
+      });
       return NextResponse.json(
         { message: 'Invalid email or password' },
         { status: 401 }
@@ -152,7 +172,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({
       message: 'Login successful',
       user: {
-        id: tokenSubject, // Use the same ID that's set in the token
+        id: tokenSubject,
         email: tokenEmail,
         role: tokenRole,
       },
@@ -166,6 +186,22 @@ export async function POST(request: Request) {
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days
       secure: process.env.NODE_ENV === 'production',
+    });
+
+    // Audit: successful login
+    const loginName = account?.fullName || account?.name || account?.companyName || tokenEmail;
+    void auditLog({
+      action: ActivityAction.LOGIN,
+      module: LogModule.SECURITY,
+      resourceType: ResourceType.USER,
+      resourceId: tokenSubject,
+      resourceName: loginName,
+      userId: tokenSubject,
+      userEmail: tokenEmail,
+      userName: loginName,
+      userRole: tokenRole,
+      remarks: `${loginName} logged in successfully`,
+      request,
     });
 
     return response;

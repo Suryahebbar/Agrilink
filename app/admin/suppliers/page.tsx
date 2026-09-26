@@ -2,7 +2,27 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Filter, X, Check, ChevronDown, CheckCircle, Download, MoreVertical } from 'lucide-react';
+import Link from 'next/link';
+import { 
+  Search, 
+  Filter, 
+  X, 
+  Check, 
+  ChevronDown, 
+  CheckCircle, 
+  Download, 
+  MoreVertical,
+  ShieldCheck,
+  AlertTriangle,
+  FileText,
+  Truck,
+  Eye,
+  Trash2,
+  Ban,
+  Building,
+  CreditCard,
+  Package
+} from 'lucide-react';
 import { adminFetch } from '@/lib/admin-client-auth';
 
 interface Supplier {
@@ -10,13 +30,28 @@ interface Supplier {
   name: string;
   email: string;
   companyName?: string;
+  phone?: string;
+  gstNumber?: string;
   verificationStatus: 'pending' | 'verified' | 'rejected';
+  status?: string;
+  isActive?: boolean;
   createdAt: string;
+  productsCount?: number;
+  totalRevenue?: number;
+  documents?: {
+    businessLicense?: string;
+    gstCertificate?: string;
+    fcoLicense?: string;
+    seedLicense?: string;
+    pesticideLicense?: string;
+    ownerIdProof?: string;
+    bankDetails?: string;
+  };
 }
 
 interface Filters {
   search?: string;
-  status?: 'all' | 'verified' | 'pending' | 'rejected';
+  status?: 'all' | 'verified' | 'pending' | 'rejected' | 'suspended';
   sortBy?: 'newest' | 'oldest' | 'name' | 'company';
 }
 
@@ -25,28 +60,21 @@ export default function SuppliersPage() {
   const [loading, setLoading] = useState(true);
   const [selectedSuppliers, setSelectedSuppliers] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
-  const [showBulkActions, setShowBulkActions] = useState(false);
-  const [bulkAction, setBulkAction] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [bulkActionStatus, setBulkActionStatus] = useState<{
-    success: number;
-    failed: number;
-    total: number;
-  } | null>(null);
-  const bulkActionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<Filters>({
     search: '',
     status: 'all',
     sortBy: 'newest',
   });
-  const [showFilters, setShowFilters] = useState(false);
+
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: 15,
     total: 0,
     totalPages: 1,
   });
+
   const router = useRouter();
 
   const fetchSuppliers = useCallback(async () => {
@@ -67,14 +95,14 @@ export default function SuppliersPage() {
       }
 
       const data = await response.json();
-      setSuppliers(data.data);
+      const list = data.data || data.suppliers || [];
+      setSuppliers(list);
       setPagination(prev => ({
         ...prev,
-        total: data.pagination.total,
-        totalPages: data.pagination.totalPages,
+        total: data.pagination?.total || list.length,
+        totalPages: data.pagination?.totalPages || 1,
       }));
       
-      // Reset select all when data changes
       setSelectAll(false);
       setSelectedSuppliers(new Set());
     } catch (error) {
@@ -85,54 +113,53 @@ export default function SuppliersPage() {
   }, [pagination.page, pagination.limit, filters]);
 
   useEffect(() => {
-    // Reset to first page when filters change
-    setPagination(prev => ({ ...prev, page: 1 }));
     const timer = setTimeout(() => {
       fetchSuppliers();
-    }, 300);
-    
+    }, 250);
     return () => clearTimeout(timer);
   }, [fetchSuppliers]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters(prev => ({
-      ...prev,
-      search: e.target.value,
-    }));
-  };
-
-  const handleFilterChange = (key: keyof Filters, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      search: '',
-      status: 'all',
-      sortBy: 'newest',
-    });
-  };
-
-  const hasActiveFilters = filters.search || filters.status !== 'all' || filters.sortBy !== 'newest';
-
-  const handleVerify = async (supplierId: string) => {
+  const handleStatusUpdate = async (supplierId: string, action: 'verify' | 'suspend' | 'activate') => {
     try {
-      const response = await adminFetch(`/api/admin/suppliers/${supplierId}/verify`, {
-        method: 'PUT',
+      setActionLoadingId(supplierId);
+      const response = await adminFetch(`/api/admin/suppliers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supplierId, action })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to verify supplier');
+        throw new Error(`Failed to ${action} supplier`);
       }
 
       fetchSuppliers();
-      return true;
     } catch (error) {
-      console.error('Error verifying supplier:', error);
-      return false;
+      console.error(`Error updating supplier (${action}):`, error);
+      alert(`Error updating supplier status: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleDeleteSupplier = async (supplierId: string, companyName: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete the supplier "${companyName}"? This will delete all their products and associated platform data.`)) {
+      return;
+    }
+    try {
+      setActionLoadingId(supplierId);
+      const response = await adminFetch(`/api/admin/suppliers/${supplierId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete supplier');
+      }
+      fetchSuppliers();
+    } catch (error) {
+      console.error('Error deleting supplier:', error);
+      alert(error instanceof Error ? error.message : 'Failed to delete supplier');
+    } finally {
+      setActionLoadingId(null);
     }
   };
 
@@ -152,369 +179,340 @@ export default function SuppliersPage() {
       setSelectedSuppliers(new Set());
       setSelectAll(false);
     } else {
-      const allIds = new Set(suppliers.map(supplier => supplier._id));
-      setSelectedSuppliers(allIds);
+      setSelectedSuppliers(new Set(suppliers.map(s => s._id)));
       setSelectAll(true);
     }
   };
 
-  const handleBulkAction = async (action: 'verify' | 'export') => {
-    if (selectedSuppliers.size === 0) return;
-
-    setBulkAction(action);
-    setIsProcessing(true);
-    setBulkActionStatus(null);
-
-    try {
-      let success = 0;
-      const total = selectedSuppliers.size;
-      const results = [];
-
-      for (const supplierId of selectedSuppliers) {
-        if (action === 'verify') {
-          const result = await handleVerify(supplierId);
-          results.push(result);
-          if (result) success++;
-        }
-        // Add more bulk actions here
-      }
-
-      setBulkActionStatus({
-        success,
-        failed: total - success,
-        total
-      });
-
-      // Auto-hide status after 5 seconds
-      if (bulkActionTimeoutRef.current) {
-        clearTimeout(bulkActionTimeoutRef.current);
-      }
-      
-      bulkActionTimeoutRef.current = setTimeout(() => {
-        setBulkActionStatus(null);
-      }, 5000);
-
-      // Refresh data if needed
-      if (action === 'verify') {
-        fetchSuppliers();
-      }
-    } catch (error) {
-      console.error(`Error performing bulk ${action}:`, error);
-    } finally {
-      setIsProcessing(false);
-      setBulkAction('');
-    }
-  };
-
-  const exportToCSV = () => {
-    if (selectedSuppliers.size === 0) return;
-    
-    const selectedData = suppliers.filter(supplier => selectedSuppliers.has(supplier._id));
-    
-    // Create CSV content
-    const headers = ['Company', 'Email', 'Phone', 'Status', 'Joined At'];
-    const rows = selectedData.map(supplier => ({
-      company: `"${supplier.companyName || 'N/A'}"`,
-      email: `"${supplier.email}"`,
-      status: supplier.verificationStatus === 'verified' ? 'Verified' : supplier.verificationStatus === 'rejected' ? 'Rejected' : 'Pending',
-      joinedAt: new Date(supplier.createdAt).toLocaleDateString()
-    }));
-    
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => Object.values(row).join(','))
-    ].join('\n');
-    
-    // Create and trigger download
+  const handleExportCSV = () => {
+    if (suppliers.length === 0) return;
+    const headers = ['Company Name', 'Email', 'Phone', 'GST Number', 'Legal Verification', 'Products', 'Revenue', 'Joined At'];
+    const rows = suppliers.map(s => [
+      `"${s.companyName || s.name || ''}"`,
+      `"${s.email || ''}"`,
+      `"${s.phone || ''}"`,
+      `"${s.gstNumber || 'N/A'}"`,
+      `"${s.verificationStatus || 'pending'}"`,
+      s.productsCount || 0,
+      s.totalRevenue || 0,
+      `"${new Date(s.createdAt).toLocaleDateString()}"`
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = url;
-    link.download = `suppliers_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.setAttribute('href', url);
+    link.setAttribute('download', `agrilink_suppliers_legal_report_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  };
+
+  // Helper badge for statutory document state
+  const renderDocBadge = (status?: string, label?: string) => {
+    if (status === 'approved' || status === 'verified') {
+      return <span title={`${label}: Verified`} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">✓ {label}</span>;
+    }
+    if (status === 'uploaded' || status === 'pending') {
+      return <span title={`${label}: Pending Review`} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800">⏳ {label}</span>;
+    }
+    if (status === 'rejected') {
+      return <span title={`${label}: Rejected`} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 text-rose-800">✗ {label}</span>;
+    }
+    return <span title={`${label}: Not Uploaded`} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500">- {label}</span>;
   };
 
   return (
-    <div>
-      {/* Bulk action status */}
-      {bulkActionStatus && (
-        <div className="mb-4 rounded-md bg-green-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <CheckCircle className="h-5 w-5 text-green-400" aria-hidden="true" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-gray-200">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-purple-600 text-white shadow-md">
+              <Truck className="h-6 w-6" />
             </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-green-800">
-                {bulkActionStatus.success} of {bulkActionStatus.total} suppliers {bulkAction}ed successfully
-                {bulkActionStatus.failed > 0 && `, ${bulkActionStatus.failed} failed`}.
+            <div>
+              <h1 className="text-2xl font-extrabold text-[#232F3E]">Supplier Legal Management</h1>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Statutory licensing, GSTIN compliance, FCO/Seed oversight, and market authorizations.
               </p>
             </div>
-            <div className="ml-auto pl-3">
-              <div className="-mx-1.5 -my-1.5">
-                <button
-                  type="button"
-                  onClick={() => setBulkActionStatus(null)}
-                  className="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
-                >
-                  <span className="sr-only">Dismiss</span>
-                  <X className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
-      )}
-
-      {/* Bulk actions bar */}
-      {selectedSuppliers.size > 0 && (
-        <div className="mb-4 rounded-lg bg-indigo-50 p-4 shadow sm:flex sm:items-center sm:justify-between">
-          <div className="sm:flex sm:items-center">
-            <div className="flex items-center">
-              <div className="flex h-5 items-center">
-                <input
-                  id="select-all"
-                  name="select-all"
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-              </div>
-              <label htmlFor="select-all" className="ml-2 text-sm font-medium text-gray-700">
-                {selectedSuppliers.size} selected
-              </label>
-            </div>
-            
-            <div className="mt-3 sm:ml-4 sm:mt-0">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowBulkActions(!showBulkActions)}
-                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Actions
-                  <ChevronDown className="ml-2 -mr-1 h-4 w-4" aria-hidden="true" />
-                </button>
-
-                {showBulkActions && (
-                  <div className="absolute left-0 z-10 mt-2 w-48 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          handleBulkAction('verify');
-                          setShowBulkActions(false);
-                        }}
-                        disabled={isProcessing}
-                        className="flex w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      >
-                        <CheckCircle className="mr-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-                        Verify Selected
-                      </button>
-                      <button
-                        onClick={() => {
-                          exportToCSV();
-                          setShowBulkActions(false);
-                        }}
-                        className="flex w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      >
-                        <Download className="mr-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-                        Export to CSV
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-3 sm:mt-0 sm:ml-4">
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedSuppliers(new Set());
-                setSelectAll(false);
-              }}
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Clear selection
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Page header */}
-      <div className="sm:flex sm:items-center sm:justify-between">
-        <div className="sm:flex-auto">
-          <h1 className="text-2xl font-semibold text-gray-900">Suppliers</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            {pagination.total} {pagination.total === 1 ? 'supplier' : 'suppliers'} found
-            {selectedSuppliers.size > 0 && ` • ${selectedSuppliers.size} selected`}
-          </p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          >
+            <Download className="h-4 w-4 text-gray-500" />
+            Export Legal Manifest
+          </button>
         </div>
       </div>
 
-      {/* Suppliers table */}
-      <div className="mt-8 flex flex-col">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="relative w-12 px-6 sm:w-16 sm:px-8">
-                      <input
-                        type="checkbox"
-                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
-                        checked={selectAll}
-                        onChange={handleSelectAll}
-                      />
-                    </th>
-                    <th scope="col" className="min-w-12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                      Company
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Email
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+      {/* Filter and Search Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+          {/* Status Tabs */}
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            {[
+              { id: 'all', label: 'All Suppliers' },
+              { id: 'verified', label: 'Verified & Authorized' },
+              { id: 'pending', label: 'Pending Legal Review' },
+              { id: 'suspended', label: 'Suspended' },
+              { id: 'rejected', label: 'Rejected' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setFilters(prev => ({ ...prev, status: tab.id as any }))}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
+                  filters.status === tab.id
+                    ? 'bg-[#1A9B9A] text-white shadow-md shadow-[#1A9B9A]/30'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Box */}
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search company, GSTIN, email..."
+              value={filters.search}
+              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9B9A] focus:bg-white transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Suppliers Table */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50/80">
+              <tr>
+                <th scope="col" className="w-12 px-6 py-4">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                    className="h-4 w-4 rounded border-gray-300 text-[#1A9B9A] focus:ring-[#1A9B9A]"
+                  />
+                </th>
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Supplier / Company
+                </th>
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  GSTIN & Identity
+                </th>
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Statutory Licenses
+                </th>
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Catalog & Orders
+                </th>
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-4 py-3.5 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Compliance Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-sm text-gray-500">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#1A9B9A]"></div>
+                    <p className="mt-2 text-xs font-medium">Loading supplier compliance records...</p>
+                  </td>
+                </tr>
+              ) : suppliers.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-sm text-gray-500">
+                    <AlertTriangle className="mx-auto h-8 w-8 text-amber-500 mb-2" />
+                    <p className="font-semibold text-gray-700">No suppliers found</p>
+                    <p className="text-xs text-gray-400 mt-1">Try adjusting your filters or search terms.</p>
+                  </td>
+                </tr>
+              ) : (
+                suppliers.map((supplier) => {
+                  const isSuspended = supplier.isActive === false || supplier.status === 'suspended';
+                  const isVerified = supplier.verificationStatus === 'verified';
+                  const isPending = supplier.verificationStatus === 'pending' || !supplier.verificationStatus;
+
+                  return (
+                    <tr 
+                      key={supplier._id} 
+                      className={`hover:bg-gray-50/70 transition-colors ${
+                        selectedSuppliers.has(supplier._id) ? 'bg-indigo-50/40' : ''
+                      }`}
                     >
-                      <div className="flex items-center">
-                        Status
-                        {filters.status !== 'all' && (
-                          <button
-                            onClick={() => handleFilterChange('status', 'all')}
-                            className="ml-1 text-gray-400 hover:text-gray-600"
-                            title="Clear status filter"
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedSuppliers.has(supplier._id)}
+                          onChange={() => handleSelectSupplier(supplier._id)}
+                          className="h-4 w-4 rounded border-gray-300 text-[#1A9B9A] focus:ring-[#1A9B9A]"
+                        />
+                      </td>
+
+                      {/* Company Info */}
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div>
+                          <Link 
+                            href={`/admin/suppliers/${supplier._id}`}
+                            className="text-sm font-bold text-[#232F3E] hover:text-[#1A9B9A] transition-colors"
                           >
-                            <X className="h-3 w-3" />
-                          </button>
-                        )}
-                      </div>
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Joined At
-                    </th>
-                    <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={6} className="px-3 py-4 text-center text-sm text-gray-500">
-                        Loading...
+                            {supplier.companyName || supplier.name || 'Unnamed Supplier'}
+                          </Link>
+                          <div className="text-xs text-gray-500 mt-0.5">{supplier.email}</div>
+                          {supplier.phone && <div className="text-[11px] text-gray-400">{supplier.phone}</div>}
+                        </div>
                       </td>
-                    </tr>
-                  ) : suppliers.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-3 py-4 text-center text-sm text-gray-500">
-                        No suppliers found
-                      </td>
-                    </tr>
-                  ) : (
-                    suppliers.map((supplier) => (
-                      <tr 
-                        key={supplier._id} 
-                        className={`${selectedSuppliers.has(supplier._id) ? 'bg-indigo-50' : 'hover:bg-gray-50'}`}
-                      >
-                        <td className="relative w-12 px-6 sm:w-16 sm:px-8">
-                          {selectedSuppliers.has(supplier._id) && (
-                            <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600"></div>
+
+                      {/* GSTIN / Tax */}
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="text-xs">
+                          {supplier.gstNumber && supplier.gstNumber !== 'Not provided' ? (
+                            <span className="font-mono font-medium px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded">
+                              {supplier.gstNumber}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 italic">No GST registered</span>
                           )}
-                          <input
-                            type="checkbox"
-                            className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
-                            checked={selectedSuppliers.has(supplier._id)}
-                            onChange={() => handleSelectSupplier(supplier._id)}
-                          />
-                        </td>
-                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                          {supplier.companyName || 'No Company'}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
-                          {supplier.email}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
-                          <span
-                            className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                              supplier.verificationStatus === 'verified'
-                                ? 'bg-green-100 text-green-800'
-                                : supplier.verificationStatus === 'rejected'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}
-                          >
-                            {supplier.verificationStatus === 'verified' ? 'Verified' : supplier.verificationStatus === 'rejected' ? 'Rejected' : 'Pending'}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
-                          {new Date(supplier.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => router.push(`/admin/suppliers/${supplier._id}`)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              View
-                            </button>
-                            {supplier.verificationStatus !== 'verified' && (
-                              <button
-                                onClick={() => handleVerify(supplier._id)}
-                                className="text-green-600 hover:text-green-900"
-                              >
-                                Verify
-                              </button>
-                            )}
+                          <div className="text-[11px] text-gray-400 mt-1">
+                            Joined {new Date(supplier.createdAt).toLocaleDateString()}
                           </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Pagination */}
-            <div className="mt-4 flex items-center justify-between">
-              <div className="text-sm text-gray-500">
-                Showing <span className="font-medium">
-                  {(pagination.page - 1) * pagination.limit + 1}
-                </span> to{' '}
-                <span className="font-medium">
-                  {Math.min(pagination.page * pagination.limit, pagination.total)}
-                </span>{' '}
-                of <span className="font-medium">{pagination.total}</span> results
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => 
-                    setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))
-                  }
-                  disabled={pagination.page === 1}
-                  className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => 
-                    setPagination(prev => ({ 
-                      ...prev, 
-                      page: Math.min(prev.page + 1, pagination.totalPages) 
-                    }))
-                  }
-                  disabled={pagination.page >= pagination.totalPages}
-                  className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+                        </div>
+                      </td>
+
+                      {/* Statutory Document Badges */}
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="flex flex-wrap gap-1 max-w-[220px]">
+                          {renderDocBadge(supplier.documents?.businessLicense, 'Trade License')}
+                          {renderDocBadge(supplier.documents?.gstCertificate, 'GSTIN')}
+                          {renderDocBadge(supplier.documents?.fcoLicense, 'FCO')}
+                          {renderDocBadge(supplier.documents?.seedLicense, 'Seed/Pesticide')}
+                          {renderDocBadge(supplier.documents?.bankDetails, 'Bank KYC')}
+                        </div>
+                      </td>
+
+                      {/* Catalog & Sales */}
+                      <td className="px-4 py-4 whitespace-nowrap text-xs text-gray-700">
+                        <div className="flex items-center gap-1.5 font-medium">
+                          <Package className="h-3.5 w-3.5 text-gray-400" />
+                          <span>{supplier.productsCount || 0} items</span>
+                        </div>
+                        <div className="font-semibold text-emerald-700 mt-0.5">
+                          ₹{(supplier.totalRevenue || 0).toLocaleString()}
+                        </div>
+                      </td>
+
+                      {/* Verification Status */}
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        {isSuspended ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800">
+                            <Ban className="h-3 w-3" /> Suspended
+                          </span>
+                        ) : isVerified ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                            <CheckCircle className="h-3 w-3" /> Verified & Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                            <AlertTriangle className="h-3 w-3" /> Pending Review
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-4 py-4 whitespace-nowrap text-right text-xs font-medium">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/admin/suppliers/${supplier._id}`}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold transition-colors"
+                          >
+                            <Eye className="h-3.5 w-3.5" /> Dossier
+                          </Link>
+
+                          {!isVerified && (
+                            <button
+                              onClick={() => handleStatusUpdate(supplier._id, 'verify')}
+                              disabled={actionLoadingId === supplier._id}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-semibold transition-colors disabled:opacity-50"
+                            >
+                              <Check className="h-3.5 w-3.5" /> Approve
+                            </button>
+                          )}
+
+                          {!isSuspended ? (
+                            <button
+                              onClick={() => handleStatusUpdate(supplier._id, 'suspend')}
+                              disabled={actionLoadingId === supplier._id}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-amber-100 hover:text-amber-800 transition-colors disabled:opacity-50"
+                              title="Suspend for legal compliance check"
+                            >
+                              <Ban className="h-3.5 w-3.5" /> Suspend
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleStatusUpdate(supplier._id, 'activate')}
+                              disabled={actionLoadingId === supplier._id}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition-colors disabled:opacity-50"
+                            >
+                              Reactivate
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => handleDeleteSupplier(supplier._id, supplier.companyName || supplier.email)}
+                            disabled={actionLoadingId === supplier._id}
+                            className="p-1.5 text-gray-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors disabled:opacity-50"
+                            title="Delete Supplier"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+          <div>
+            Showing <span className="font-bold text-gray-800">{Math.min((pagination.page - 1) * pagination.limit + 1, pagination.total)}</span> to{' '}
+            <span className="font-bold text-gray-800">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of{' '}
+            <span className="font-bold text-gray-800">{pagination.total}</span> suppliers
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+              disabled={pagination.page <= 1}
+              className="px-3 py-1.5 rounded-xl border border-gray-200 bg-white font-semibold hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              Previous
+            </button>
+            <span className="px-3 py-1.5 font-bold text-gray-700 bg-gray-100 rounded-xl">
+              Page {pagination.page} of {pagination.totalPages}
+            </span>
+            <button
+              onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.page + 1, pagination.totalPages) }))}
+              disabled={pagination.page >= pagination.totalPages}
+              className="px-3 py-1.5 rounded-xl border border-gray-200 bg-white font-semibold hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

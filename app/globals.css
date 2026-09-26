@@ -1546,3 +1546,26 @@ body {
   background-color: #178A89;
 }
 
+/* Force all text inputs, selects, and textareas in the project to have high-contrast dark text and clean white background */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="search"],
+select,
+textarea {
+  color: #0f1111 !important;
+  background-color: #ffffff !important;
+}
+
+/* Legible placeholder contrast */
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}

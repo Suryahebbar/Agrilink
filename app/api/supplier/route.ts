@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { Seller } from '@/lib/models/supplier';
 import { connectDB } from '@/lib/db';
 import { authenticateSupplier } from '@/lib/supplier-auth-middleware';
@@ -15,15 +16,21 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('Looking for supplier with ID:', auth.sellerId);
-    
-    // Try to find the supplier by ID first
-    let supplier = await Seller.findById(auth.sellerId).select('-passwordHash') as any;
+    // Try to find the supplier by ID first if valid ObjectId
+    let supplier: any = null;
+    if (auth.sellerId && mongoose.Types.ObjectId.isValid(auth.sellerId)) {
+      supplier = await Seller.findById(auth.sellerId).select('-passwordHash');
+    }
     
     // If not found by ID, try to find by email (fallback)
     if (!supplier && auth.email) {
-      console.log('Supplier not found by ID, trying email:', auth.email);
-      supplier = await Seller.findOne({ email: auth.email }).select('-passwordHash') as any;
+      supplier = await Seller.findOne({ email: auth.email }).select('-passwordHash');
+    }
+
+    // If admin is previewing supplier portal, find any active supplier
+    if (!supplier && auth.isAdmin) {
+      supplier = await Seller.findOne({ isActive: true }).select('-passwordHash') ||
+        await Seller.findOne().select('-passwordHash');
     }
     
     if (!supplier) {

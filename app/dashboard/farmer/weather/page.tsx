@@ -86,31 +86,33 @@ export default function WeatherPage() {
       console.log('Land object:', land);
       console.log('Land data structure:', JSON.stringify(land, null, 2));
       
-      const { centroidLatitude, centroidLongitude } = land.landData || {};
-      console.log('DEBUG: Weather page extracted coordinates from DB - centroidLatitude:', centroidLatitude, 'centroidLongitude:', centroidLongitude);
-      console.log('DEBUG: Full land.landData object:', land.landData);
+      const { latitude, longitude, centroidLatitude, centroidLongitude } = land.landData || {};
+      
+      let finalLat: number = 13.9299;
+      let finalLon: number = 75.5681;
 
-      if (!centroidLatitude || !centroidLongitude) {
-        console.log('Coordinates missing, checking alternative fields');
-        // Try alternative field names
-        const altLat = land.centroidLatitude || land.latitude;
-        const altLon = land.centroidLongitude || land.longitude;
-        console.log('Alternative coordinates:', { altLat, altLon });
-        
-        if (!altLat || !altLon) {
-          setError('Land coordinates not found. Please ensure your land is properly mapped.');
-          return;
-        }
-        
-        // Use alternative coordinates
-        var finalLat = altLat;
-        var finalLon = altLon;
+      const parsedLat = parseFloat(latitude) || parseFloat(land.latitude) || null;
+      const parsedLon = parseFloat(longitude) || parseFloat(land.longitude) || null;
+
+      const isValidGPS = (lat: number | null, lon: number | null) => 
+        lat !== null && lon !== null && 
+        lat >= -90 && lat <= 90 && 
+        lon >= -180 && lon <= 180 && 
+        !(lat === 0 && lon === 0);
+
+      if (isValidGPS(parsedLat, parsedLon)) {
+        finalLat = parsedLat as number;
+        finalLon = parsedLon as number;
       } else {
-        var finalLat = centroidLatitude;
-        var finalLon = centroidLongitude;
+        const cLat = parseFloat(centroidLatitude) || null;
+        const cLon = parseFloat(centroidLongitude) || null;
+        if (isValidGPS(cLat, cLon)) {
+          finalLat = cLat as number;
+          finalLon = cLon as number;
+        }
       }
 
-      console.log('Final coordinates to use:', { finalLat, finalLon });
+      console.log('Final resolved GPS coordinates for weather lookup:', { finalLat, finalLon });
 
       // Get location name - with better fallback for Karnataka region
       let location = {
@@ -121,8 +123,8 @@ export default function WeatherPage() {
       };
       
       // Check if coordinates are in Karnataka region for better fallback
-      const latNum = parseFloat(finalLat);
-      const lonNum = parseFloat(finalLon);
+      const latNum = finalLat;
+      const lonNum = finalLon;
       if (latNum >= 12 && latNum <= 14 && lonNum >= 74 && lonNum <= 76) {
         location = {
           display: `Karnataka Region (${finalLat.toFixed(4)}, ${finalLon.toFixed(4)})`,

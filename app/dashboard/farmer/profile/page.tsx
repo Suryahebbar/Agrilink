@@ -1,427 +1,486 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import AgreementPreviewModal from '../../../components/AgreementPreviewModal/AgreementPreviewModal';
+import { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
+import { Camera, MapPin, Calendar, CheckCircle2, User, Phone, Briefcase, Sparkles, X, Save } from 'lucide-react';
+
+interface FarmerProfileData {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  gender: string;
+  dob: string;
+  bio: string;
+  profilePic: string | null;
+  readyToIntegrate: boolean;
+  memberSince: string;
+  landParcelIdentity?: string;
+  totalCultivableArea?: string;
+  soilProperties?: string;
+}
 
 export default function FarmerProfilePage() {
-  const [profile, setProfile] = useState<any | null>(null);
-  const [landDetails, setLandDetails] = useState<any | null>(null);
-  const [completedAgreements, setCompletedAgreements] = useState<any[]>([]);
-  const [selectedAgreementPreview, setSelectedAgreementPreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<FarmerProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  
+  // Edit State variables
+  const [isEditing, setIsEditing] = useState(false);
+  const [editPhone, setEditPhone] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  const [editGender, setEditGender] = useState('');
+  const [editDob, setEditDob] = useState('');
+  const [editBio, setEditBio] = useState('');
+  const [editReady, setEditReady] = useState(false);
+  const [editProfilePic, setEditProfilePic] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    async function loadProfile() {
+  // Load Profile from DB
+  const loadProfile = async () => {
+    try {
       setLoading(true);
       setError(null);
-      try {
-        const res = await fetch('/api/farmer/kyc');
-        const data = await res.json();
-        if (!res.ok) {
-          setError(data.message || 'Failed to load profile');
-        } else {
-          setProfile(data.profile);
-        }
-      } catch (err) {
-        setError('Something went wrong');
-      } finally {
-        setLoading(false);
+      
+      const authRes = await fetch('/api/auth/me');
+      if (!authRes.ok) {
+        setError('Not authenticated');
+        return;
       }
+      const authData = await authRes.json();
+      const userId = authData.user?.id || authData.user?._id;
+      
+      if (!userId) {
+        setError('User session invalid');
+        return;
+      }
+
+      const res = await fetch(`/api/farmer/profile?userId=${userId}`);
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        setProfile(data.profile);
+        resetFormFields(data.profile);
+      } else {
+        setError(data.error || 'Failed to load profile');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Something went wrong loading your profile.');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     loadProfile();
   }, []);
 
-  useEffect(() => {
-    async function loadLandDetails() {
-      try {
-        // Get current logged-in user ID
-        const authResponse = await fetch('/api/auth/me');
-        if (authResponse.ok) {
-          const userData = await authResponse.json();
-          const userId = userData.user?.id || userData.user?._id;
-          
-          if (userId) {
-            const res = await fetch(`/api/farmer/land-details?userId=${userId}`);
-            const data = await res.json();
-            if (res.ok) {
-              setLandDetails(data.data && data.data.length > 0 ? data.data[0] : null);
-            }
-          }
-        } else {
-          // Fallback to localStorage if auth fails
-          const userId = localStorage.getItem('userId') || new URLSearchParams(window.location.search).get('userId');
-          if (userId) {
-            const res = await fetch(`/api/farmer/land-details?userId=${userId}`);
-            const data = await res.json();
-            if (res.ok) {
-              setLandDetails(data.data && data.data.length > 0 ? data.data[0] : null);
-            }
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load land details:', err);
-      }
-    }
-    loadLandDetails();
-  }, []);
-
-  useEffect(() => {
-    async function loadCompletedAgreements() {
-      try {
-        const res = await fetch('/api/farmer/land-integration/completed-agreements');
-        const data = await res.json();
-        if (res.ok) {
-          setCompletedAgreements(data.agreements || []);
-        }
-      } catch (err) {
-        console.error('Failed to load completed agreements:', err);
-      }
-    }
-    loadCompletedAgreements();
-  }, []);
-
-  // Check if profile is complete
-  const isProfileComplete = () => {
-    if (!profile) return false;
-    
-    // Required fields for a complete profile
-    const requiredFields = [
-      'aadhaarKannadaName',
-      'contactNumber',
-      'homeAddress',
-      'dob',
-      'gender',
-      'idProof',
-      'landParcelIdentity',
-      'totalCultivableArea'
-    ];
-    
-    return requiredFields.every(field => {
-      const value = profile[field];
-      return value !== undefined && value !== null && value !== '';
-    });
+  const resetFormFields = (p: FarmerProfileData) => {
+    setEditPhone(p.phone || '');
+    setEditAddress(p.address || '');
+    setEditGender(p.gender || '');
+    setEditDob(p.dob || '');
+    setEditBio(p.bio || '');
+    setEditReady(p.readyToIntegrate || false);
+    setEditProfilePic(p.profilePic);
   };
 
-  return (
-    <div className="space-y-6 text-xs md:text-sm">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold text-[#1f3b2c] mb-2">My Profile</h1>
+  // Convert uploaded file to base64
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditProfilePic(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileSelect = () => {
+    if (isEditing && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Save changes to API
+  const handleSaveChanges = async () => {
+    if (!profile) return;
+    setSaving(true);
+    try {
+      const response = await fetch('/api/farmer/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: profile.id,
+          dob: editDob,
+          gender: editGender,
+          phone: editPhone,
+          address: editAddress,
+          bio: editBio,
+          readyToIntegrate: editReady,
+          profilePic: editProfilePic
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setIsEditing(false);
+        loadProfile(); // reload enriched profile
+      } else {
+        alert(data.error || 'Failed to save changes');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error occurred saving profile.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (profile) {
+      resetFormFields(profile);
+    }
+    setIsEditing(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p className="text-gray-500 text-sm">Loading farmer profile details...</p>
       </div>
-      
-      {!isProfileComplete() && profile && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-center">
+        {error || 'Profile could not be loaded.'}
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Page Title */}
+      <div>
+        <h1 className="text-2xl font-bold text-[#1f3b2c]">My Profile</h1>
+        <p className="text-sm text-gray-500">Manage your digital identity, account configuration, and land integrations.</p>
+      </div>
+
+      {/* Main Responsive Layout Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+        
+        {/* Left Column: Fiverr-style Premium Info Card */}
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-xl relative flex flex-col items-center">
+          
+          {/* Status Pill Badge */}
+          <div className="absolute top-4 right-4">
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+              profile.readyToIntegrate 
+                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                : 'bg-amber-100 text-amber-800 border border-amber-200'
+            }`}>
+              <span className={`h-2 w-2 rounded-full ${profile.readyToIntegrate ? 'bg-emerald-600' : 'bg-amber-500'}`} />
+              {profile.readyToIntegrate ? 'Ready to Integrate' : 'Not Active'}
+            </span>
+          </div>
+
+          {/* Profile Picture Container */}
+          <div 
+            onClick={triggerFileSelect}
+            className={`w-32 h-32 rounded-full border-4 border-emerald-50 shadow-md relative overflow-hidden group mt-6 ${
+              isEditing ? 'cursor-pointer' : ''
+            }`}
+          >
+            {isEditing ? (
+              editProfilePic ? (
+                <img src={editProfilePic} alt="Avatar Preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-emerald-700/5 flex items-center justify-center text-emerald-800 font-bold text-3xl">
+                  {profile.name.substring(0, 2).toUpperCase()}
+                </div>
+              )
+            ) : (
+              profile.profilePic ? (
+                <img src={profile.profilePic} alt="Farmer Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-emerald-700/5 flex items-center justify-center text-emerald-800 font-bold text-3xl">
+                  {profile.name.substring(0, 2).toUpperCase()}
+                </div>
+              )
+            )}
+            
+            {/* Hidden Input File Picker */}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept="image/*" 
+              className="hidden" 
+            />
+
+            {/* Hover Camera overlay when editing */}
+            {isEditing && (
+              <div className="absolute inset-0 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-6 h-6 mb-1" />
+                <span className="text-[10px] font-bold">Edit Photo</span>
+              </div>
+            )}
+          </div>
+
+          {/* Farmer Primary Identifiers */}
+          <div className="text-center mt-4 w-full">
+            <h2 className="text-xl font-extrabold text-[#1f3b2c] flex items-center justify-center gap-1.5">
+              {profile.name}
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 fill-emerald-50" />
+            </h2>
+            <p className="text-xs text-gray-500 mt-1 font-mono">
+              @{profile.phone ? profile.phone : 'farmer_' + profile.id.substring(0, 6)}
+            </p>
+            <p className="text-xs text-[#166534] mt-2 italic px-4 font-medium leading-relaxed">
+              "{isEditing ? editBio : (profile.bio || 'Passionate about smart farming.')}"
+            </p>
+          </div>
+
+          <div className="w-full border-t border-[#e2d4b7]/50 my-6" />
+
+          {/* Key-Value Metadata Grid */}
+          <div className="w-full space-y-4 text-sm text-[#1f3b2c]">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#166534]" /> From
+              </span>
+              <strong className="text-right max-w-[150px] truncate">
+                {profile.address ? profile.address.split(',')[0] : 'Karnataka, IN'}
+              </strong>
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-yellow-700">
-                Your profile is incomplete. Please complete your profile to access all features.
-              </p>
+
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#166534]" /> Member since
+              </span>
+              <strong>{profile.memberSince}</strong>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#166534]" /> Integration
+              </span>
+              <strong className={profile.readyToIntegrate ? 'text-emerald-700 font-bold' : 'text-amber-600 font-medium'}>
+                {profile.readyToIntegrate ? 'Active' : 'Inactive'}
+              </strong>
             </div>
           </div>
-        </div>
-      )}
 
-      {loading && <p className="text-[#6b7280]">Loading profile…</p>}
-      {error && <p className="text-red-600">{error}</p>}
-
-      {profile && (
-        <>
-          <section className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 space-y-2">
-            <h2 className="text-sm font-semibold text-[#1f3b2c] mb-2">Farmer Profile</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Aadhaar Name: </span>{profile.aadhaarKannadaName || profile.verifiedName || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Age &amp; Gender: </span>{profile.age ? `${profile.age}, ` : ''}{profile.gender || '' || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Home Address: </span>{profile.homeAddress || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">ID Proof: </span>{profile.idProof || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Contact Number: </span>{profile.contactNumber || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Date of Birth: </span>{profile.dob || '—'}</div>
-              {profile.nameVerificationStatus && (
-                <div className="text-[#1f3b2c]">
-                  <span className="font-semibold">Name Verification: </span>
-                  <span className={`font-bold ${
-                    profile.nameVerificationStatus === 'verified' ? 'text-green-700' :
-                    profile.nameVerificationStatus === 'not_verified' ? 'text-red-700' :
-                    'text-yellow-700'
-                  }`}>
-                    {profile.nameVerificationStatus === 'verified' ? '✅ Verified' :
-                     profile.nameVerificationStatus === 'not_verified' ? '❌ Not Verified' :
-                     '⏳ Pending'}
-                  </span>
-                </div>
-              )}
-            </div>
-          </section>
-
-          <section className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 space-y-2">
-            <h2 className="text-sm font-semibold text-[#1f3b2c] mb-2">Aadhaar Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Aadhaar Number: </span>{profile.idProof || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Mobile Number: </span>{profile.contactNumber || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Date of Birth: </span>{profile.dob || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Gender: </span>{profile.gender || '—'}</div>
-              <div className="text-[#1f3b2c]"><span className="font-semibold">Address: </span>{profile.homeAddress || '—'}</div>
-            </div>
-          </section>
-
-          {/* Land Details Section */}
-          <section className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 space-y-2">
-            <h2 className="text-sm font-semibold text-[#1f3b2c] mb-2">Land Details</h2>
-            {profile.nameVerificationStatus === 'verified' && profile.landParcelIdentity ? (
-              // Show land details if names matched and RTC data is available
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div className="text-[#1f3b2c]"><span className="font-semibold">Survey Number: </span>{profile.landParcelIdentity || '—'}</div>
-                <div className="text-[#1f3b2c]"><span className="font-semibold">Total Area: </span>{profile.totalCultivableArea ? `${profile.totalCultivableArea} acres` : '—'}</div>
-                <div className="text-[#1f3b2c]"><span className="font-semibold">Soil Type: </span>{profile.soilProperties || '—'}</div>
-                <div className="text-[#1f3b2c]"><span className="font-semibold">Mutation: </span>{profile.mutationTraceability || '—'}</div>
-                {profile.rtcAddress && (
-                  <div className="text-[#1f3b2c] md:col-span-2">
-                    <span className="font-semibold">Land Location: </span>{profile.rtcAddress}
-</div>
-                )}
-                <div className="text-[#1f3b2c]">
-                  <span className="font-semibold">Ownership Verified: </span>
-                  <span className="font-bold text-green-700">✅ Yes</span>
-                </div>
-              </div>
-            ) : (
-              // Show upload button if names don't match or no RTC data
-              <div className="text-center py-4">
-                <p className="text-[#1f3b2c] mb-4">
-                  {profile.nameVerificationStatus === 'not_verified' 
-                    ? 'Names did not match. Please upload matching RTC and Aadhaar documents to view land details.'
-                    : 'No land details available. Please upload your RTC document.'}
-                </p>
-                <button
-                  onClick={() => router.push('/dashboard/farmer/documents')}
-                  className="inline-flex items-center rounded-md bg-[#166534] px-4 py-2 text-xs font-medium text-white hover:bg-[#14532d]"
-                >
-                  Upload RTC Document
-                </button>
-              </div>
-            )}
-          </section>
-
-          {/* Mapped Land Details Section */}
-          <section className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-[#1f3b2c]">Mapped Land Details</h2>
+          <div className="w-full mt-6">
+            {!isEditing ? (
               <button
-                onClick={() => router.push('/dashboard/farmer/land/details')}
-                className="inline-flex items-center rounded-md bg-[#166534] px-3 py-1 text-xs font-medium text-white hover:bg-[#14532d]"
+                onClick={() => setIsEditing(true)}
+                className="w-full py-2.5 rounded-xl border border-gray-300 bg-white font-bold text-gray-700 text-xs shadow-sm hover:bg-gray-50 transition-all text-center"
               >
-                Map New Land
+                Edit Profile
               </button>
-            </div>
-            
-            {landDetails ? (
-              <div className="border border-[#e2d4b7] rounded-lg p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium text-[#1f3b2c">Land Details</h3>
-                  <span className={`px-2 py-1 rounded-full text-[11px] ${
-                    landDetails.processingStatus === 'completed' ? 'bg-green-100 text-green-800' : 
-                    landDetails.processingStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {landDetails.processingStatus === 'completed' ? '✅ Mapped' : 
-                     landDetails.processingStatus === 'pending' ? '⏳ Pending' : 
-                     '❌ Failed'}
-                  </span>
-                </div>
-
-                {/* Land Sketch Image */}
-                {landDetails.sketchImage && (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-[#1f3b2c]">Land Sketch</h4>
-                    <img 
-                      src={landDetails.sketchImage.path} 
-                      alt="Land Sketch" 
-                      className="w-full max-w-xs h-auto border border-[#e2d4b7] rounded-lg"
-                    />
-                  </div>
-                )}
-
-                {/* RTC Details */}
-                {/* RTC details removed - already displayed in RTC section above */}
-
-                {/* Geographic Coordinates */}
-                {landDetails.landData && (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-[#1f3b2c]">Geographic Coordinates</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[#1f3b2c]">
-                      <div>
-                        <span className="font-semibold">Centroid: </span>
-                        {landDetails.landData.centroidLatitude?.toFixed(7)}, {landDetails.landData.centroidLongitude?.toFixed(7)}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Land Size: </span>
-                        {landDetails.landData.landSizeInAcres ? (
-                          <>
-                            {landDetails.landData.landSizeInAcres.toFixed(2)} acres
-                          </>
-                        ) : profile.totalCultivableArea ? `${profile.totalCultivableArea} acres` : '—'}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Vertices: </span>
-                        {landDetails.landData.vertices?.length || 0} points
-                      </div>
-                      <div>
-                        <span className="font-semibold">Side Lengths: </span>
-                        {landDetails.landData.sideLengths?.length || 0} sides
-                      </div>
-                    </div>
-
-                    {/* Show calculated side lengths */}
-                    {landDetails.landData.sideLengths && landDetails.landData.sideLengths.length > 0 && (
-                      <div className="mt-2">
-                        <span className="font-semibold text-[#1f3b2c]">Calculated Side Lengths:</span>
-                        <div className="text-[#1f3b2c] text-xs mt-1">
-                          {landDetails.landData.sideLengths.map((length: number, index: number) => (
-                            <span key={index} className="inline-block mr-2 mb-1">
-                              Side {index + 1}: {length.toFixed(2)}m
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Show vertices coordinates */}
-                    {landDetails.landData.vertices && landDetails.landData.vertices.length > 0 && (
-                      <div className="mt-2">
-                        <span className="font-semibold text-[#1f3b2c]">Vertex Coordinates:</span>
-                        <div className="text-[#1f3b2c] text-xs mt-1 max-h-24 overflow-y-auto">
-                          {landDetails.landData.vertices
-                            .sort((a: any, b: any) => a.order - b.order)
-                            .map((vertex: any, index: number) => (
-                              <div key={index} className="mr-2 mb-1">
-                                {vertex.order}: {vertex.latitude.toFixed(7)}, {vertex.longitude.toFixed(7)}
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Download GeoJSON */}
-                {landDetails.landData?.geojson && (
-                  <div className="pt-2">
-                    <button
-                      onClick={() => {
-                        const blob = new Blob([landDetails.landData.geojson], { type: 'application/json' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `land-parcel.geojson`;
-                        a.click();
-                        URL.revokeObjectURL(url);
-                      }}
-                      className="inline-flex items-center rounded-md bg-[#166534] px-3 py-1 text-xs font-medium text-white hover:bg-[#14532d]"
-                    >
-                      Download GeoJSON
-                    </button>
-                  </div>
-                )}
-              </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-[#6b7280] mb-4">
-                  No mapped land details found. Use the land mapping tool to convert your land sketches to geographic coordinates.
-                </p>
+              <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => router.push('/dashboard/farmer/land/details')}
-                  className="inline-flex items-center rounded-md bg-[#166534] px-4 py-2 text-xs font-medium text-white hover:bg-[#14532d]"
+                  onClick={handleSaveChanges}
+                  disabled={saving}
+                  className="py-2.5 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
                 >
-                  Start Land Mapping
+                  <Save className="w-3.5 h-3.5" />
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Cancel
                 </button>
               </div>
             )}
-          </section>
+          </div>
+        </div>
 
-          {/* Completed Agreements Section */}
-          {completedAgreements.length > 0 && (
-            <section className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 space-y-3">
-              <h2 className="text-sm font-semibold text-[#1f3b2c] mb-2">Land Integration Agreements</h2>
-              <div className="space-y-3">
-                {completedAgreements.map((agreement) => (
-                  <div key={agreement.agreementId} className="border border-[#e2d4b7] rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <h3 className="font-medium text-[#1f3b2c]">Agreement with {agreement.otherUserName}</h3>
-                        <p className="text-xs text-[#6b7280] mt-1">
-                          Total Land: {agreement.totalLandSize.toFixed(2)} acres | 
-                          Your Land: {agreement.yourLandSize.toFixed(2)} acres ({agreement.yourContribution.toFixed(1)}%)
-                        </p>
-                        <p className="text-xs text-[#6b7280]">
-                          Executed on: {new Date(agreement.executionDate).toLocaleDateString()}
-                        </p>
-                        {agreement.otherUserContact && (
-                          <p className="text-xs text-[#6b7280]">Contact: {agreement.otherUserContact}</p>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setSelectedAgreementPreview(agreement.agreementId)}
-                          className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors"
-                        >
-                          Preview
-                        </button>
-                        <button
-                          onClick={() => window.open(`/api/farmer/land-integration/download-agreement?requestId=${agreement.agreementId}`, '_blank')}
-                          className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
-                        >
-                          Download
-                        </button>
-                      </div>
-                    </div>
-                    <div className="text-xs text-[#6b7280]">
-                      <span className="font-medium">Signatures:</span>
-                      {agreement.signatures.map((sig: any, index: number) => (
-                        <span key={index} className="ml-2">
-                          {sig.userName} ({new Date(sig.signedAt).toLocaleDateString()})
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+        {/* Right Column: Dynamic Form Fields / Registry Details */}
+        <div className="md:col-span-2 space-y-6">
+          
+          {/* 1. Account Settings Fields */}
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-[#1f3b2c] border-b border-gray-100 pb-3">Personal Configurations</h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Full Name (Read Only) */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Full Name (Registry Verified)</label>
+                <input 
+                  type="text" 
+                  value={profile.name} 
+                  disabled 
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs text-gray-400 font-semibold focus:outline-none cursor-not-allowed" 
+                />
               </div>
-            </section>
-          )}
 
-          <section className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 space-y-3">
-            <h2 className="text-sm font-semibold text-[#1f3b2c] mb-2">Uploaded Documents</h2>
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center">
-                <span className="text-[#1f3b2c]">RTC Document</span>
-                <span className={`px-2 py-1 rounded-full text-[11px] ${profile.rtcOcrText ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                  {profile.rtcOcrText ? 'Uploaded' : 'Not Uploaded'}
-                </span>
+              {/* Mobile Number */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Mobile Number</label>
+                <input 
+                  type="text" 
+                  value={isEditing ? editPhone : (profile.phone || '—')} 
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  disabled={!isEditing} 
+                  className={`w-full rounded-xl border px-4 py-2.5 text-xs text-[#1f3b2c] ${
+                    isEditing ? 'border-[#e2d4b7] bg-white focus:ring-1 focus:ring-[#166534] focus:outline-none' : 'border-transparent bg-gray-50/50 font-semibold'
+                  }`} 
+                />
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[#1f3b2c]">Aadhaar Document</span>
-                <span className={`px-2 py-1 rounded-full text-[11px] ${profile.aadharOcrText ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                  {profile.aadharOcrText ? 'Uploaded' : 'Not Uploaded'}
-                </span>
+
+              {/* DOB */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Date of Birth</label>
+                <input 
+                  type={isEditing ? "date" : "text"}
+                  value={isEditing ? editDob : (profile.dob || '—')} 
+                  onChange={(e) => setEditDob(e.target.value)}
+                  disabled={!isEditing} 
+                  className={`w-full rounded-xl border px-4 py-2.5 text-xs text-[#1f3b2c] ${
+                    isEditing ? 'border-[#e2d4b7] bg-white focus:ring-1 focus:ring-[#166534] focus:outline-none' : 'border-transparent bg-gray-50/50 font-semibold'
+                  }`} 
+                />
+              </div>
+
+              {/* Gender */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Gender</label>
+                {isEditing ? (
+                  <select
+                    value={editGender}
+                    onChange={(e) => setEditGender(e.target.value)}
+                    className="w-full rounded-xl border border-[#e2d4b7] bg-white px-4 py-2.5 text-xs text-[#1f3b2c] focus:ring-1 focus:ring-[#166534] focus:outline-none"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                ) : (
+                  <input 
+                    type="text" 
+                    value={profile.gender || '—'} 
+                    disabled 
+                    className="w-full rounded-xl border border-transparent bg-gray-50/50 px-4 py-2.5 text-xs text-[#1f3b2c] font-semibold" 
+                  />
+                )}
               </div>
             </div>
-          </section>
-        </>
-      )}
 
-      {/* Agreement Preview Modal */}
-      {selectedAgreementPreview && (
-        <AgreementPreviewModal
-          isOpen={!!selectedAgreementPreview}
-          onClose={() => setSelectedAgreementPreview(null)}
-          agreementId={selectedAgreementPreview}
-        />
-      )}
+            {/* Address */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1">Home Address</label>
+              <textarea 
+                value={isEditing ? editAddress : (profile.address || '—')} 
+                onChange={(e) => setEditAddress(e.target.value)}
+                disabled={!isEditing} 
+                rows={2}
+                className={`w-full rounded-xl border px-4 py-2.5 text-xs text-[#1f3b2c] resize-none ${
+                  isEditing ? 'border-[#e2d4b7] bg-white focus:ring-1 focus:ring-[#166534] focus:outline-none' : 'border-transparent bg-gray-50/50 font-semibold'
+                }`} 
+              />
+            </div>
+
+            {/* About Me Section */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1">About Me (Bio)</label>
+              <textarea 
+                value={isEditing ? editBio : (profile.bio || '—')} 
+                onChange={(e) => setEditBio(e.target.value)}
+                disabled={!isEditing} 
+                rows={3}
+                placeholder="Share a brief statement about your farm holdings, farming practices, or crop priorities."
+                className={`w-full rounded-xl border px-4 py-2.5 text-xs text-[#1f3b2c] resize-none ${
+                  isEditing ? 'border-[#e2d4b7] bg-white focus:ring-1 focus:ring-[#166534] focus:outline-none' : 'border-transparent bg-gray-50/50 font-semibold'
+                }`} 
+              />
+            </div>
+
+            {/* Integration Status Toggle */}
+            {isEditing && (
+              <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
+                <div>
+                  <h4 className="text-xs font-bold text-[#1f3b2c]">Mark Ready for Consortium Integration</h4>
+                  <p className="text-[11px] text-gray-500">Allow other farmers to find and request cooperative land integration with your plot.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={editReady} 
+                    onChange={(e) => setEditReady(e.target.checked)} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Official Cadastral Farmland details (if verified) */}
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-[#1f3b2c] border-b border-gray-100 pb-3">Official Land Records Registry</h3>
+            {profile.landParcelIdentity ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
+                  <span className="text-gray-500 block mb-1">Land Identity</span>
+                  <strong className="text-[#1f3b2c] text-sm font-semibold">{profile.landParcelIdentity}</strong>
+                </div>
+                <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
+                  <span className="text-gray-500 block mb-1">Cultivable Area</span>
+                  <strong className="text-[#1f3b2c] text-sm font-semibold">{profile.totalCultivableArea} Acres</strong>
+                </div>
+                <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
+                  <span className="text-gray-500 block mb-1">Soil Properties</span>
+                  <strong className="text-[#1f3b2c] text-sm font-semibold">{profile.soilProperties || 'Dry/Sandy'}</strong>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4 border border-dashed border-gray-200 rounded-xl">
+                <p className="text-xs text-gray-500">No verified land parcel linked to your profile yet.</p>
+                <Link
+                  href="/dashboard/farmer/land/details"
+                  className="text-xs font-bold text-emerald-700 hover:underline mt-1.5 inline-block"
+                >
+                  Verify Land Record →
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Fiverr-style Intro video / Consortium Readiness Prompts */}
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-[#1f3b2c]">Consortium Cooperatives</h3>
+              <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Beta</span>
+            </div>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Consolidate adjacent farmlands with neighboring farmers using AgriLink smart contracts on the blockchain to enable high-efficiency collective farming.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/dashboard/farmer/land"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 active:scale-95 transition-all"
+              >
+                Search Neighbors & Form Pool
+              </Link>
+            </div>
+          </div>
+          
+        </div>
+      </div>
     </div>
   );
 }

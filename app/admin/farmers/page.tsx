@@ -15,7 +15,8 @@ import {
   FiUser, 
   FiRefreshCw, 
   FiMapPin, 
-  FiLayers 
+  FiLayers,
+  FiTrash2
 } from 'react-icons/fi';
 import { adminFetch } from '@/lib/admin-client-auth';
 import Link from 'next/link';
@@ -155,6 +156,28 @@ export default function FarmersManagement() {
       setTimeout(() => setActionSuccessMessage(''), 4000);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Action failed');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteFarmer = async (farmerId: string, fullName: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete the farmer account for "${fullName}"? This will delete all their land details, integrations, and profile data.`)) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await adminFetch(`/api/admin/farmers/${farmerId}`, {
+        method: 'DELETE',
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.error || 'Failed to delete farmer account');
+      }
+      alert('Farmer account and all related data deleted successfully.');
+      fetchFarmers();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Deletion failed');
     } finally {
       setActionLoading(false);
     }
@@ -451,6 +474,15 @@ export default function FarmersManagement() {
                           title="Reset Password"
                         >
                           <FiUnlock className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteFarmer(farmer.id, farmer.fullName)}
+                          disabled={actionLoading}
+                          className="p-2 border border-gray-200 hover:border-red-600 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded-lg transition-all disabled:opacity-50"
+                          title="Delete Farmer Account"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

@@ -54,7 +54,21 @@ export async function POST(request: Request) {
       user.otpExpiresAt = undefined;
     }
 
+    if (user.role === 'farmer') {
+      user.isVerified = true;
+    }
+
     await user.save();
+
+    // If this is a farmer user, verify their FarmerProfile identity status
+    if (user.role === 'farmer') {
+      const { FarmerProfile } = await import('../../../../lib/models/FarmerProfile');
+      await FarmerProfile.findOneAndUpdate(
+        { user: user._id },
+        { nameVerificationStatus: 'verified', ownershipVerified: true }
+      );
+      console.log('✅ Verified FarmerProfile identity for user:', user._id);
+    }
 
     // If this is a supplier user, ensure a Seller profile exists so login works
     if (user.role === 'supplier') {

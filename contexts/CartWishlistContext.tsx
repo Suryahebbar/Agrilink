@@ -38,14 +38,41 @@ export function CartWishlistProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Get userId from auth/session
+  // Get userId from auth/session, URL params, or localStorage
   useEffect(() => {
     const getUserId = async () => {
       try {
+        // 1. Check URL parameters
+        if (typeof window !== 'undefined') {
+          const urlParams = new URLSearchParams(window.location.search);
+          const paramUid = urlParams.get('userId');
+          if (paramUid) {
+            setUserId(paramUid);
+            localStorage.setItem('agrilink_userId', paramUid);
+            return;
+          }
+        }
+
+        // 2. Check API /api/auth/me
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
-          setUserId(data.user?.id || data.user?._id);
+          const uid = data.user?.id || data.user?._id;
+          if (uid) {
+            setUserId(uid);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('agrilink_userId', uid);
+            }
+            return;
+          }
+        }
+
+        // 3. Check localStorage fallback
+        if (typeof window !== 'undefined') {
+          const savedUid = localStorage.getItem('agrilink_userId') || localStorage.getItem('userId');
+          if (savedUid) {
+            setUserId(savedUid);
+          }
         }
       } catch (error) {
         console.error('Error getting user ID:', error);
@@ -82,7 +109,12 @@ export function CartWishlistProvider({ children }: { children: ReactNode }) {
   }, [userId]);
 
   const addToCart = useCallback(async (product: Product, quantity: number = 1) => {
-    if (quantity <= 0 || !userId) return;
+    let effectiveUserId = userId;
+    if (!effectiveUserId && typeof window !== 'undefined') {
+      effectiveUserId = localStorage.getItem('agrilink_userId') || localStorage.getItem('userId') || new URLSearchParams(window.location.search).get('userId');
+      if (effectiveUserId) setUserId(effectiveUserId);
+    }
+    if (quantity <= 0 || !effectiveUserId) return;
     
     try {
       setLoading(true);
@@ -90,14 +122,14 @@ export function CartWishlistProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId,
+          userId: effectiveUserId,
           productId: product._id,
           name: product.name,
           price: product.price,
           quantity,
           image: product.images?.[0]?.url,
-          sellerId: product.seller?._id,
-          sellerName: product.seller?.companyName
+          sellerId: (product as any).seller?._id || (product as any).sellerId,
+          sellerName: (product as any).seller?.companyName || (product as any).sellerName || 'Verified Seller'
         })
       });
 

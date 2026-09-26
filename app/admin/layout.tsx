@@ -17,7 +17,10 @@ import {
   FiMenu, 
   FiX, 
   FiChevronRight, 
-  FiHome 
+  FiHome,
+  FiActivity,
+  FiTruck,
+  FiPackage
 } from 'react-icons/fi';
 
 const queryClient = new QueryClient({
@@ -38,11 +41,15 @@ type SidebarItem = {
 const sidebarItems: SidebarItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: FiLayout },
   { label: 'Farmer Management', href: '/admin/farmers', icon: FiUsers },
+  { label: 'Supplier Management', href: '/admin/suppliers', icon: FiTruck },
+  { label: 'Product Compliance', href: '/admin/products', icon: FiPackage },
   { label: 'Farm Pool Management', href: '/admin/farm-pools', icon: FiFolder },
   { label: 'FCO Management', href: '/admin/fco', icon: FiShield },
   { label: 'Agreement Management', href: '/admin/agreements', icon: FiFileText },
+  { label: 'Scheme Management', href: '/admin/schemes', icon: FiFileText },
   { label: 'Blockchain Records', href: '/admin/blockchain', icon: FiDatabase },
   { label: 'Analytics', href: '/admin/analytics', icon: FiBarChart2 },
+  { label: 'Audit Logs', href: '/admin/audit-logs', icon: FiActivity },
   { label: 'Settings', href: '/admin/settings', icon: FiSettings },
 ];
 

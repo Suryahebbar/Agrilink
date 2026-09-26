@@ -47,7 +47,7 @@ function LoginForm() {
           if (user.role === 'farmer') {
             router.push(`/dashboard/farmer?userId=${user.id}`);
           } else if (user.role === 'supplier') {
-            router.push(`/dashboard/supplier?userId=${user.id}`);
+            router.push(`/dashboard/seller?userId=${user.id}`);
           } else if (user.role === 'fco') {
             router.push(`/fco/dashboard?userId=${user.id}`);
           }

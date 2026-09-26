@@ -43,7 +43,7 @@ export default function AdminSuppliersPage() {
       const response = await fetch(`/api/admin/suppliers?${params}`);
       if (response.ok) {
         const data = await response.json();
-        setSuppliers(data.suppliers || []);
+        setSuppliers(data.suppliers || data.data || []);
       } else {
         setError('Failed to load suppliers');
       }
@@ -281,7 +281,13 @@ export default function AdminSuppliersPage() {
                     {new Date(supplier.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
+                    <div className="flex items-center space-x-3">
+                      <Link
+                        href={`/admin/suppliers/${supplier._id}`}
+                        className="text-indigo-600 hover:text-indigo-900 font-bold"
+                      >
+                        Dossier &rarr;
+                      </Link>
                       {supplier.status === 'pending' && (
                         <>
                           <button

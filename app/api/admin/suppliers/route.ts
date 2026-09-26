@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
-import { Seller } from '@/lib/models/supplier';
-import { Order } from '@/lib/models/supplier';
+import { Seller, Order, Product } from '@/lib/models/supplier';
 import { User } from '@/lib/models/User';
-import { Types } from 'mongoose';
+import { auditLog } from '@/lib/auditLogger';
+import { ActivityAction, ActivityStatus, LogModule, ResourceType } from '@/lib/auditTypes';
 
-interface SupplierType {
-  _id: Types.ObjectId;
-  name?: string;
-  email: string;
-  phone?: string;
-  companyName?: string;
-  gstNumber?: string;
-  verificationStatus?: string;
-  createdAt: Date;
-  documents?: any[];
-  // Add other fields as needed
+function extractDocStatus(doc: any): 'pending' | 'approved' | 'rejected' | 'uploaded' | 'missing' {
+  if (!doc) return 'missing';
+  if (typeof doc === 'string') return doc ? 'uploaded' : 'missing';
+  if (doc.status === 'verified' || doc.status === 'approved') return 'approved';
+  if (doc.status === 'rejected') return 'rejected';
+  if (doc.status === 'pending') return 'pending';
+  return doc.url ? 'uploaded' : 'missing';
 }
 
 export async function GET(request: NextRequest) {
@@ -23,8 +19,10 @@ export async function GET(request: NextRequest) {
     await connectDB();
     
     const { searchParams } = new URL(request.url);
-    const searchTerm = searchParams.get('search') || '';
-    const filter = searchParams.get('status') || 'all';
+    const searchTerm = searchParams.get('search') || searchParams.get('searchTerm') || '';
+    const filter = searchParams.get('status') || searchParams.get('filter') || 'all';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '50', 10);
     
     // Build query based on filters
     let supplierQuery: any = {};
@@ -33,7 +31,8 @@ export async function GET(request: NextRequest) {
       supplierQuery.$or = [
         { name: { $regex: searchTerm, $options: 'i' } },
         { email: { $regex: searchTerm, $options: 'i' } },
-        { companyName: { $regex: searchTerm, $options: 'i' } }
+        { companyName: { $regex: searchTerm, $options: 'i' } },
+        { gstNumber: { $regex: searchTerm, $options: 'i' } }
       ];
     }
     
@@ -41,75 +40,117 @@ export async function GET(request: NextRequest) {
       supplierQuery.verificationStatus = filter;
     }
     
-    // Get suppliers from Seller model (legacy)
+    // Get suppliers from Seller model (primary supplier store)
     const legacySuppliers = await Seller.find(supplierQuery)
-      .select('name email phone companyName gstNumber verificationStatus createdAt documents')
+      .select('name email phone companyName gstNumber businessDetails verificationStatus isActive createdAt updatedAt documents address settings')
       .sort({ createdAt: -1 })
       .lean();
     
-    // Get suppliers from User model (new registration system)
+    // Get suppliers from User model (unified accounts)
     const userSuppliers = await User.find({ 
       role: 'supplier', 
       ...supplierQuery 
     })
-      .select('email companyName businessEmail upiId emailVerified documentsUploaded verificationStatus verifiedAt rejectionReason createdAt')
+      .select('email companyName businessEmail upiId phone emailVerified documentsUploaded verificationStatus verifiedAt rejectionReason status isActive createdAt updatedAt')
       .sort({ createdAt: -1 })
       .lean();
-    
-    // Combine and format all suppliers
-    const allSuppliers = [
-      ...legacySuppliers.map((supplier: any) => ({
+
+    // Prevent duplicate entries if a supplier has both records with the same email
+    const seenEmails = new Set<string>();
+    const allSuppliers: any[] = [];
+
+    legacySuppliers.forEach((supplier: any) => {
+      const emailLower = supplier.email?.toLowerCase();
+      if (emailLower) seenEmails.add(emailLower);
+
+      allSuppliers.push({
         ...supplier,
-        source: 'legacy',
-        documentsUploaded: true, // Legacy suppliers assumed to have documents
+        source: 'seller',
+        name: supplier.name || supplier.companyName,
+        documentsUploaded: !!supplier.documents && Object.keys(supplier.documents).length > 0,
         documents: {
-          businessLicense: supplier.documents?.businessLicense?.status || 'pending',
-          gstCertificate: supplier.documents?.gstCertificate?.status || 'pending',
-          bankDetails: supplier.documents?.bankDetails?.status || 'pending'
-        }
-      })),
-      ...userSuppliers.map((supplier: any) => ({
+          businessLicense: extractDocStatus(supplier.documents?.businessCertificate || supplier.documents?.tradeLicense),
+          gstCertificate: extractDocStatus(supplier.documents?.gstCertificate),
+          fcoLicense: extractDocStatus(supplier.documents?.fcoLicense),
+          seedLicense: extractDocStatus(supplier.documents?.seedLicense),
+          pesticideLicense: extractDocStatus(supplier.documents?.pesticideLicense),
+          ownerIdProof: extractDocStatus(supplier.documents?.ownerIdProof),
+          bankDetails: extractDocStatus(supplier.documents?.bankDetails)
+        },
+        gstNumber: supplier.gstNumber || 'Not provided',
+        status: supplier.isActive === false ? 'suspended' : (supplier.verificationStatus || 'pending')
+      });
+    });
+
+    userSuppliers.forEach((supplier: any) => {
+      const emailLower = supplier.email?.toLowerCase();
+      if (emailLower && seenEmails.has(emailLower)) {
+        return; // Skip duplicate
+      }
+
+      allSuppliers.push({
         ...supplier,
         source: 'user',
-        name: supplier.companyName, // Use companyName as name for consistency
+        name: supplier.companyName || supplier.email,
+        documentsUploaded: supplier.documentsUploaded || false,
         documents: {
           businessLicense: supplier.documentsUploaded ? 'uploaded' : 'pending',
           gstCertificate: supplier.documentsUploaded ? 'uploaded' : 'pending',
+          fcoLicense: 'pending',
+          seedLicense: 'pending',
+          pesticideLicense: 'pending',
+          ownerIdProof: supplier.documentsUploaded ? 'uploaded' : 'pending',
           bankDetails: supplier.documentsUploaded ? 'uploaded' : 'pending'
-        }
-      }))
-    ];
+        },
+        gstNumber: 'Not provided',
+        status: supplier.status === 'suspended' ? 'suspended' : (supplier.verificationStatus || 'pending')
+      });
+    });
     
-    // Get products count and revenue for each supplier
+    // Compute products count and total revenue for each supplier
     const suppliersWithStats = await Promise.all(
       allSuppliers.map(async (supplier: any) => {
-        const productsCount = await require('@/lib/models/supplier').Product.countDocuments({ 
-          sellerId: supplier._id 
-        });
-        
-        const revenueData = await Order.aggregate([
-          { $match: { sellerId: supplier._id, paymentStatus: 'paid' } },
-          { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-        ]);
-        
-        return {
-          ...supplier,
-          productsCount,
-          totalRevenue: revenueData[0]?.total || 0
-        };
+        try {
+          const productsCount = await Product.countDocuments({ 
+            sellerId: supplier._id 
+          });
+          
+          const revenueData = await Order.aggregate([
+            { $match: { sellerId: supplier._id, paymentStatus: 'paid' } },
+            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+          ]);
+          
+          return {
+            ...supplier,
+            productsCount: productsCount || 0,
+            totalRevenue: revenueData[0]?.total || 0
+          };
+        } catch (err) {
+          return {
+            ...supplier,
+            productsCount: 0,
+            totalRevenue: 0
+          };
+        }
       })
     );
 
-    // Sort by creation date
+    // Sort by creation date descending
     suppliersWithStats.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    const total = suppliersWithStats.length;
+    const startIndex = (page - 1) * limit;
+    const paginatedSuppliers = suppliersWithStats.slice(startIndex, startIndex + limit);
     
     return NextResponse.json({ 
-      data: suppliersWithStats,
+      success: true,
+      data: paginatedSuppliers,
+      suppliers: paginatedSuppliers,
       pagination: {
-        page: 1,
-        limit: suppliersWithStats.length,
-        total: suppliersWithStats.length,
-        totalPages: 1
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1
       }
     });
     
@@ -130,19 +171,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { supplierId, action, reason } = body;
 
-    if (!supplierId || !action || !['verify', 'reject'].includes(action)) {
+    if (!supplierId || !action || !['verify', 'reject', 'suspend', 'activate'].includes(action)) {
       return NextResponse.json(
-        { error: 'Invalid request. SupplierId and action (verify/reject) required' },
+        { error: 'Invalid request. supplierId and valid action (verify/reject/suspend/activate) required' },
         { status: 400 }
       );
     }
 
-    // Find supplier in User model (new registration system)
-    let supplier = await User.findById(supplierId);
-    
-    // If not found in User model, try Seller model (legacy system)
+    // Check Seller first
+    let supplier: any = await Seller.findById(supplierId);
+
+    // Fallback to User
     if (!supplier) {
-      supplier = await Seller.findById(supplierId);
+      supplier = await User.findById(supplierId);
     }
 
     if (!supplier) {
@@ -152,33 +193,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if supplier has uploaded documents (for User model)
-    if (supplier instanceof User && !supplier.documentsUploaded) {
-      return NextResponse.json(
-        { error: 'Supplier has not uploaded documents yet' },
-        { status: 400 }
-      );
-    }
+    const previousStatus = supplier.verificationStatus;
 
-    if (action === 'verify') {
+    if (action === 'verify' || action === 'activate') {
       supplier.verificationStatus = 'verified';
       supplier.verifiedAt = new Date();
       supplier.rejectionReason = undefined;
+      supplier.isActive = true;
+      if (supplier.status) supplier.status = 'active';
     } else if (action === 'reject') {
       supplier.verificationStatus = 'rejected';
-      supplier.rejectionReason = reason || 'Rejected by admin';
+      supplier.rejectionReason = reason || 'Rejected by platform admin after compliance review';
       supplier.verifiedAt = undefined;
+      supplier.isActive = false;
+      if (supplier.status) supplier.status = 'inactive';
+    } else if (action === 'suspend') {
+      supplier.verificationStatus = 'rejected';
+      supplier.isActive = false;
+      supplier.rejectionReason = reason || 'Account suspended for statutory/legal non-compliance';
+      if (supplier.status) supplier.status = 'suspended';
     }
 
     await supplier.save();
 
-    console.log(`👤 Supplier ${action}ed:`, {
-      supplierId,
-      companyName: supplier.companyName,
-      verificationStatus: supplier.verificationStatus
+    // Audit log this administrative legal decision
+    void auditLog({
+      action: action === 'verify' ? ActivityAction.VERIFY : ActivityAction.STATUS_CHANGE,
+      module: LogModule.ADMIN,
+      resourceType: ResourceType.SUPPLIER,
+      resourceId: supplierId,
+      resourceName: supplier.companyName || supplier.name || 'Supplier',
+      oldValue: previousStatus,
+      newValue: supplier.verificationStatus,
+      remarks: reason || `Admin executed ${action} on supplier account`,
+      request,
+      status: ActivityStatus.SUCCESS
     });
 
     return NextResponse.json({
+      success: true,
       message: `Supplier ${action}ed successfully`,
       verificationStatus: supplier.verificationStatus,
       verifiedAt: supplier.verifiedAt,
@@ -186,9 +239,9 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error verifying supplier:', error);
+    console.error('Error modifying supplier status:', error);
     return NextResponse.json(
-      { error: 'Failed to verify supplier' },
+      { error: 'Failed to update supplier status' },
       { status: 500 }
     );
   }

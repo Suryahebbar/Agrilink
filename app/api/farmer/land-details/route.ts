@@ -5,6 +5,10 @@ import { ObjectId } from 'mongodb';
 import { uploadFile } from '@/lib/cloudinary';
 import Document from '@/lib/models/Document';
 
+export const dynamic = 'force-dynamic';
+
+import { DigitizedPlot } from '@/lib/models/DigitizedPlot';
+
 // GET - Fetch all land details for a user
 export async function GET(request: NextRequest) {
   try {
@@ -19,10 +23,60 @@ export async function GET(request: NextRequest) {
 
     const landDetails = await LandDetails.find({ userId }).sort({ createdAt: -1 });
     
+    // Backfill any missing registry/owner fields from DigitizedPlot on-the-fly
+    const enrichedDetails = await Promise.all(landDetails.map(async (landDoc: any) => {
+      const docObj = landDoc.toObject();
+      if (docObj.rtcDetails && docObj.rtcDetails.surveyNumber) {
+        const plot = await DigitizedPlot.findOne({
+          'administrative.survey': docObj.rtcDetails.surveyNumber
+        });
+        
+        if (plot) {
+          const formattedVertices = plot.points?.map((pt: number[], idx: number) => ({
+            latitude: pt[0],
+            longitude: pt[1],
+            order: idx
+          })) || [];
+
+          docObj.landData = {
+            ...docObj.landData,
+            centroidLatitude: plot.gis?.centroid?.[0] ?? docObj.landData?.centroidLatitude,
+            centroidLongitude: plot.gis?.centroid?.[1] ?? docObj.landData?.centroidLongitude,
+            latitude: plot.gis?.latitude ?? docObj.landData?.latitude,
+            longitude: plot.gis?.longitude ?? docObj.landData?.longitude,
+            sideLengths: plot.gis?.side_lengths ?? docObj.landData?.sideLengths ?? [],
+            vertices: formattedVertices.length > 0 ? formattedVertices : docObj.landData?.vertices,
+            geojson: plot.gis?.geojson_geom ? JSON.stringify(plot.gis.geojson_geom) : docObj.landData?.geojson
+          };
+
+          docObj.rtcDetails = {
+            ...docObj.rtcDetails,
+            ownerName: docObj.rtcDetails.ownerName || plot.owner.name,
+            fatherName: docObj.rtcDetails.fatherName || plot.owner.father,
+            khataNumber: docObj.rtcDetails.khataNumber || plot.owner.khata,
+            ownershipType: docObj.rtcDetails.ownershipType || plot.owner.ownership_type,
+            
+            potKharabA: docObj.rtcDetails.potKharabA || plot.land.pot_kharab_a,
+            potKharabB: docObj.rtcDetails.potKharabB || plot.land.pot_kharab_b,
+            revenue: docObj.rtcDetails.revenue || plot.land.revenue,
+            jodi: docObj.rtcDetails.jodi || plot.land.jodi,
+            cess: docObj.rtcDetails.cess || plot.land.cess,
+            waterRate: docObj.rtcDetails.waterRate || plot.land.water_rate,
+            
+            landType: docObj.rtcDetails.landType || plot.land.land_type,
+            irrigationSource: docObj.rtcDetails.irrigationSource || plot.land.irrigation_source,
+            trees: docObj.rtcDetails.trees || plot.land.trees,
+            allCrops: docObj.rtcDetails.allCrops || plot.crops
+          };
+        }
+      }
+      return docObj;
+    }));
+    
     return NextResponse.json({ 
       success: true, 
-      data: landDetails,
-      count: landDetails.length 
+      data: enrichedDetails,
+      count: enrichedDetails.length 
     });
   } catch (error) {
     console.error('Error fetching land details:', error);

@@ -1,23 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Product } from '@/lib/models/supplier';
-import { Seller } from '@/lib/models/seller';
+import { Product, Seller } from '@/lib/models/supplier';
 import { connectDB } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
     await connectDB();
 
-    // Get or create a seller for the products
-    let seller = await Seller.findOne({ companyName: 'Demo Agricultural Supplies' });
+    // Get or create a seller for the products (prefer active verified seller like FOMO)
+    let seller = await Seller.findOne({ verificationStatus: 'verified', isActive: true });
+    if (!seller) {
+      seller = await Seller.findOne({ email: 'fomo@gmail.com' });
+    }
     if (!seller) {
       // Create a demo seller if it doesn't exist
       seller = new Seller({
-        companyName: 'Demo Agricultural Supplies',
-        email: 'demo@agrisupplies.com',
+        companyName: 'AgriLink Certified Supplies',
+        email: 'fomo@gmail.com',
         phone: '+919876543210',
         passwordHash: 'demo_hash',
         address: {
-          street: '123 Farm Road',
+          street: '123 Farm Corridor',
           city: 'Bangalore',
           state: 'Karnataka',
           pincode: '560001',
@@ -206,6 +208,9 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error creating sample supplier products:', error);
-    return NextResponse.json({ error: 'Failed to create sample products' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to create sample products', 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 });
   }
 }

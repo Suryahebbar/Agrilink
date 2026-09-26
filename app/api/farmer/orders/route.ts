@@ -91,6 +91,34 @@ export async function POST(req: Request) {
     const mongooseModule = await import('mongoose')
     const mongoose = mongooseModule.default
     
+    // Resolve sellerId for each item to ensure valid ObjectId
+    for (const item of items) {
+      let currentSellerId = item.sellerId || item.seller;
+      if (!currentSellerId || !mongoose.Types.ObjectId.isValid(String(currentSellerId))) {
+        if (item.productId && mongoose.Types.ObjectId.isValid(String(item.productId))) {
+          try {
+            const p = await Product.findById(item.productId);
+            if (p?.sellerId && mongoose.Types.ObjectId.isValid(String(p.sellerId))) {
+              item.sellerId = String(p.sellerId);
+              currentSellerId = item.sellerId;
+            }
+          } catch (e) {
+            console.error('Error resolving item sellerId:', e);
+          }
+        }
+      }
+      if (!currentSellerId || !mongoose.Types.ObjectId.isValid(String(currentSellerId))) {
+        try {
+          const defaultSeller = await (supplierModels.Seller as any).findOne({ isActive: true });
+          if (defaultSeller) {
+            item.sellerId = defaultSeller._id.toString();
+          }
+        } catch (e) {
+          console.error('Error fetching fallback seller:', e);
+        }
+      }
+    }
+
     // Group items by sellerId
     const itemsBySeller = items.reduce((acc: Record<string, any[]>, item: any) => {
       const sellerId = item.sellerId || item.seller
@@ -129,6 +157,9 @@ export async function POST(req: Request) {
         )
 
         const sellerTotal = orderItems.reduce((sum, item) => sum + item.total, 0)
+        const platformFeeRate = 0.05 // 5% AgriLink platform commission
+        const platformFeeAmount = Math.round(sellerTotal * platformFeeRate * 100) / 100
+        const sellerEarnings = Math.round((sellerTotal - platformFeeAmount) * 100) / 100
 
         // Create supplier order
         const supplierOrderData = {
@@ -147,6 +178,9 @@ export async function POST(req: Request) {
           },
           items: orderItems,
           totalAmount: sellerTotal,
+          platformFeeRate,
+          platformFeeAmount,
+          sellerEarnings,
           paymentStatus: 'pending' as const,
           orderStatus: 'new' as const,
           shippingDetails: {

@@ -16,7 +16,8 @@ import {
   FiRefreshCw, 
   FiMapPin, 
   FiBriefcase, 
-  FiBookOpen 
+  FiBookOpen,
+  FiTrash2
 } from 'react-icons/fi';
 import { adminFetch } from '@/lib/admin-client-auth';
 import Link from 'next/link';
@@ -275,6 +276,29 @@ export default function FcoManagement() {
     }
   };
 
+  const handleDeleteFco = async (fcoId: string, fullName: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete the FCO account for "${fullName}"? This action cannot be undone.`)) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await adminFetch(`/api/admin/fco/${fcoId}`, {
+        method: 'DELETE',
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.error || 'Failed to delete FCO account');
+      }
+      setActionSuccessMessage(`Successfully deleted FCO account: ${fullName}`);
+      fetchFcos();
+      setTimeout(() => setActionSuccessMessage(''), 4000);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Deletion failed');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -473,6 +497,15 @@ export default function FcoManagement() {
                           title="Reset Password"
                         >
                           <FiUnlock className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteFco(fco.id, fco.fullName)}
+                          disabled={actionLoading}
+                          className="p-2 border border-gray-200 hover:border-red-600 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded-lg transition-all disabled:opacity-50"
+                          title="Delete FCO Account"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

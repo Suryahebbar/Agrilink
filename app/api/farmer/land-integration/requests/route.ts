@@ -36,12 +36,16 @@ interface FormattedRequest {
 
 export async function GET(request: Request) {
   try {
-    const auth = await getUserFromRequest(request);
-    if (!auth || auth.role !== 'farmer') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const { searchParams } = new URL(request.url);
+    let userId = searchParams.get('userId');
 
-    const userId = auth.sub;
+    if (!userId) {
+      const auth = await getUserFromRequest(request);
+      if (!auth || auth.role !== 'farmer') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      userId = auth.sub;
+    }
 
     await connectDB();
 

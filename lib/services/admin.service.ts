@@ -3,6 +3,7 @@ import { User } from '@/lib/models/User';
 import { FarmerProfile } from '@/lib/models/FarmerProfile';
 import { LandIntegration } from '@/lib/models/LandIntegration';
 import { AdminAuditLog } from '@/lib/models/AdminAuditLog';
+import { Seller, Product, Order } from '@/lib/models/supplier';
 
 export interface AdminDashboardStats {
   totalFarmers: number;
@@ -15,6 +16,13 @@ export interface AdminDashboardStats {
   revenueOverview: number;
   totalInsuranceRequests: number;
   blockchainRecords: number;
+  // Supplier Metrics
+  totalSuppliers: number;
+  verifiedSuppliers: number;
+  pendingSupplierApprovals: number;
+  totalSupplierProducts: number;
+  totalSupplierOrders: number;
+  totalSupplierRevenue: number;
 }
 
 export class AdminService {
@@ -28,7 +36,16 @@ export class AdminService {
       activeFarmPools,
       pendingAgreements,
       totalBlockchainAgreements,
-      blockchainRecords
+      blockchainRecords,
+      userSuppliersCount,
+      sellerSuppliersCount,
+      userVerifiedSuppliers,
+      sellerVerifiedSuppliers,
+      userPendingSuppliers,
+      sellerPendingSuppliers,
+      totalSupplierProducts,
+      totalSupplierOrders,
+      orderRevenueResult
     ] = await Promise.all([
       User.countDocuments({ role: 'farmer' }).catch(() => 0),
       FarmerProfile.countDocuments({ nameVerificationStatus: 'pending' }).catch(() => 0),
@@ -37,7 +54,24 @@ export class AdminService {
       LandIntegration.countDocuments({ status: 'pending' }).catch(() => 0),
       LandIntegration.countDocuments({ 'blockchain.agreementId': { $exists: true, $ne: '' } }).catch(() => 0),
       LandIntegration.countDocuments({ 'blockchain.transactionHash': { $exists: true, $ne: '' } }).catch(() => 0),
+      User.countDocuments({ role: 'supplier' }).catch(() => 0),
+      Seller.countDocuments().catch(() => 0),
+      User.countDocuments({ role: 'supplier', verificationStatus: 'verified' }).catch(() => 0),
+      Seller.countDocuments({ verificationStatus: 'verified' }).catch(() => 0),
+      User.countDocuments({ role: 'supplier', verificationStatus: 'pending' }).catch(() => 0),
+      Seller.countDocuments({ verificationStatus: 'pending' }).catch(() => 0),
+      Product.countDocuments().catch(() => 0),
+      Order.countDocuments().catch(() => 0),
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid' } },
+        { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      ]).catch(() => [])
     ]);
+
+    const totalSuppliers = (userSuppliersCount || 0) + (sellerSuppliersCount || 0);
+    const verifiedSuppliers = (userVerifiedSuppliers || 0) + (sellerVerifiedSuppliers || 0);
+    const pendingSupplierApprovals = (userPendingSuppliers || 0) + (sellerPendingSuppliers || 0);
+    const totalSupplierRevenue = orderRevenueResult?.[0]?.total || 0;
 
     return {
       totalFarmers,
@@ -47,9 +81,15 @@ export class AdminService {
       totalFcos: 0, // Placeholder as FCO module is not yet implemented
       pendingAgreements,
       totalBlockchainAgreements,
-      revenueOverview: 0, // Placeholder
+      revenueOverview: totalSupplierRevenue,
       totalInsuranceRequests: 0, // Placeholder
-      blockchainRecords
+      blockchainRecords,
+      totalSuppliers,
+      verifiedSuppliers,
+      pendingSupplierApprovals,
+      totalSupplierProducts: totalSupplierProducts || 0,
+      totalSupplierOrders: totalSupplierOrders || 0,
+      totalSupplierRevenue
     };
   }
 

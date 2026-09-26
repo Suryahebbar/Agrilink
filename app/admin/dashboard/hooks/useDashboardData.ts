@@ -12,10 +12,14 @@ interface DashboardStats {
   revenueOverview: number;
   totalInsuranceRequests: number;
   totalSuppliers: number;
+  verifiedSuppliers: number;
+  pendingSupplierApprovals: number;
   totalProducts: number;
+  totalSupplierProducts: number;
   totalMarketplaceOrders: number;
   totalSupplierOrders: number;
   totalRevenue: number;
+  totalSupplierRevenue: number;
   recentActivities: any[];
   topProducts: any[];
   recentOrders: any[];
@@ -47,10 +51,14 @@ export function useDashboardData() {
           revenueOverview: 0,
           totalInsuranceRequests: 0,
           totalSuppliers: 0,
+          verifiedSuppliers: 0,
+          pendingSupplierApprovals: 0,
           totalProducts: 0,
+          totalSupplierProducts: 0,
           totalMarketplaceOrders: 0,
           totalSupplierOrders: 0,
           totalRevenue: 0,
+          totalSupplierRevenue: 0,
           recentActivities: [],
           topProducts: [],
           recentOrders: [],

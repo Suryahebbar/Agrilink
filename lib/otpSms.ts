@@ -7,13 +7,12 @@ if (!FAST2SMS_API_KEY) {
 export async function sendSmsOtp(phone: string, otp: string, purpose: string) {
   if (!FAST2SMS_API_KEY) {
     console.warn('Skipping SMS send because FAST2SMS_API_KEY is missing');
-    return;
+    return { success: false, skipped: true, error: 'SMS service configuration (FAST2SMS_API_KEY) is missing.' };
   }
 
   const message = `Your AgriLink OTP for ${purpose} is ${otp}. It is valid for 10 minutes.`;
 
   try {
-    // Fast2SMS API v2 example; adjust endpoint/params to your account documentation
     const res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: {
@@ -30,9 +29,13 @@ export async function sendSmsOtp(phone: string, otp: string, purpose: string) {
     });
 
     if (!res.ok) {
-      console.error('Fast2SMS error status', res.status, await res.text());
+      const errText = await res.text();
+      console.error('Fast2SMS error status', res.status, errText);
+      return { success: false, error: `Fast2SMS Gateway Error (${res.status}): ${errText}` };
     }
+    return { success: true };
   } catch (err) {
     console.error('Fast2SMS request failed', err);
+    return { success: false, error: err instanceof Error ? err.message : 'Network error sending SMS.' };
   }
 }

@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 export async function sendEmailOtp(to: string, otp: string, purpose: string) {
   if (!host || !user || !pass) {
     console.warn('Skipping email send because SMTP env vars are missing');
-    return;
+    return { success: false, skipped: true, error: 'Email service configuration (SMTP settings) is missing.' };
   }
 
   const subject = `Your AgriLink OTP for ${purpose}`;
@@ -34,7 +34,9 @@ export async function sendEmailOtp(to: string, otp: string, purpose: string) {
       text,
     });
     console.log('OTP email sent to', to);
+    return { success: true };
   } catch (err) {
     console.error('Failed to send OTP email', err);
+    return { success: false, error: err instanceof Error ? err.message : 'Network error sending Email.' };
   }
 }
