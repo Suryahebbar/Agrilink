@@ -51,6 +51,14 @@ export interface IFarmerProfile extends Document {
   readyToIntegrate?: boolean;
   readyToIntegrateDate?: Date;
 
+  // Land Pooling fields
+  readyToPool?: boolean;
+  readyToPoolDate?: Date;
+
+  // Additional profile fields
+  bio?: string;
+  profilePic?: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -102,7 +110,15 @@ const FarmerProfileSchema = new Schema<IFarmerProfile>(
 
     // Land Integration fields
     readyToIntegrate: { type: Boolean, default: false },
-    readyToIntegrateDate: { type: Date }
+    readyToIntegrateDate: { type: Date },
+
+    // Land Pooling fields
+    readyToPool: { type: Boolean, default: false },
+    readyToPoolDate: { type: Date },
+
+    // Additional profile fields
+    bio: { type: String, default: "Passionate about sustainable agriculture and smart farming." },
+    profilePic: { type: String }
   },
   { timestamps: true }
 );

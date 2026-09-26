@@ -42,6 +42,16 @@ export interface IPoolSettlement extends Document {
   settledAt: Date;
   status: 'draft' | 'finalized' | 'audited';
   blockchainTxHash?: string;
+  
+  // Blockchain Distribution Records
+  blockchain?: {
+    isAnchored: boolean;
+    distributionHash?: string;
+    transactionHash?: string;
+    blockNumber?: number;
+    timestamp?: Date;
+  };
+
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -82,6 +92,13 @@ const PoolSettlementSchema = new Schema<IPoolSettlement>(
     settledAt: { type: Date, default: Date.now },
     status: { type: String, enum: ['draft', 'finalized', 'audited'], default: 'finalized' },
     blockchainTxHash: { type: String },
+    blockchain: {
+      isAnchored: { type: Boolean, default: false },
+      distributionHash: { type: String },
+      transactionHash: { type: String },
+      blockNumber: { type: Number },
+      timestamp: { type: Date }
+    },
     notes: { type: String }
   },
   { timestamps: true }

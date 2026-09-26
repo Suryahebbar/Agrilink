@@ -1,10 +1,9 @@
-import mongoose, { Schema, Document, Model, Types } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface ILandDetails extends Document {
   user: Types.ObjectId;
-  userId?: string; // For easier lookup
+  userId?: string;
 
-  // Land sketch image
   sketchImage?: {
     filename: string;
     originalName: string;
@@ -14,33 +13,54 @@ export interface ILandDetails extends Document {
     uploadedAt: Date;
   };
 
-  // Land coordinates and measurements
   landData?: {
     centroidLatitude: number;
     centroidLongitude: number;
-    sideLengths: number[]; // in meters
+    latitude?: number;
+    longitude?: number;
+    sideLengths: number[];
     vertices: Array<{
       latitude: number;
       longitude: number;
       order: number;
     }>;
-    landSizeInAcres?: number; // land size from RTC document in acres
-    geojson?: string; // GeoJSON string
+    landSizeInAcres?: number;
+    geojson?: string;
   };
 
-  // RTC land details
   rtcDetails?: {
     surveyNumber: string;
-    extent: string; // acres
-    location: string; // village, hobli, taluk
+    surnoc?: string;
+    hissa?: string;
+    extent: string;
+    location: string;
     taluk?: string;
     hobli?: string;
     village?: string;
     soilType?: string;
     cropType?: string;
+    
+    // Detailed registry info
+    ownerName?: string;
+    fatherName?: string;
+    khataNumber?: string;
+    ownershipType?: string;
+    
+    // Revenue & Pot Kharab metrics
+    potKharabA?: string;
+    potKharabB?: string;
+    revenue?: string;
+    jodi?: string;
+    cess?: string;
+    waterRate?: string;
+    
+    // Land and Irrigation details
+    landType?: string;
+    irrigationSource?: string;
+    trees?: string;
+    allCrops?: any[];
   };
 
-  // Processing status
   processingStatus?: 'pending' | 'completed' | 'failed';
   processedAt?: Date;
 
@@ -54,17 +74,19 @@ const LandDetailsSchema = new Schema<ILandDetails>(
     userId: { type: String, index: true },
 
     sketchImage: {
-      filename: { type: String, required: false },
-      originalName: { type: String, required: false },
-      path: { type: String, required: false },
-      size: { type: Number, required: false },
-      mimeType: { type: String, required: false },
+      filename: { type: String },
+      originalName: { type: String },
+      path: { type: String },
+      size: { type: Number },
+      mimeType: { type: String },
       uploadedAt: { type: Date, default: Date.now }
     },
 
     landData: {
-      centroidLatitude: { type: Number, required: false },
-      centroidLongitude: { type: Number, required: false },
+      centroidLatitude: { type: Number },
+      centroidLongitude: { type: Number },
+      latitude: { type: Number },
+      longitude: { type: Number },
       sideLengths: [{ type: Number }],
       vertices: [{
         latitude: { type: Number, required: true },
@@ -77,13 +99,35 @@ const LandDetailsSchema = new Schema<ILandDetails>(
 
     rtcDetails: {
       surveyNumber: { type: String },
+      surnoc: { type: String },
+      hissa: { type: String },
       extent: { type: String },
       location: { type: String },
       taluk: { type: String },
       hobli: { type: String },
       village: { type: String },
       soilType: { type: String },
-      cropType: { type: String }
+      cropType: { type: String },
+      
+      // Detailed registry info
+      ownerName: { type: String },
+      fatherName: { type: String },
+      khataNumber: { type: String },
+      ownershipType: { type: String },
+      
+      // Revenue & Pot Kharab metrics
+      potKharabA: { type: String },
+      potKharabB: { type: String },
+      revenue: { type: String },
+      jodi: { type: String },
+      cess: { type: String },
+      waterRate: { type: String },
+      
+      // Land and Irrigation details
+      landType: { type: String },
+      irrigationSource: { type: String },
+      trees: { type: String },
+      allCrops: { type: Schema.Types.Mixed }
     },
 
     processingStatus: { 
@@ -96,7 +140,6 @@ const LandDetailsSchema = new Schema<ILandDetails>(
   { timestamps: true }
 );
 
-// Index for faster queries
 LandDetailsSchema.index({ userId: 1 });
 LandDetailsSchema.index({ user: 1 });
 LandDetailsSchema.index({ 'rtcDetails.surveyNumber': 1 });

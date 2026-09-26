@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Clock, Tractor, Coins, CheckCircle, XCircle, 
   AlertCircle, Plus, RefreshCw, Filter, ShieldCheck, 
-  Calendar, User, ChevronRight, Check, X, Loader2 
+  Calendar, User, ChevronRight, Check, X, Loader2,
+  ExternalLink, Shield
 } from 'lucide-react';
 import ContributionLoggerModal from './ContributionLoggerModal';
 
@@ -24,6 +25,13 @@ interface ContributionLog {
   verifiedAt?: string;
   rejectionReason?: string;
   notes?: string;
+  blockchain?: {
+    isAnchored: boolean;
+    proofHash?: string;
+    transactionHash?: string;
+    blockNumber?: number;
+    timestamp?: string;
+  };
 }
 
 interface MemberSummary {
@@ -101,147 +109,155 @@ export default function ContributionHistoryTable({
       });
       const data = await res.json();
       if (data.success) {
-        await fetchContributions();
+        fetchContributions();
         if (onRefreshPool) onRefreshPool();
+      } else {
+        alert(data.error || 'Operation failed');
       }
     } catch (err) {
-      console.error('Verify error:', err);
+      console.error(err);
+      alert('Error updating contribution status');
     } finally {
       setActionLoadingId(null);
     }
   };
 
-  // Compute total aggregates
-  const totalVerifiedLabour = summaries.reduce((s, m) => s + m.totalLabourHours, 0);
-  const totalVerifiedMachinery = summaries.reduce((s, m) => s + m.totalMachineryHours, 0);
-  const totalExtraCapital = summaries.reduce((s, m) => s + m.extraCapitalInjected, 0);
-  const totalValueCredited = summaries.reduce((s, m) => s + m.labourValue + m.machineryValue + m.extraCapitalInjected, 0);
-
-  const filteredLogs = logs.filter(l => {
+  const filteredLogs = logs.filter(log => {
     if (filterType === 'all') return true;
-    return l.type === filterType;
+    return log.type === filterType;
   });
+
+  const totalLabour = summaries.reduce((acc, s) => acc + s.totalLabourHours, 0);
+  const totalLabourValue = summaries.reduce((acc, s) => acc + s.labourValue, 0);
+  const totalMachinery = summaries.reduce((acc, s) => acc + s.totalMachineryHours, 0);
+  const totalMachineryValue = summaries.reduce((acc, s) => acc + s.machineryValue, 0);
+  const totalCapital = summaries.reduce((acc, s) => acc + s.extraCapitalInjected, 0);
 
   return (
     <div className="space-y-6">
       
-      {/* Header Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-4 bg-white border border-[#e2d4b7] rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Verified Labour</span>
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-              <Clock className="w-4 h-4" />
-            </div>
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        {/* Labour Metric */}
+        <div className="p-4.5 rounded-2xl bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/80 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <Clock className="w-6 h-6" />
           </div>
-          <div className="text-xl font-black text-[#1f3b2c]">
-            {totalVerifiedLabour} <span className="text-xs font-normal text-slate-500">Hours</span>
+          <div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Labour Logged</div>
+            <div className="text-xl font-black text-[#1f3b2c] mt-0.5">
+              {totalLabour} <span className="text-xs font-semibold text-slate-500">Hours</span>
+            </div>
+            <div className="text-xs font-bold text-blue-700 mt-0.5">
+              Valuation: ₹{totalLabourValue.toLocaleString()}
+            </div>
           </div>
         </div>
 
-        <div className="p-4 bg-white border border-[#e2d4b7] rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Machinery Used</span>
-            <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
-              <Tractor className="w-4 h-4" />
-            </div>
+        {/* Machinery Metric */}
+        <div className="p-4.5 rounded-2xl bg-gradient-to-br from-amber-50/80 to-white border border-amber-100/80 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+            <Tractor className="w-6 h-6" />
           </div>
-          <div className="text-xl font-black text-[#1f3b2c]">
-            {totalVerifiedMachinery} <span className="text-xs font-normal text-slate-500">Hours</span>
+          <div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Machinery & Fuel Hours</div>
+            <div className="text-xl font-black text-[#1f3b2c] mt-0.5">
+              {totalMachinery} <span className="text-xs font-semibold text-slate-500">Hours</span>
+            </div>
+            <div className="text-xs font-bold text-amber-700 mt-0.5">
+              Valuation: ₹{totalMachineryValue.toLocaleString()}
+            </div>
           </div>
         </div>
 
-        <div className="p-4 bg-white border border-[#e2d4b7] rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Extra Capital</span>
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-              <Coins className="w-4 h-4" />
-            </div>
+        {/* Capital Metric */}
+        <div className="p-4.5 rounded-2xl bg-gradient-to-br from-emerald-50/80 to-white border border-emerald-100/80 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-[#166534] flex items-center justify-center shrink-0">
+            <Coins className="w-6 h-6" />
           </div>
-          <div className="text-xl font-black text-[#1f3b2c]">
-            ₹{totalExtraCapital.toLocaleString()}
+          <div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Injected Capital</div>
+            <div className="text-xl font-black text-[#1f3b2c] mt-0.5">
+              ₹{totalCapital.toLocaleString()}
+            </div>
+            <div className="text-xs font-bold text-[#166534] mt-0.5">
+              Direct input purchases / emergency funds
+            </div>
           </div>
         </div>
 
-        <div className="p-4 bg-white border border-[#e2d4b7] rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Total Value</span>
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-              <ShieldCheck className="w-4 h-4" />
+      </div>
+
+      {/* Member Contribution Breakdown (Accordion / Grid) */}
+      <div className="bg-white border border-[#e2d4b7] rounded-3xl p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h4 className="font-bold text-[#1f3b2c] text-sm flex items-center gap-2">
+              <User className="w-4 h-4 text-[#166534]" /> Member Cumulative Contribution Balance
+            </h4>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Tracks individual resource allocation to adjust final net profit distributions.
+            </p>
+          </div>
+          <span className="text-xs font-mono font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
+            Model #{model} Active
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {summaries.map((summary) => (
+            <div 
+              key={summary.userId}
+              className={`p-4 rounded-2xl border transition-all ${
+                summary.userId === userId 
+                  ? 'bg-emerald-50/30 border-[#166534]/40 shadow-xs ring-1 ring-[#166534]/20' 
+                  : 'bg-[#f8fafc] border-slate-200/70 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-1.5">
+                  {summary.fullName}
+                  {summary.userId === userId && (
+                    <span className="text-[10px] bg-[#166534] text-white px-2 py-0.2 rounded-full font-bold">You</span>
+                  )}
+                </span>
+                <span className="text-xs font-semibold text-slate-500">{summary.landAcres} Acres</span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/60 text-center">
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Labour</div>
+                  <div className="text-xs font-extrabold text-[#1f3b2c] mt-0.5">{summary.totalLabourHours}h</div>
+                  <div className="text-[10px] font-bold text-blue-600">₹{summary.labourValue.toLocaleString()}</div>
+                </div>
+
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Machinery</div>
+                  <div className="text-xs font-extrabold text-[#1f3b2c] mt-0.5">{summary.totalMachineryHours}h</div>
+                  <div className="text-[10px] font-bold text-amber-600">₹{summary.machineryValue.toLocaleString()}</div>
+                </div>
+
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Capital</div>
+                  <div className="text-xs font-extrabold text-[#166534] mt-0.5">₹{summary.extraCapitalInjected.toLocaleString()}</div>
+                  <div className="text-[10px] font-bold text-slate-400">{summary.verifiedContributionsCount} logs</div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-xl font-black text-[#166534]">
-            ₹{totalValueCredited.toLocaleString()}
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Member Weighting Breakdown Preview (Model 5 Multi-Factor Consensus) */}
-      {model === 5 && summaries.length > 0 && (
-        <div className="p-6 bg-emerald-50/70 text-[#1f3b2c] rounded-3xl shadow-sm border border-emerald-200">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 bg-[#166534] text-white rounded-full text-[11px] font-extrabold uppercase">
-                  Model 5 Research Engine
-                </span>
-                <h4 className="font-bold text-sm text-[#1f3b2c]">Live Dynamic Contribution Shares</h4>
-              </div>
-              <p className="text-xs text-slate-600 mt-0.5">
-                Formula: (35% Land) + (25% Capital) + (20% Labour) + (20% Machinery)
-              </p>
-            </div>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs shrink-0"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Log Daily Contribution</span>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {summaries.map((m) => {
-              const totalLand = summaries.reduce((s, x) => s + x.landAcres, 0) || 1;
-              const landShare = (m.landAcres / totalLand) * 35;
-              const labourShare = totalVerifiedLabour > 0 ? (m.totalLabourHours / totalVerifiedLabour) * 20 : 0;
-              const machShare = totalVerifiedMachinery > 0 ? (m.totalMachineryHours / totalVerifiedMachinery) * 20 : 0;
-              const capShare = (totalExtraCapital + summaries.reduce((s, x) => s + x.initialInvestment, 0)) > 0
-                ? ((m.extraCapitalInjected + m.initialInvestment) / (totalExtraCapital + summaries.reduce((s, x) => s + x.initialInvestment, 0))) * 25
-                : 25 * (m.landAcres / totalLand);
-
-              const estEquity = (landShare + labourShare + machShare + capShare).toFixed(1);
-
-              return (
-                <div key={m.userId} className="p-3.5 bg-white rounded-2xl border border-emerald-200/80 shadow-xs flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-sm text-[#1f3b2c] truncate">{m.fullName}</span>
-                      <span className="text-xs font-black text-[#166534]">{estEquity}% Share</span>
-                    </div>
-                    <div className="text-[11px] text-slate-600 flex items-center gap-3 mt-1">
-                      <span>🌾 {m.landAcres} Ac</span>
-                      <span>⏱️ {m.totalLabourHours}h Work</span>
-                      <span>🚜 {m.totalMachineryHours}h Mach</span>
-                    </div>
-                  </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-3">
-                    <div className="bg-[#166534] h-full rounded-full" style={{ width: `${Math.min(100, Number(estEquity))}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Main Table Container */}
-      <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm overflow-hidden">
+      {/* Main Contribution Activity Log Table */}
+      <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden shadow-xs">
         
         {/* Table Controls */}
         <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <h4 className="font-bold text-[#1f3b2c] text-sm">Contribution Activity Log</h4>
+            <h4 className="font-bold text-[#1f3b2c] text-sm flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-[#166534]" /> Contribution Activity Log (On-Chain)
+            </h4>
             <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200">
               {logs.length} Entries
             </span>
@@ -304,7 +320,7 @@ export default function ContributionHistoryTable({
                 <th className="py-3 px-4">Type & Activity</th>
                 <th className="py-3 px-4">Quantity / Duration</th>
                 <th className="py-3 px-4">Valuation</th>
-                <th className="py-3 px-4">Verification Status</th>
+                <th className="py-3 px-4">Verification & Ledger</th>
                 {isFco && <th className="py-3 px-4 text-right">FCO Action</th>}
               </tr>
             </thead>
@@ -373,24 +389,38 @@ export default function ContributionHistoryTable({
                       </span>
                     </td>
 
-                    <td className="py-3.5 px-4">
-                      {log.status === 'verified' && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-[11px] font-bold">
-                          <CheckCircle className="w-3 h-3" />
-                          <span>Verified</span>
-                        </span>
-                      )}
-                      {log.status === 'pending' && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-[11px] font-bold">
-                          <Clock className="w-3 h-3" />
-                          <span>Pending FCO</span>
-                        </span>
-                      )}
-                      {log.status === 'rejected' && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 border border-red-200 rounded-full text-[11px] font-bold" title={log.rejectionReason}>
-                          <XCircle className="w-3 h-3" />
-                          <span>Rejected</span>
-                        </span>
+                    <td className="py-3.5 px-4 space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        {log.status === 'verified' && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-[10px] font-bold">
+                            <CheckCircle className="w-3 h-3" />
+                            <span>Verified</span>
+                          </span>
+                        )}
+                        {log.status === 'pending' && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-[10px] font-bold">
+                            <Clock className="w-3 h-3" />
+                            <span>Pending FCO</span>
+                          </span>
+                        )}
+                        {log.status === 'rejected' && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded-full text-[10px] font-bold" title={log.rejectionReason}>
+                            <XCircle className="w-3 h-3" />
+                            <span>Rejected</span>
+                          </span>
+                        )}
+                      </div>
+
+                      {log.blockchain?.isAnchored && (
+                        <a
+                          href={`/verify?type=contribution&id=${log._id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#1A9B9A] hover:underline"
+                        >
+                          <Shield className="w-3 h-3" />
+                          <span>On-Chain #{log.blockchain.blockNumber} ↗</span>
+                        </a>
                       )}
                     </td>
 
@@ -401,22 +431,23 @@ export default function ContributionHistoryTable({
                             <button
                               onClick={() => handleVerifyOrReject(log._id, 'verified')}
                               disabled={actionLoadingId === log._id}
-                              className="px-2.5 py-1 bg-[#166534] hover:bg-[#14532d] text-white rounded-lg font-bold text-[11px] flex items-center gap-1 transition"
+                              className="px-2.5 py-1 bg-[#166534] hover:bg-[#14532d] text-white rounded-lg text-xs font-bold flex items-center gap-1 transition shadow-xs disabled:opacity-50"
+                              title="Verify & Anchor On Blockchain"
                             >
-                              <Check className="w-3 h-3" />
+                              <Check className="w-3.5 h-3.5" />
                               <span>Approve</span>
                             </button>
                             <button
                               onClick={() => handleVerifyOrReject(log._id, 'rejected')}
                               disabled={actionLoadingId === log._id}
-                              className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg font-bold text-[11px] flex items-center gap-1 transition"
+                              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition disabled:opacity-50"
+                              title="Reject Log"
                             >
-                              <X className="w-3 h-3" />
-                              <span>Reject</span>
+                              <X className="w-4 h-4" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-slate-400">Processed</span>
+                          <span className="text-[11px] text-slate-400 italic">No action</span>
                         )}
                       </td>
                     )}
@@ -428,15 +459,21 @@ export default function ContributionHistoryTable({
         </div>
       </div>
 
-      {/* Modal Trigger */}
-      <ContributionLoggerModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        poolId={poolId}
-        userId={userId}
-        farmerName={userName}
-        onSuccess={fetchContributions}
-      />
+      {/* Modal for adding log */}
+      {isModalOpen && (
+        <ContributionLoggerModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          poolId={poolId}
+          userId={userId}
+          farmerName={userName}
+          onSuccess={() => {
+            fetchContributions();
+            if (onRefreshPool) onRefreshPool();
+          }}
+        />
+      )}
+
     </div>
   );
 }

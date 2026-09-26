@@ -54,6 +54,9 @@ export interface ILandIntegration extends Document {
     signedAt: Date;
     ipAddress: string;
     userAgent: string;
+    signatureImage?: string;
+    signatureMethod?: 'draw' | 'upload';
+    signatureUrl?: string;
   }>;
   executionDate?: Date;
   // Blockchain fields
@@ -125,7 +128,10 @@ const LandIntegrationSchema = new Schema<ILandIntegration>({
     signatureHash: { type: String, required: true },
     signedAt: { type: Date, required: true },
     ipAddress: { type: String, required: true },
-    userAgent: { type: String, required: true }
+    userAgent: { type: String, required: true },
+    signatureImage: { type: String },
+    signatureMethod: { type: String, enum: ['draw', 'upload'] },
+    signatureUrl: { type: String }
   }],
   executionDate: { type: Date },
   
@@ -146,4 +152,7 @@ LandIntegrationSchema.index({ requestingUser: 1, status: 1 });
 LandIntegrationSchema.index({ targetUser: 1, status: 1 });
 LandIntegrationSchema.index({ status: 1, requestDate: -1 });
 
-export const LandIntegration = mongoose.models.LandIntegration || mongoose.model('LandIntegration', LandIntegrationSchema);
+if (mongoose.models.LandIntegration) {
+  delete (mongoose.models as any).LandIntegration;
+}
+export const LandIntegration = mongoose.model('LandIntegration', LandIntegrationSchema);

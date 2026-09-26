@@ -15,6 +15,8 @@ import { PoolPurchaseProposal } from './PoolPurchaseProposal';
 import { PoolContributionLog } from './PoolContributionLog';
 import { PoolSettlement } from './PoolSettlement';
 import { FarmLifecyclePlan } from './FarmLifecyclePlan';
+import { CropSale } from './CropSale';
+import { PoolInvestment } from './PoolInvestment';
 
 // Export models
 export { 
@@ -31,7 +33,9 @@ export {
   PoolPurchaseProposal,
   PoolContributionLog,
   PoolSettlement,
-  FarmLifecyclePlan
+  FarmLifecyclePlan,
+  CropSale,
+  PoolInvestment
 };
 
 // Export mongoose instance

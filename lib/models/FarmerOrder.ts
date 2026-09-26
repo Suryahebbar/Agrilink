@@ -45,6 +45,9 @@ export interface IFarmerOrder extends Document {
     timestamp: Date;
     note?: string;
   }[];
+  isPoolOrder?: boolean;
+  poolId?: Types.ObjectId | string;
+  poolName?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,7 +96,10 @@ const FarmerOrderSchema = new Schema<IFarmerOrder>({
     status: { type: String, required: true },
     timestamp: { type: Date, default: Date.now },
     note: { type: String }
-  }]
+  }],
+  isPoolOrder: { type: Boolean, default: false },
+  poolId: { type: Schema.Types.Mixed },
+  poolName: { type: String },
 }, { timestamps: true });
 
 FarmerOrderSchema.index({ user: 1, createdAt: -1 });

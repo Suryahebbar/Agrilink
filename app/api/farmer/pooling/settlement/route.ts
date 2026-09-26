@@ -11,7 +11,7 @@ import {
 import User from '@/models/User';
 import { auditLog } from '@/lib/auditLogger';
 import { ActivityAction, LogModule, ResourceType } from '@/lib/auditTypes';
-import crypto from 'crypto';
+import { agriLedgerService } from '@/lib/services/agri-ledger.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -147,12 +147,8 @@ export async function POST(request: Request) {
       if (settler) settlerName = settler.name;
     }
 
-    // Generate cryptographic proof hash
-    const blockHashData = `${poolId}-${grossHarvestRevenue}-${statement.netDistributableMargin}-${Date.now()}`;
-    const blockchainTxHash = '0x' + crypto.createHash('sha256').update(blockHashData).digest('hex');
-
     // 6. Save Immutable Settlement
-    const newSettlement = await PoolSettlement.create({
+    const newSettlement = new PoolSettlement({
       poolId,
       poolName: pool.name,
       season: season || 'Kharif 2026',
@@ -183,9 +179,41 @@ export async function POST(request: Request) {
       settlerName,
       settledAt: new Date(),
       status: 'finalized',
-      blockchainTxHash,
       notes
     });
+
+    // 7. Anchor Settlement on Blockchain
+    try {
+      const anchorResult = await agriLedgerService.anchorProfitDistributionOnChain(newSettlement);
+      newSettlement.blockchainTxHash = anchorResult.transactionHash;
+      newSettlement.blockchain = {
+        isAnchored: true,
+        distributionHash: anchorResult.proofHash,
+        transactionHash: anchorResult.transactionHash,
+        blockNumber: anchorResult.blockNumber,
+        timestamp: new Date(anchorResult.timestamp)
+      };
+    } catch (bcErr) {
+      console.warn('Profit distribution blockchain anchoring error:', bcErr);
+    }
+
+    await newSettlement.save();
+
+    // 8. Progressive Block Addition on Pool if available
+    if (pool.blockchain?.blocksProgress && newSettlement.blockchain) {
+      const lastBlock = pool.blockchain.blocksProgress[pool.blockchain.blocksProgress.length - 1];
+      pool.blockchain.blocksProgress.push({
+        blockNumber: (lastBlock?.blockNumber || 1) + 1,
+        timestamp: new Date(),
+        action: 'Profit Distributed & Settled',
+        parentHash: lastBlock?.blockHash || pool.blockchain.contractHash || '0x000',
+        blockHash: newSettlement.blockchain.distributionHash || newSettlement.blockchain.transactionHash,
+        remarks: `Harvest of ${harvestYield} ${yieldUnit || 'Quintals'} settled. Net margin: ₹${statement.netDistributableMargin.toLocaleString('en-IN')}`,
+        operator: settlerName
+      });
+      pool.markModified('blockchain');
+      await pool.save();
+    }
 
     // Audit Log
     void auditLog({
@@ -200,13 +228,14 @@ export async function POST(request: Request) {
         grossRevenue: grossHarvestRevenue,
         netMargin: statement.netDistributableMargin,
         model: calculationInput.modelNumber,
-        txHash: blockchainTxHash
+        txHash: newSettlement.blockchainTxHash,
+        blockchain: newSettlement.blockchain
       }
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Harvest recorded and pool settlement finalized successfully!',
+      message: 'Harvest recorded, profit distributed, and anchored to blockchain ledger!',
       settlement: newSettlement,
       financialStatement: statement
     });

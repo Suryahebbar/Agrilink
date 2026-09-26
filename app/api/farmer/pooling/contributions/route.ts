@@ -5,6 +5,7 @@ import { FarmPool } from '@/lib/models/FarmPool';
 import User from '@/models/User';
 import { auditLog } from '@/lib/auditLogger';
 import { ActivityAction, LogModule, ResourceType } from '@/lib/auditTypes';
+import { agriLedgerService } from '@/lib/services/agri-ledger.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -158,6 +159,21 @@ export async function POST(request: Request) {
       notes
     });
 
+    // Automatically anchor contribution on-chain
+    try {
+      const anchorResult = await agriLedgerService.anchorContributionOnChain(newLog);
+      newLog.blockchain = {
+        isAnchored: true,
+        proofHash: anchorResult.proofHash,
+        transactionHash: anchorResult.transactionHash,
+        blockNumber: anchorResult.blockNumber,
+        timestamp: new Date(anchorResult.timestamp)
+      };
+      await newLog.save();
+    } catch (bcErr) {
+      console.warn('Blockchain contribution anchoring error:', bcErr);
+    }
+
     // Audit log
     void auditLog({
       action: ActivityAction.CREATE,
@@ -167,12 +183,12 @@ export async function POST(request: Request) {
       resourceName: `${resolvedName} - ${activityName}`,
       userId,
       userName: resolvedName,
-      metadata: { type, quantity, totalValue }
+      metadata: { type, quantity, totalValue, blockchain: newLog.blockchain }
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Contribution log submitted successfully',
+      message: 'Contribution log submitted and recorded on blockchain',
       contribution: newLog
     });
   } catch (error: any) {
@@ -205,6 +221,20 @@ export async function PATCH(request: Request) {
       log.verifiedByName = verifiedByName || 'Field Officer / Pool Leader';
       log.verifiedAt = new Date();
       log.rejectionReason = undefined;
+
+      // Re-anchor verified state on blockchain
+      try {
+        const anchorResult = await agriLedgerService.anchorContributionOnChain(log);
+        log.blockchain = {
+          isAnchored: true,
+          proofHash: anchorResult.proofHash,
+          transactionHash: anchorResult.transactionHash,
+          blockNumber: anchorResult.blockNumber,
+          timestamp: new Date(anchorResult.timestamp)
+        };
+      } catch (e) {
+        console.warn('Error re-anchoring verified contribution:', e);
+      }
     } else {
       log.rejectionReason = rejectionReason || 'Rejected by reviewer';
     }

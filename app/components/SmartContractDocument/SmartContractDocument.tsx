@@ -2586,22 +2586,52 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
                 </div>
               </div>
 
-              {/* Future Crop Sale & Audit Trail Scope */}
+              {/* Crop Sale & Escrow Ledger Scope */}
               <div className="p-4 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-800">4. Crop Sale & Settlement Scope Logs</span>
-                  <span className="text-[10px] bg-slate-100 text-slate-500 font-mono px-2 py-0.5 rounded border border-slate-200">Auto-Linked Scope</span>
+                  <span className="font-bold text-slate-800">4. Crop Sale & Escrow Ledger Scope</span>
+                  <span className="text-[10px] bg-slate-100 text-slate-500 font-mono px-2 py-0.5 rounded border border-slate-200">On-Chain Escrow Receipts</span>
                 </div>
-                <p className="text-[10px] text-slate-500">Future crop cycle sale receipts and financial settlement blocks linked back to this contract receipt.</p>
-                <div className="bg-white border border-slate-200/60 rounded-xl p-3 text-[10px] text-slate-400 italic text-center">
-                  Awaiting harvest and crop sale transactions to execute settlements.
+                <p className="text-[10px] text-slate-500">Bulk produce sale receipts and smart contract escrow settlement records linked to this pool agreement.</p>
+                <div className="bg-white border border-slate-200/60 rounded-xl p-3 text-[10px] font-mono space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Produce Type:</span>
+                    <span className="text-slate-800 font-bold">{pool.farmPlan?.selectedCrop || 'Mixed Crops'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Expected Harvest:</span>
+                    <span className="text-slate-800 font-bold">{pool.farmPlan?.expectedYield || 'Standard Yield'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Target Revenue:</span>
+                    <span className="text-slate-800 font-bold">₹{pool.farmPlan?.expectedRevenue?.toLocaleString('en-IN') || '4,50,000'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Capital & Partner Investment Scope */}
+              <div className="p-4 space-y-2 bg-slate-50/40">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-slate-800">5. Capital & Partner Investment Scope</span>
+                  <span className="text-[10px] bg-slate-100 text-slate-500 font-mono px-2 py-0.5 rounded border border-slate-200">Capital Ledger Anchored</span>
+                </div>
+                <p className="text-[10px] text-slate-500">Immutable tracking of third-party, partner, and institutional seed capital injections.</p>
+                <div className="bg-white border border-slate-200/60 rounded-xl p-3 text-[10px] font-mono space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Initial Farmer Investment:</span>
+                    <span className="text-slate-800 font-bold">₹{pool.participants.reduce((acc, p) => acc + (p.investmentContribution || 0), 0).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Institutional / Partner Terms:</span>
+                    <span className="text-slate-800 font-bold">Pro-Rata Harvest Settlement</span>
+                  </div>
                 </div>
               </div>
 
               {/* Progressive Block Chain Explorer Scope */}
-              <div className="p-4 space-y-3 bg-slate-50/40">
+              <div className="p-4 space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-800">5. Decentralized Block Progression Explorer</span>
+                  <span className="font-bold text-slate-800">6. Decentralized Block Progression Explorer</span>
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200 uppercase">Chained Logs</span>
                 </div>
                 <p className="text-[10px] text-slate-500">Cryptographically progress operational stages anchored with parent block hashes to prevent backdating or modifications.</p>

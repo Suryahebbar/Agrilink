@@ -17,6 +17,16 @@ export interface IPoolContributionLog extends Document {
   verifiedAt?: Date;
   rejectionReason?: string;
   notes?: string;
+
+  // Blockchain Ledger Proofs
+  blockchain?: {
+    isAnchored: boolean;
+    proofHash?: string;
+    transactionHash?: string;
+    blockNumber?: number;
+    timestamp?: Date;
+  };
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,7 +56,14 @@ const PoolContributionLogSchema = new Schema<IPoolContributionLog>(
     verifiedByName: { type: String },
     verifiedAt: { type: Date },
     rejectionReason: { type: String },
-    notes: { type: String }
+    notes: { type: String },
+    blockchain: {
+      isAnchored: { type: Boolean, default: false },
+      proofHash: { type: String },
+      transactionHash: { type: String },
+      blockNumber: { type: Number },
+      timestamp: { type: Date }
+    }
   },
   { timestamps: true }
 );

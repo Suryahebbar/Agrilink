@@ -268,6 +268,9 @@ export interface IOrder extends Document {
     total: number;
   }[];
   totalAmount: number;
+  platformFeeRate?: number; // e.g. 0.05 for 5% platform commission
+  platformFeeAmount?: number; // amount retained by platform
+  sellerEarnings?: number; // net amount payable to seller
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentDetails?: {
     method?: 'card' | 'upi' | 'netbanking' | 'wallet';
@@ -309,6 +312,9 @@ const OrderSchema = new Schema<IOrder>({
     total: { type: Number, required: true, min: 0 }
   }],
   totalAmount: { type: Number, required: true, min: 0 },
+  platformFeeRate: { type: Number, default: 0.05 },
+  platformFeeAmount: { type: Number, default: 0 },
+  sellerEarnings: { type: Number, default: 0 },
   paymentStatus: { 
     type: String, 
     enum: ['pending', 'paid', 'failed', 'refunded'], 
