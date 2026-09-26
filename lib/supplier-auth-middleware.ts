@@ -3,12 +3,14 @@ import { Seller } from '@/lib/models/supplier';
 import { connectDB } from '@/lib/db';
 import mongoose from 'mongoose';
 import { AUTH_COOKIE_NAME, getUserFromRequest, verifyAuthToken } from '@/lib/auth';
+import { verifyAdminToken } from '@/lib/admin-auth';
 
 export interface AuthenticatedSeller {
   sellerId: string;
   email: string;
   companyName: string;
   verificationStatus: string;
+  isAdmin?: boolean;
 }
 
 async function findActiveSellerByIdOrEmail(id?: string | null, email?: string | null) {
@@ -35,6 +37,52 @@ export async function authenticateSupplier(request: NextRequest): Promise<Authen
 
     const debug = process.env.NODE_ENV !== 'production';
     const context = request.nextUrl?.pathname ?? 'unknown';
+
+    // 0. Legal Administrative Oversight: Check if an Admin is making this request
+    const adminToken = request.cookies.get('admin-token')?.value ||
+      request.headers.get('cookie')?.split('; ')
+        .find(row => row.startsWith('admin-token='))
+        ?.split('=')[1];
+
+    if (adminToken) {
+      const adminPayload = await verifyAdminToken(adminToken);
+      if (adminPayload) {
+        // If inspecting a specific supplier via x-seller-id or route param
+        const targetId = request.headers.get('x-seller-id') ||
+          request.nextUrl?.pathname?.match(/\/supplier\/([a-f0-9]{24})/i)?.[1];
+        if (targetId && mongoose.Types.ObjectId.isValid(targetId)) {
+          const targetSeller = await Seller.findById(targetId);
+          if (targetSeller) {
+            return {
+              sellerId: targetSeller._id.toString(),
+              email: targetSeller.email,
+              companyName: targetSeller.companyName,
+              verificationStatus: targetSeller.verificationStatus,
+              isAdmin: true
+            };
+          }
+        }
+        // If no target ID is specified, pick a sample seller for administrative preview
+        const sampleSeller = await Seller.findOne().sort({ createdAt: -1 });
+        if (sampleSeller) {
+          return {
+            sellerId: sampleSeller._id.toString(),
+            email: sampleSeller.email,
+            companyName: sampleSeller.companyName,
+            verificationStatus: sampleSeller.verificationStatus,
+            isAdmin: true
+          };
+        }
+
+        return {
+          sellerId: 'admin-legal-access',
+          email: (adminPayload as any).email || 'admin@bpfis.com',
+          companyName: 'Platform Administrator',
+          verificationStatus: 'verified',
+          isAdmin: true
+        };
+      }
+    }
 
     // Prefer cookie-based auth (shared with farmer flow)
     const cookieToken = request.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -199,6 +247,11 @@ export async function requireAuth(
 
   // Verify supplierId in route matches authenticated user
   const supplierIdFromRoute = resolvedParams?.params?.supplierId;
+
+  // Platform administrators have legal oversight authority over all supplier resources
+  if (auth.isAdmin) {
+    return auth;
+  }
   
   // For orders routes, allow access if user is authenticated (they can only see their own orders anyway)
   const isOrdersRoute = request.nextUrl?.pathname?.includes('/orders');

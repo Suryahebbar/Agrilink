@@ -1,4 +1,12 @@
 import mongoose from 'mongoose';
+import dns from 'dns';
+
+// Ensure DNS lookups for MongoDB Atlas SRV work reliably on Windows/ISP networks
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
+} catch (e) {
+  console.warn('DNS server setting skipped:', e);
+}
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -32,12 +40,22 @@ export async function connectDB(): Promise<typeof mongoose> {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI!, {
-      // Add options here if needed in the future
+      serverSelectionTimeoutMS: 8000,
     }).then((mongooseInstance) => {
       return mongooseInstance;
+    }).catch((err) => {
+      cached.promise = null;
+      cached.conn = null;
+      throw err;
     });
   }
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+  try {
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (err) {
+    cached.promise = null;
+    cached.conn = null;
+    throw err;
+  }
 }

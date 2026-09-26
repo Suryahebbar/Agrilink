@@ -12,12 +12,23 @@ export interface AdminUser {
 
 export function verifyAdminToken(request: NextRequest): AdminUser | null {
   try {
+    // 1. Check Authorization header
+    let token = '';
     const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    } else {
+      // 2. Check admin-token cookie
+      token = request.cookies.get('admin-token')?.value ||
+        request.headers.get('cookie')?.split('; ')
+          .find(row => row.startsWith('admin-token='))
+          ?.split('=')[1] || '';
+    }
+
+    if (!token) {
       return null;
     }
 
-    const token = authHeader.substring(7);
     const decoded = jwt.verify(token, JWT_SECRET) as any;
     
     // Verify user is admin
@@ -26,10 +37,10 @@ export function verifyAdminToken(request: NextRequest): AdminUser | null {
     }
 
     return {
-      id: decoded.id,
+      id: decoded.id || decoded.sub,
       email: decoded.email,
       role: decoded.role,
-      name: decoded.name
+      name: decoded.name || 'Admin'
     };
   } catch (error) {
     console.error('Admin token verification failed:', error);
