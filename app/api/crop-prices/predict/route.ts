@@ -15,18 +15,21 @@ export async function POST(request: Request) {
 
     // Call Python script for prediction using virtual environment
     const scriptPath = path.join(process.cwd(), 'ml_models', 'predict_prices.py');
-    const excelPath = path.join(process.cwd(), 'AgriLink_Chikkamagaluru_Crop_Prices.xlsx');
-    const venvPython = path.join(process.cwd(), 'ml_env', 'bin', 'python3');
+    const excelPath = path.join(process.cwd(), 'AgriLink_Chikkamagaluru_Crop_Prices_Augmented.xlsx');
+    const venvPython = process.platform === 'win32'
+      ? path.join(process.cwd(), 'ml_env', 'Scripts', 'python.exe')
+      : path.join(process.cwd(), 'ml_env', 'bin', 'python3');
     
     const { stdout, stderr } = await execAsync(
-      `${venvPython} ${scriptPath} --crop "${crop}" --months ${months} --excel "${excelPath}"`
+      `"${venvPython}" "${scriptPath}" --crop "${crop}" --months ${months} --excel "${excelPath}"`
     );
 
     if (stderr) {
       console.error('Python script error:', stderr);
     }
 
-    const result = JSON.parse(stdout);
+    console.log("Raw Python stdout:", JSON.stringify(stdout));
+    const result = JSON.parse(stdout.trim());
     
     return NextResponse.json(result);
     
@@ -41,13 +44,14 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    // Get available crops
     const scriptPath = path.join(process.cwd(), 'ml_models', 'get_crops.py');
-    const excelPath = path.join(process.cwd(), 'AgriLink_Chikkamagaluru_Crop_Prices.xlsx');
-    const venvPython = path.join(process.cwd(), 'ml_env', 'bin', 'python3');
+    const excelPath = path.join(process.cwd(), 'AgriLink_Chikkamagaluru_Crop_Prices_Augmented.xlsx');
+    const venvPython = process.platform === 'win32'
+      ? path.join(process.cwd(), 'ml_env', 'Scripts', 'python.exe')
+      : path.join(process.cwd(), 'ml_env', 'bin', 'python3');
     
     const { stdout, stderr } = await execAsync(
-      `${venvPython} ${scriptPath} --excel "${excelPath}"`
+      `"${venvPython}" "${scriptPath}" --excel "${excelPath}"`
     );
 
     if (stderr) {

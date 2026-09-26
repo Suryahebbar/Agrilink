@@ -1,0 +1,9 @@
+{
+    "crop": "arecanut",
+    "model_type": "linear_regression",
+    "mae": 1319.2724654945337,
+    "rmse": 1469.7869923804667,
+    "r2": 0.9642630651463738,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:36"
+}

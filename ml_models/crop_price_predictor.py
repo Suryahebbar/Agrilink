@@ -13,18 +13,47 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
 import os
+import sys
+
+# Override print to redirect output to stderr so Node.js can parse clean JSON from stdout
+def print(*args, **kwargs):
+    kwargs['file'] = sys.stderr
+    import builtins
+    builtins.print(*args, **kwargs)
 
 class CropPricePredictor:
-    def __init__(self, excel_path: str = 'AgriLink_Chikkamagaluru_Crop_Prices.xlsx'):
+    def __init__(self, excel_path: str = 'AgriLink_Chikkamagaluru_Crop_Prices_Augmented.xlsx'):
         self.excel_path = excel_path
         self.crops_data = {}
         self.models = {}
         self.scalers = {}
         self.feature_columns = []
+        self.saved_models_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saved_models')
+        os.makedirs(self.saved_models_dir, exist_ok=True)
         
         # Load and prepare data
         self.load_data()
         self.prepare_features()
+        self.load_all_saved_models()
+        
+    def load_saved_model(self, crop_name: str) -> bool:
+        """Load pre-trained model and scaler from joblib files if they exist"""
+        model_path = os.path.join(self.saved_models_dir, f"{crop_name}_best_model.pkl")
+        scaler_path = os.path.join(self.saved_models_dir, f"{crop_name}_scaler.pkl")
+        if os.path.exists(model_path) and os.path.exists(scaler_path):
+            try:
+                self.models[crop_name] = joblib.load(model_path)
+                self.scalers[crop_name] = joblib.load(scaler_path)
+                print(f"Loaded saved model and scaler for {crop_name}")
+                return True
+            except Exception as e:
+                print(f"Error loading saved model for {crop_name}: {e}")
+        return False
+
+    def load_all_saved_models(self):
+        """Attempt to load saved models for all crops"""
+        for crop in self.crops_data.keys():
+            self.load_saved_model(crop)
         
     def load_data(self):
         """Load crop data from Excel file"""
@@ -32,8 +61,12 @@ class CropPricePredictor:
             xls = pd.ExcelFile(self.excel_path)
             
             for crop_name in xls.sheet_names:
+                if 'readme' in crop_name.lower():
+                    continue
                 df = pd.read_excel(self.excel_path, sheet_name=crop_name)
                 # Clean and prepare data
+                if 'month' not in df.columns:
+                    continue
                 df['month'] = pd.to_datetime(df['month'])
                 df = df.sort_values('month')
                 df = df.dropna()
@@ -74,11 +107,11 @@ class CropPricePredictor:
             # Store processed data
             self.crops_data[crop_name] = df
             
-            # Define feature columns (exclude target and date)
-            self.feature_columns = [col for col in df.columns if col not in ['month', 'value']]
+            # Define feature columns (only numeric, exclude target)
+            self.feature_columns = [col for col in df.select_dtypes(include=[np.number]).columns if col not in ['value']]
             
     def train_models(self, crop_name: str) -> Dict[str, float]:
-        """Train multiple ML models for a specific crop"""
+        """Train multiple ML models with Hyperparameter Tuning for a specific crop"""
         if crop_name not in self.crops_data:
             return {}
             
@@ -96,56 +129,99 @@ class CropPricePredictor:
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
         
-        # Initialize models
-        models = {
-            'random_forest': RandomForestRegressor(n_estimators=100, random_state=42),
-            'gradient_boosting': GradientBoostingRegressor(n_estimators=100, random_state=42),
-            'linear_regression': LinearRegression(),
-            'svr': SVR(kernel='rbf', C=100, gamma=0.1)
+        # Define hyperparameter grid for tuning
+        rf_grid = [{'n_estimators': n, 'max_depth': d, 'random_state': 42} for n in [50, 100] for d in [10, None]]
+        gb_grid = [{'n_estimators': 100, 'learning_rate': lr, 'max_depth': md, 'random_state': 42} for lr in [0.05, 0.1] for md in [3, 5]]
+        svr_grid = [{'kernel': 'rbf', 'C': c, 'gamma': g} for c in [10, 100] for g in [0.05, 0.1]]
+        lr_grid = [{}]
+        
+        grids = {
+            'random_forest': (RandomForestRegressor, rf_grid, False),
+            'gradient_boosting': (GradientBoostingRegressor, gb_grid, False),
+            'linear_regression': (LinearRegression, lr_grid, False),
+            'svr': (SVR, svr_grid, True)
         }
         
-        # Train and evaluate models
         results = {}
         best_model = None
+        best_model_name = ""
         best_score = float('inf')
+        best_metrics = {}
         
-        for name, model in models.items():
-            try:
-                # Train model
-                if name == 'svr':
-                    model.fit(X_train_scaled, y_train)
-                    y_pred = model.predict(X_test_scaled)
-                else:
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
-                
-                # Calculate metrics
-                mae = mean_absolute_error(y_test, y_pred)
-                rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-                r2 = r2_score(y_test, y_pred)
-                
-                results[name] = {
-                    'mae': mae,
-                    'rmse': rmse,
-                    'r2': r2,
-                    'model': model
-                }
-                
-                # Track best model (based on RMSE)
-                if rmse < best_score:
-                    best_score = rmse
-                    best_model = model
+        for name, (model_class, param_grid, use_scaled) in grids.items():
+            best_param_rmse = float('inf')
+            best_param_model = None
+            best_param_metrics = {}
+            
+            for params in param_grid:
+                try:
+                    model = model_class(**params)
+                    if use_scaled:
+                        model.fit(X_train_scaled, y_train)
+                        y_pred = model.predict(X_test_scaled)
+                    else:
+                        model.fit(X_train, y_train)
+                        y_pred = model.predict(X_test)
+                        
+                    mae = mean_absolute_error(y_test, y_pred)
+                    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+                    r2 = r2_score(y_test, y_pred)
                     
-                print(f"{crop_name} - {name}: RMSE={rmse:.2f}, R²={r2:.3f}")
+                    if rmse < best_param_rmse:
+                        best_param_rmse = rmse
+                        best_param_model = model
+                        best_param_metrics = {
+                            'mae': float(mae),
+                            'rmse': float(rmse),
+                            'r2': float(r2),
+                            'params': {k: (v if not isinstance(v, type(None)) else 'None') for k, v in params.items()}
+                        }
+                except Exception as e:
+                    print(f"Error training {name} with params {params}: {e}")
+            
+            if best_param_model is not None:
+                results[name] = best_param_metrics
+                print(f"{crop_name} - {name} (Best Params: {best_param_metrics['params']}): RMSE={best_param_rmse:.2f}, R²={best_param_metrics['r2']:.3f}")
                 
-            except Exception as e:
-                print(f"Error training {name} for {crop_name}: {e}")
-                
+                # Check if this is the overall best model across all types
+                if best_param_rmse < best_score:
+                    best_score = best_param_rmse
+                    best_model = best_param_model
+                    best_model_name = name
+                    best_metrics = best_param_metrics
+                    
         # Store best model and scaler
         if best_model is not None:
             self.models[crop_name] = best_model
             self.scalers[crop_name] = scaler
             
+            # Save model to disk
+            model_path = os.path.join(self.saved_models_dir, f"{crop_name}_best_model.pkl")
+            scaler_path = os.path.join(self.saved_models_dir, f"{crop_name}_scaler.pkl")
+            metrics_path = os.path.join(self.saved_models_dir, f"{crop_name}_metrics.json")
+            
+            try:
+                joblib.dump(best_model, model_path)
+                joblib.dump(scaler, scaler_path)
+                
+                # Save metrics to JSON file
+                import json
+                save_data = {
+                    'crop': crop_name,
+                    'model_type': best_model_name,
+                    'mae': best_metrics['mae'],
+                    'rmse': best_metrics['rmse'],
+                    'r2': best_metrics['r2'],
+                    'params': best_metrics['params'],
+                    'trained_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                with open(metrics_path, 'w') as f:
+                    json.dump(save_data, f, indent=4)
+                    
+                print(f"Persisted model, scaler, and metrics for {crop_name} to disk.")
+            except Exception as e:
+                print(f"Error persisting model for {crop_name}: {e}")
+                
         return results
         
     def predict_future_prices(self, crop_name: str, months_ahead: int = 3) -> Dict:
@@ -203,11 +279,53 @@ class CropPricePredictor:
                         current_data[f'rolling_mean_{window}'] = np.mean(recent_values[-window:])
                         current_data[f'rolling_std_{window}'] = np.std(recent_values[-window:])
                         
+            # Load metrics from JSON if exists
+            metrics = {}
+            metrics_path = os.path.join(self.saved_models_dir, f"{crop_name}_metrics.json")
+            if os.path.exists(metrics_path):
+                try:
+                    import json
+                    with open(metrics_path, 'r') as f:
+                        metrics = json.load(f)
+                except Exception:
+                    pass
+
+            last_known_price = float(df.iloc[-1]['value'])
+            final_pred_price = float(predictions[-1])
+            change_pct = ((final_pred_price - last_known_price) / last_known_price) * 100
+            
+            # Volatility classification based on Coefficient of Variation (std / mean)
+            coef_var = float(df['value'].std() / df['value'].mean())
+            if coef_var >= 0.25:
+                volatility = "High"
+            elif coef_var >= 0.12:
+                volatility = "Medium"
+            else:
+                volatility = "Low"
+                
+            if change_pct >= 5.0:
+                recommendation = "HOLD"
+                rec_text = f"{crop_name.title()} prices are projected to rise by {change_pct:.1f}% over the next {months_ahead} months. Recommendation: HOLD stock to maximize profit."
+            elif change_pct <= -5.0:
+                recommendation = "SELL"
+                rec_text = f"{crop_name.title()} prices are projected to drop by {abs(change_pct):.1f}% over the next {months_ahead} months. Recommendation: SELL stock soon to prevent losses."
+            else:
+                recommendation = "STABLE"
+                rec_text = f"Market prices for {crop_name} are expected to remain stable (change within {change_pct:+.1f}%). Recommendation: Monitor market conditions."
+
             return {
                 'crop': crop_name,
                 'predictions': predictions,
                 'dates': [date.strftime('%Y-%m-%d') for date in prediction_dates],
-                'confidence_intervals': self._calculate_confidence_intervals(predictions)
+                'confidenceIntervals': self._calculate_confidence_intervals(predictions),
+                'metrics': metrics,
+                'analysis': {
+                    'lastKnownPrice': last_known_price,
+                    'changePercent': change_pct,
+                    'volatility': volatility,
+                    'recommendation': recommendation,
+                    'recommendationText': rec_text
+                }
             }
             
         except Exception as e:

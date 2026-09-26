@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser(description='Predict crop prices')
     parser.add_argument('--crop', required=True, help='Crop name')
     parser.add_argument('--months', type=int, default=3, help='Months to predict')
-    parser.add_argument('--excel', default='AgriLink_Chikkamagaluru_Crop_Prices.xlsx', help='Excel file path')
+    parser.add_argument('--excel', default='AgriLink_Chikkamagaluru_Crop_Prices_Augmented.xlsx', help='Excel file path')
     
     args = parser.parse_args()
     

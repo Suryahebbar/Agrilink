@@ -17,6 +17,20 @@ interface PredictionData {
     lower: number;
     upper: number;
   }>;
+  metrics?: {
+    model_type: string;
+    r2: number;
+    rmse: number;
+    mae: number;
+    trained_at: string;
+  };
+  analysis?: {
+    lastKnownPrice: number;
+    changePercent: number;
+    volatility: string;
+    recommendation: 'HOLD' | 'SELL' | 'STABLE';
+    recommendationText: string;
+  };
 }
 
 interface HistoricalData {
@@ -52,7 +66,7 @@ export default function CropPricePrediction() {
   const loadCrops = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/crop-prices/predict-simple');
+      const response = await fetch('/api/crop-prices/predict');
       if (response.ok) {
         const data = await response.json();
         setCrops(data.crops || []);
@@ -78,7 +92,7 @@ export default function CropPricePrediction() {
   const loadHistoricalData = async (crop: string) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/crop-prices/historical-simple', {
+      const response = await fetch('/api/crop-prices/historical', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +120,7 @@ export default function CropPricePrediction() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/crop-prices/predict-simple', {
+      const response = await fetch('/api/crop-prices/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -268,7 +282,7 @@ export default function CropPricePrediction() {
                 })}
 
                 {/* Confidence intervals */}
-                {predictionData.confidenceIntervals.map((interval, index) => {
+                {(predictionData.confidenceIntervals || (predictionData as any).confidence_intervals || []).map((interval: any, index: number) => {
                   const histLength = historicalData.dates.length;
                   const predIndex = histLength + index;
                   const x = 50 + (predIndex / (allDates.length - 1)) * 700;
@@ -408,6 +422,33 @@ export default function CropPricePrediction() {
       {/* Chart */}
       {historicalData && renderChart()}
 
+      {/* Actionable Recommendations Banner */}
+      {predictionData?.analysis && (
+        <div className={`p-5 rounded-lg mt-6 border flex items-start space-x-4 ${
+          predictionData.analysis.recommendation === 'HOLD'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : predictionData.analysis.recommendation === 'SELL'
+            ? 'bg-amber-50 border-amber-200 text-amber-800'
+            : 'bg-blue-50 border-blue-200 text-blue-800'
+        }`}>
+          <div className="text-2xl mt-0.5">
+            {predictionData.analysis.recommendation === 'HOLD' ? '🟢' : predictionData.analysis.recommendation === 'SELL' ? '🟠' : '🔵'}
+          </div>
+          <div>
+            <div className="flex items-center space-x-2 mb-1">
+              <span className="font-bold uppercase tracking-wider text-xs">
+                Market Action: {predictionData.analysis.recommendation}
+              </span>
+              <span className="text-gray-300">|</span>
+              <span className="text-xs font-semibold">
+                Risk / Volatility: <span className="underline font-bold">{predictionData.analysis.volatility}</span>
+              </span>
+            </div>
+            <p className="text-sm font-medium">{predictionData.analysis.recommendationText}</p>
+          </div>
+        </div>
+      )}
+
       {/* Prediction Results */}
       {predictionData && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -430,7 +471,7 @@ export default function CropPricePrediction() {
               ))}
             </div>
           </div>
-
+ 
           {/* Statistics */}
           <div className="bg-white rounded-lg border border-[#e2d4b7] p-6">
             <h3 className="text-lg font-semibold text-[#1f3b2c] mb-4">Analysis Summary</h3>
@@ -472,10 +513,29 @@ export default function CropPricePrediction() {
                   {historicalData?.data_points || 0}
                 </span>
               </div>
+
+              {predictionData.metrics && (
+                <>
+                  <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <span className="text-sm text-[#6b7280]">Algorithm Type</span>
+                    <span className="font-semibold text-[#1f3b2c] capitalize">
+                      {predictionData.metrics.model_type.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-[#6b7280]">Model Confidence Score (R²)</span>
+                    <span className={`font-bold ${predictionData.metrics.r2 > 0.8 ? 'text-green-600' : 'text-amber-600'}`}>
+                      {predictionData.metrics.r2 > 0
+                        ? `${(predictionData.metrics.r2 * 100).toFixed(1)}%`
+                        : 'Stable Trend (Baseline)'}
+                    </span>
+                  </div>
+                </>
+              )}
               
               <div className="mt-4 pt-4 border-t border-[#e2d4b7]">
                 <div className="text-xs text-[#6b7280] space-y-1">
-                <p>• Actual prices may vary due to market conditions</p>
+                <p>• Accuracy estimates are computed against historical validation sets</p>
                 </div>
               </div>
             </div>

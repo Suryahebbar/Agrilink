@@ -1,0 +1,9 @@
+{
+    "crop": "clove",
+    "model_type": "linear_regression",
+    "mae": 243.7042808523308,
+    "rmse": 272.8711428865086,
+    "r2": 0.914217504666958,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:44"
+}

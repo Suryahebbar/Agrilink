@@ -1,0 +1,14 @@
+{
+    "crop": "blackpepper",
+    "model_type": "gradient_boosting",
+    "mae": 1319.683174152162,
+    "rmse": 1768.6975463102187,
+    "r2": 0.9792810634860183,
+    "params": {
+        "n_estimators": 100,
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "random_state": 42
+    },
+    "trained_at": "2026-08-14 12:54:37"
+}

@@ -1,0 +1,9 @@
+{
+    "crop": "banana",
+    "model_type": "linear_regression",
+    "mae": 85.49606156577167,
+    "rmse": 102.69334395781216,
+    "r2": 0.963427451026786,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:43"
+}

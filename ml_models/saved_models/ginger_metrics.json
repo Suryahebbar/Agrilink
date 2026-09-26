@@ -1,0 +1,9 @@
+{
+    "crop": "ginger",
+    "model_type": "linear_regression",
+    "mae": 345.8537240705494,
+    "rmse": 433.35746602007663,
+    "r2": 0.9806560204603338,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:46"
+}

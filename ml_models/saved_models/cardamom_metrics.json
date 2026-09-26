@@ -1,0 +1,9 @@
+{
+    "crop": "cardamom",
+    "model_type": "linear_regression",
+    "mae": 22740.31809858719,
+    "rmse": 28986.975089959873,
+    "r2": 0.8411588406393443,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:42"
+}

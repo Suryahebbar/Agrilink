@@ -15,11 +15,13 @@ export async function POST(request: Request) {
 
     // Call Python script for historical data using virtual environment
     const scriptPath = path.join(process.cwd(), 'ml_models', 'get_historical.py');
-    const excelPath = path.join(process.cwd(), 'AgriLink_Chikkamagaluru_Crop_Prices.xlsx');
-    const venvPython = path.join(process.cwd(), 'ml_env', 'bin', 'python3');
+    const excelPath = path.join(process.cwd(), 'AgriLink_Chikkamagaluru_Crop_Prices_Augmented.xlsx');
+    const venvPython = process.platform === 'win32'
+      ? path.join(process.cwd(), 'ml_env', 'Scripts', 'python.exe')
+      : path.join(process.cwd(), 'ml_env', 'bin', 'python3');
     
     const { stdout, stderr } = await execAsync(
-      `${venvPython} ${scriptPath} --crop "${crop}" --months ${months} --excel "${excelPath}"`
+      `"${venvPython}" "${scriptPath}" --crop "${crop}" --months ${months} --excel "${excelPath}"`
     );
 
     if (stderr) {

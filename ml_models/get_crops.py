@@ -6,7 +6,7 @@ from crop_price_predictor import CropPricePredictor
 
 def main():
     parser = argparse.ArgumentParser(description='Get available crops')
-    parser.add_argument('--excel', default='AgriLink_Chikkamagaluru_Crop_Prices.xlsx', help='Excel file path')
+    parser.add_argument('--excel', default='AgriLink_Chikkamagaluru_Crop_Prices_Augmented.xlsx', help='Excel file path')
     
     args = parser.parse_args()
     

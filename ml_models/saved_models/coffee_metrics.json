@@ -1,0 +1,9 @@
+{
+    "crop": "coffee",
+    "model_type": "linear_regression",
+    "mae": 489.5465530737345,
+    "rmse": 814.3043730541791,
+    "r2": 0.9833488194037511,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:38"
+}

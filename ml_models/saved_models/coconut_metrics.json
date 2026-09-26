@@ -1,0 +1,9 @@
+{
+    "crop": "coconut",
+    "model_type": "linear_regression",
+    "mae": 318.8048224306203,
+    "rmse": 423.28545142734936,
+    "r2": 0.9430109470861376,
+    "params": {},
+    "trained_at": "2026-08-14 12:54:47"
+}
