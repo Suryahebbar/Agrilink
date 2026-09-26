@@ -198,6 +198,8 @@ export default function NewProductPage() {
       formPayload.append('stockQuantity', formData.stockQuantity);
       formPayload.append('reorderThreshold', formData.reorderThreshold);
       
+      formPayload.append('status', 'active');
+      
       // Add tags as JSON string
       const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
       formPayload.append('tags', JSON.stringify(tagsArray));
@@ -212,7 +214,7 @@ export default function NewProductPage() {
       formPayload.append('dimensions', JSON.stringify(dimensionsData));
       
       // Add image files
-      formData.imageFiles.forEach((file, index) => {
+      formData.imageFiles.forEach((file) => {
         formPayload.append(`images`, file);
       });
 
@@ -241,9 +243,11 @@ export default function NewProductPage() {
   };
 
   const hasRequiredDocuments = Boolean(
-    profile?.documents?.businessCertificate &&
-    profile?.documents?.tradeLicense &&
-    profile?.documents?.ownerIdProof
+    (profile as any)?.verificationStatus === 'verified' ||
+    (profile as any)?.documentsUploaded ||
+    ((profile?.documents?.businessCertificate || (profile as any)?.documents?.businessLicense) &&
+     profile?.documents?.ownerIdProof) ||
+    Boolean(profile?.documents)
   );
 
   if (profileLoading) {

@@ -21,17 +21,20 @@ interface ProductCardProps {
       verificationStatus?: 'verified' | 'pending' | 'unverified';
     };
     isInWishlist?: boolean;
+    isSponsored?: boolean;
   };
   onView?: () => void;
   onAddToWishlist?: () => void;
   onAddToCart?: () => void;
+  onBuyAsPool?: () => void;
 }
 
 export default function ProductCard({ 
   product, 
   onView, 
   onAddToWishlist, 
-  onAddToCart 
+  onAddToCart,
+  onBuyAsPool 
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(!!product.isInWishlist);
@@ -80,12 +83,19 @@ export default function ProductCard({
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
         
-        {/* Discount Badge */}
-        {discount > 0 && (
-          <div className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
-            {discount}% OFF
-          </div>
-        )}
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
+          {product.isSponsored && (
+            <span className="bg-amber-400 text-amber-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs">
+              Sponsored
+            </span>
+          )}
+          {discount > 0 && (
+            <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shadow-xs">
+              {discount}% OFF
+            </span>
+          )}
+        </div>
         
         {/* Wishlist Button */}
         <button 
@@ -96,18 +106,32 @@ export default function ProductCard({
           <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
         </button>
         
-        {/* Quick Add to Cart Button */}
+        {/* Quick Action Buttons */}
         <div 
-          className={`absolute bottom-0 left-0 right-0 bg-white/95 p-3 transition-transform duration-300 ${isHovered ? 'translate-y-0' : 'translate-y-full'}`}
+          className={`absolute bottom-0 left-0 right-0 bg-white/95 p-2.5 transition-transform duration-300 ${isHovered ? 'translate-y-0' : 'translate-y-full'} flex flex-col gap-1.5`}
         >
           <Button 
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
+            className="w-full bg-green-600 hover:bg-green-700 text-white text-xs py-1.5 h-auto font-semibold"
             size="sm"
             onClick={handleAddToCartClick}
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
+            <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
             Add to Cart
           </Button>
+
+          {onBuyAsPool && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onBuyAsPool();
+              }}
+              className="w-full bg-emerald-50 hover:bg-emerald-100 text-[#166534] border border-emerald-300 text-xs py-1.5 rounded-md font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs"
+            >
+              <span>👥 Buy as Farm Pool</span>
+            </button>
+          )}
         </div>
       </div>
       

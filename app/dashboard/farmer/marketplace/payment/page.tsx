@@ -31,7 +31,8 @@ export default function FarmerPaymentPage() {
   }, [success, error])
 
   const orderId = searchParams.get('orderId')
-  const userId = searchParams.get('userId')
+  const initialUserId = searchParams.get('userId')
+  const [userId, setUserId] = useState<string | null>(initialUserId)
 
   const [loading, setLoading] = useState(true)
   const [paying, setPaying] = useState(false)
@@ -70,15 +71,33 @@ export default function FarmerPaymentPage() {
   }, [orderId, userId, paymentStatus, method, form])
 
   useEffect(() => {
-    if (!orderId || !userId) {
-      router.push('/login')
-      return
-    }
+    const resolveAndLoad = async () => {
+      let effectiveUserId = initialUserId
+      if (!effectiveUserId) {
+        try {
+          const res = await fetch('/api/auth/me')
+          if (res.ok) {
+            const data = await res.json()
+            effectiveUserId = data.user?.id || data.user?._id
+          }
+        } catch (e) {
+          console.error('Payment user lookup error:', e)
+        }
+        if (!effectiveUserId && typeof window !== 'undefined') {
+          effectiveUserId = localStorage.getItem('agrilink_userId') || localStorage.getItem('userId')
+        }
+      }
 
-    const load = async () => {
+      if (!orderId || !effectiveUserId) {
+        router.push('/login')
+        return
+      }
+
+      setUserId(effectiveUserId)
+
       try {
         setLoading(true)
-        const res = await fetch(`/api/farmer/orders/${orderId}?userId=${encodeURIComponent(userId)}`, { cache: 'no-store' })
+        const res = await fetch(`/api/farmer/orders/${orderId}?userId=${encodeURIComponent(effectiveUserId)}`, { cache: 'no-store' })
         const raw: unknown = await res.json().catch(() => ({}))
         const data = raw as OrderResponse
 
@@ -101,8 +120,8 @@ export default function FarmerPaymentPage() {
       }
     }
 
-    load()
-  }, [orderId, userId, router])
+    resolveAndLoad()
+  }, [orderId, initialUserId, router])
 
   const handlePay = async () => {
     if (!orderId || !userId) return

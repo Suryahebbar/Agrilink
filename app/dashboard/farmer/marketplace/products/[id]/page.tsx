@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, ShoppingCart, Package, User, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Package, User, Phone, Mail, MapPin, Users } from 'lucide-react';
+import PoolPurchaseModal from '@/components/marketplace/PoolPurchaseModal';
 
 interface Product {
   _id: string;
@@ -45,6 +46,7 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [showPoolModal, setShowPoolModal] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -86,6 +88,12 @@ export default function ProductDetailPage() {
         userId = authData.user?.id || authData.user?._id;
       }
 
+      if (!userId && typeof window !== 'undefined') {
+        userId = new URLSearchParams(window.location.search).get('userId') ||
+          localStorage.getItem('agrilink_userId') ||
+          localStorage.getItem('userId');
+      }
+
       if (!userId) {
         // Redirect to login if not authenticated
         setToast({ message: 'Please login to add items to cart', type: 'error' });
@@ -93,6 +101,10 @@ export default function ProductDetailPage() {
           window.location.href = '/login';
         }, 1500);
         return;
+      }
+
+      if (typeof window !== 'undefined' && userId) {
+        localStorage.setItem('agrilink_userId', userId);
       }
 
       console.log('Adding to cart with userId:', userId);
@@ -275,10 +287,21 @@ export default function ProductDetailPage() {
                   <ShoppingCart className="w-5 h-5 inline mr-2" />
                   Add to Cart
                 </button>
+                <button
+                  onClick={() => setShowPoolModal(true)}
+                  className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-[#166534] border border-emerald-400 py-3 px-6 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-xs"
+                >
+                  <Users className="w-5 h-5 text-[#166534]" />
+                  Buy as Farm Pool
+                </button>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 flex items-center gap-4">
                 <Link href={userId ? `/dashboard/farmer/marketplace/cart?userId=${userId}` : "/dashboard/farmer/marketplace/cart"} className="text-green-700 hover:text-green-800 text-sm font-medium">
                   View Cart
+                </Link>
+                <span className="text-gray-300">•</span>
+                <Link href={userId ? `/dashboard/farmer/marketplace?userId=${userId}` : "/dashboard/farmer/marketplace"} className="text-emerald-700 hover:text-emerald-800 text-sm font-medium">
+                  View Pool Orders
                 </Link>
               </div>
             </div>
@@ -380,6 +403,25 @@ export default function ProductDetailPage() {
             </span>
           </div>
         </div>
+      )}
+
+      {product && (
+        <PoolPurchaseModal
+          isOpen={showPoolModal}
+          onClose={() => setShowPoolModal(false)}
+          product={product}
+          userId={userId}
+          onSuccess={(propId) => {
+            setToast({
+              message: 'Group purchase proposed! Notification sent to all pooled farmers.',
+              type: 'success'
+            });
+            setTimeout(() => {
+              const url = userId ? `/dashboard/farmer/marketplace?userId=${userId}` : '/dashboard/farmer/marketplace';
+              router.push(url);
+            }, 1500);
+          }}
+        />
       )}
     </div>
   );

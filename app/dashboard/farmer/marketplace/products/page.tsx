@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Search, Filter, ShoppingCart, Heart, Star, Loader2, Grid, List } from 'lucide-react';
 import Link from 'next/link';
 import ProductCard from '@/components/marketplace/ProductCard';
+import { useCartWishlist } from '@/contexts/CartWishlistContext';
 
 interface Product {
   _id: string;
@@ -23,13 +24,16 @@ interface Product {
   };
   tags?: string[];
   status?: string;
+  isSponsored?: boolean;
   createdAt?: string;
 }
 
 export default function MarketplaceProductsPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get('category');
   const userId = searchParams.get('userId');
+  const { cart, wishlist, addToCart, toggleWishlist: contextToggleWishlist, isInWishlist } = useCartWishlist();
   
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +42,6 @@ export default function MarketplaceProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState(category || 'all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
-  const [wishlist, setWishlist] = useState<string[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const categories = [
@@ -46,6 +49,7 @@ export default function MarketplaceProductsPage() {
     { id: 'seeds', name: 'Seeds' },
     { id: 'fertilizers', name: 'Fertilizers' },
     { id: 'tools', name: 'Tools' },
+    { id: 'equipment', name: 'Equipment' },
     { id: 'irrigation', name: 'Irrigation' },
     { id: 'pesticides', name: 'Pesticides' },
     { id: 'machinery', name: 'Machinery' },
@@ -53,31 +57,7 @@ export default function MarketplaceProductsPage() {
 
   useEffect(() => {
     fetchProducts();
-    loadWishlist();
   }, [selectedCategory, searchQuery, sortBy]);
-
-  const loadWishlist = async () => {
-    try {
-      const userId = searchParams.get('userId');
-      if (!userId) {
-        console.error('No userId provided');
-        return;
-      }
-      
-      const response = await fetch(`/api/marketplace/wishlist?userId=${userId}`);
-      if (!response.ok) {
-        throw new Error('Failed to load wishlist');
-      }
-      const data = await response.json();
-      
-      // Extract product IDs from wishlist items
-      const productIds = Array.isArray(data.products) ? data.products.map((p: any) => p._id) : [];
-      setWishlist(productIds);
-    } catch (error) {
-      console.error('Error loading wishlist:', error);
-      setWishlist([]);
-    }
-  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -114,7 +94,7 @@ export default function MarketplaceProductsPage() {
             return (b.rating || 0) - (a.rating || 0);
           case 'newest':
           default:
-            return 0; // In real app, sort by creation date
+            return 0;
         }
       });
       
@@ -127,62 +107,20 @@ export default function MarketplaceProductsPage() {
     }
   };
 
-  const toggleWishlist = async (productId: string) => {
-    try {
-      const userId = searchParams.get('userId');
-      if (!userId) {
-        console.error('No userId provided');
-        return;
-      }
-      
-      // Check if product is already in wishlist
-      const isInWishlist = wishlist.includes(productId);
-      
-      if (isInWishlist) {
-        // Remove from wishlist
-        const response = await fetch(`/api/marketplace/wishlist?userId=${userId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ productId })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to remove from wishlist');
-        }
-        
-        setWishlist(prev => prev.filter(id => id !== productId));
-        setToast({ message: 'Removed from wishlist', type: 'success' });
-      } else {
-        // Add to wishlist
-        const response = await fetch(`/api/marketplace/wishlist?userId=${userId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ productId })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to add to wishlist');
-        }
-        
-        setWishlist(prev => [...prev, productId]);
-        setToast({ message: 'Added to wishlist', type: 'success' });
-      }
-    } catch (error) {
-      console.error('Error toggling wishlist:', error);
-      setToast({ message: 'Failed to update wishlist', type: 'error' });
-    }
-    
+  const toggleWishlist = (productId: string) => {
+    contextToggleWishlist(productId);
+    const inWish = isInWishlist(productId);
+    setToast({ 
+      message: inWish ? 'Removed from wishlist' : 'Added to wishlist', 
+      type: 'success' 
+    });
     setTimeout(() => setToast(null), 2000);
   };
 
-  const handleAddToCart = (productId: string) => {
-    // Hook up to cart API/localStorage as needed; show non-intrusive UI feedback
-    setToast({ message: 'Added to cart', type: 'success' });
-    setTimeout(() => setToast(null), 2000);
+  const handleAddToCart = (product: Product) => {
+    addToCart(product as any, 1);
+    setToast({ message: `Added "${product.name}" to cart`, type: 'success' });
+    setTimeout(() => setToast(null), 2500);
   };
 
   return (
@@ -282,14 +220,17 @@ export default function MarketplaceProductsPage() {
             {products.map((product) => (
               <div key={product._id} className={viewMode === 'list' ? 'bg-white rounded-lg shadow p-4' : ''}>
                 <ProductCard
-                  product={product}
+                  product={{
+                    ...product,
+                    isInWishlist: isInWishlist(product._id)
+                  }}
                   onView={() => {
                     const base = `/dashboard/farmer/marketplace/products/${product._id}`;
                     const url = userId ? `${base}?userId=${userId}` : base;
-                    window.location.href = url;
+                    router.push(url);
                   }}
                   onAddToWishlist={() => toggleWishlist(product._id)}
-                  onAddToCart={() => handleAddToCart(product._id)}
+                  onAddToCart={() => handleAddToCart(product)}
                 />
               </div>
             ))}
@@ -299,7 +240,7 @@ export default function MarketplaceProductsPage() {
 
       {/* Wishlist Summary */}
       {wishlist.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border">
+        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-40">
           <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500 fill-current" />
             <span className="text-sm font-medium text-gray-900">{wishlist.length} items in wishlist</span>

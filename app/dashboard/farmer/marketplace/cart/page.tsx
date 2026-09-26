@@ -21,15 +21,48 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Require userId from URL params, redirect to login if not present
+  // Resolve userId from URL params, auth session, or localStorage
   useEffect(() => {
-    const urlUserId = searchParams.get('userId')
-    if (urlUserId) {
-      setUserId(urlUserId)
-    } else {
-      // No userId in URL, redirect to login
+    const resolveUser = async () => {
+      const urlUserId = searchParams.get('userId')
+      if (urlUserId) {
+        setUserId(urlUserId)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('agrilink_userId', urlUserId)
+        }
+        return
+      }
+
+      try {
+        const res = await fetch('/api/auth/me')
+        if (res.ok) {
+          const data = await res.json()
+          const uid = data.user?.id || data.user?._id
+          if (uid) {
+            setUserId(uid)
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('agrilink_userId', uid)
+            }
+            return
+          }
+        }
+      } catch (e) {
+        console.error('Failed to get auth user in cart:', e)
+      }
+
+      if (typeof window !== 'undefined') {
+        const savedUid = localStorage.getItem('agrilink_userId') || localStorage.getItem('userId')
+        if (savedUid) {
+          setUserId(savedUid)
+          return
+        }
+      }
+
+      // No authenticated user found, redirect to login
       router.push('/login')
     }
+
+    resolveUser()
   }, [searchParams, router])
 
   // Load cart from database

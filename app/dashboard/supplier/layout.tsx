@@ -6,25 +6,29 @@ import { usePathname, useRouter } from 'next/navigation';
 import { withSupplierAuth } from '@/lib/supplier-auth';
 
 // Create context for supplier ID
-const SupplierIdContext = createContext<string | null>(null);
+interface SupplierContextType {
+  supplierId: string | null;
+  loading: boolean;
+}
+
+const SupplierIdContext = createContext<SupplierContextType | undefined>(undefined);
 
 export const useSupplierId = () => {
   const context = useContext(SupplierIdContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useSupplierId must be used within SupplierLayout');
   }
-  return context;
+  return context.supplierId;
 };
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard/supplier', current: true },
-  { name: 'Products', href: '/dashboard/supplier/products', current: false },
-  { name: 'Inventory', href: '/dashboard/supplier/inventory', current: false },
-  { name: 'Orders', href: '/dashboard/supplier/orders', current: false },
-  // { name: 'Analytics', href: '/dashboard/supplier/analytics', current: false },
-  //{ name: 'Reviews', href: '/dashboard/supplier/reviews', current: false },
-  { name: 'Profile', href: '/dashboard/supplier/profile', current: false },
-  // { name: 'Settings', href: '/dashboard/supplier/settings', current: false },
+  { name: 'Dashboard', href: '/dashboard/seller', current: true },
+  { name: 'Products', href: '/dashboard/seller/products', current: false },
+  { name: 'Inventory', href: '/dashboard/seller/inventory', current: false },
+  { name: 'Orders', href: '/dashboard/seller/orders', current: false },
+  { name: 'Earnings & Payouts', href: '/dashboard/seller/earnings', current: false },
+  { name: 'Ads & Promotions', href: '/dashboard/seller/ads', current: false },
+  { name: 'Profile', href: '/dashboard/seller/profile', current: false },
 ];
 
 export default function SupplierLayout({
@@ -40,37 +44,53 @@ export default function SupplierLayout({
 
   // Load supplier ID on mount
   useEffect(() => {
+    let isMounted = true;
+
     const loadSupplierId = async () => {
       try {
         const response = await fetch('/api/supplier', withSupplierAuth());
         if (response.ok) {
           const data = await response.json();
-          // Try both supplier and seller keys
           const id = data.supplier?._id || data.seller?._id;
-          if (id) {
-            setSupplierId(id);
-          } else {
-            console.error('No supplier ID found in response:', data);
+          if (isMounted) {
+            if (id) {
+              setSupplierId(id);
+            } else if (data.needsSetup) {
+              router.push('/dashboard/supplier/setup');
+              return;
+            }
+          }
+        } else if (response.status === 401) {
+          if (isMounted) {
+            setSupplierId(null);
           }
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.error('Failed to load supplier ID:', errorData);
+          console.warn('Could not load supplier profile:', errorData);
         }
       } catch (error) {
         console.error('Error loading supplier ID:', error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     loadSupplierId();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
 
   const isActive = (href: string) => {
-    if (href === '/dashboard/supplier') {
-      return pathname === href;
+    const normalizedPath = pathname.replace(/^\/dashboard\/supplier/, '/dashboard/seller');
+    const normalizedHref = href.replace(/^\/dashboard\/supplier/, '/dashboard/seller');
+    if (normalizedHref === '/dashboard/seller') {
+      return normalizedPath === normalizedHref;
     }
-    return pathname.startsWith(href);
+    return normalizedPath.startsWith(normalizedHref);
   };
 
   const handleLogout = () => {
@@ -90,15 +110,47 @@ export default function SupplierLayout({
     );
   }
 
+  if (!loading && !supplierId && !pathname.includes('/setup') && !pathname.includes('/register')) {
+    return (
+      <SupplierIdContext.Provider value={{ supplierId, loading }}>
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-4">
+            <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-xl font-bold">
+              !
+            </div>
+            <h2 className="text-xl font-extrabold text-gray-900">Supplier Account Required</h2>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              You are currently not signed in to a supplier account, or your profile setup is still pending.
+            </p>
+            <div className="flex flex-col gap-2 pt-2">
+              <Link
+                href="/login?role=supplier"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#1A9B9A] text-white text-xs font-bold hover:bg-[#147878] transition-colors"
+              >
+                Sign In as Supplier
+              </Link>
+              <Link
+                href="/dashboard/supplier/setup"
+                className="w-full py-2.5 px-4 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
+              >
+                Complete Profile Setup
+              </Link>
+            </div>
+          </div>
+        </div>
+      </SupplierIdContext.Provider>
+    );
+  }
+
   return (
-    <SupplierIdContext.Provider value={supplierId}>
+    <SupplierIdContext.Provider value={{ supplierId, loading }}>
       <div className="min-h-screen bg-gray-50">
         {/* Mobile sidebar */}
         <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
           <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
             <div className="flex h-16 items-center justify-between px-4 border-b border-[var(--gray-300)]">
-              <h1 className="text-lg font-semibold text-[var(--navy-blue)]">Supplier Portal</h1>
+              <h1 className="text-lg font-semibold text-[var(--navy-blue)]">Seller Dashboard</h1>
             <button
               aria-label="Close sidebar"
               onClick={() => setSidebarOpen(false)}
@@ -131,7 +183,7 @@ export default function SupplierLayout({
       <div className="sidebar hidden lg:flex lg:flex-col">
         <div className="flex flex-col flex-grow bg-white">
           <div className="flex h-16 items-center px-6 border-b border-[var(--gray-300)]">
-            <h1 className="text-lg font-semibold text-[var(--navy-blue)]">Supplier Portal</h1>
+            <h1 className="text-lg font-semibold text-[var(--navy-blue)]">Seller Dashboard</h1>
           </div>
           <nav className="flex-1 py-4">
             {navigation.map((item) => (

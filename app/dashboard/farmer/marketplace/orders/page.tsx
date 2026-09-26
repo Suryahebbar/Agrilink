@@ -36,14 +36,45 @@ export default function FarmerMarketplaceOrders() {
   };
 
   useEffect(() => {
-    // Require userId from URL params, redirect to login if not present
-    const urlUserId = searchParams.get('userId');
-    if (urlUserId) {
-      setUid(urlUserId);
-    } else {
-      // No userId in URL, redirect to login
+    const resolveUser = async () => {
+      const urlUserId = searchParams.get('userId');
+      if (urlUserId) {
+        setUid(urlUserId);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('agrilink_userId', urlUserId);
+        }
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          const authId = data.user?.id || data.user?._id;
+          if (authId) {
+            setUid(authId);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('agrilink_userId', authId);
+            }
+            return;
+          }
+        }
+      } catch (e) {
+        console.error('Orders auth resolution error:', e);
+      }
+
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('agrilink_userId') || localStorage.getItem('userId');
+        if (saved) {
+          setUid(saved);
+          return;
+        }
+      }
+
       window.location.href = '/login';
-    }
+    };
+
+    resolveUser();
   }, [searchParams]);
 
   useEffect(() => {
