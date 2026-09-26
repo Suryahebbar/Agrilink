@@ -3,118 +3,166 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
-interface LandData {
-  centroidLatitude: number;
-  centroidLongitude: number;
-  sideLengths: number[];
-  vertices: Array<{ latitude: number; longitude: number; order: number }>;
-  totalArea?: number;
-  geojson?: string;
+interface Crop {
+  name: string;
+  season?: string;
+  area?: string;
+  land_use?: string;
+  irrigation?: string;
+}
+
+interface Plot {
+  plotId: string;
+  type: string;
+  points: number[][];
+  administrative: {
+    district: string;
+    taluk: string;
+    hobli: string;
+    village: string;
+    survey: string;
+    surnoc?: string;
+    hissa?: string;
+    ulpin?: string;
+    olc?: string;
+  };
+  owner: {
+    name?: string;
+    father?: string;
+    khata?: string;
+    ownership_type?: string;
+    address?: string;
+  };
+  land: {
+    total_area?: string;
+    cultivable_area?: string;
+    pot_kharab_a?: string;
+    pot_kharab_b?: string;
+    revenue?: string;
+    jodi?: string;
+    cess?: string;
+    water_rate?: string;
+    soil?: string;
+    land_type?: string;
+    irrigation_source?: string;
+    trees?: string;
+  };
+  gis: {
+    geojson_geom: any;
+    centroid: number[];
+    bbox: number[];
+    area: number;
+    perimeter: number;
+    side_lengths: number[];
+    latitude?: number;
+    longitude?: number;
+  };
+  crops: Crop[];
 }
 
 export default function LandDetailsPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Auth and User State
   const [userId, setUserId] = useState<string>('');
-  const [landData, setLandData] = useState<LandData | null>(null);
-  const [sketchImage, setSketchImage] = useState<File | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string>('');
+  const [registeredName, setRegisteredName] = useState<string>('');
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [isVerified, setIsVerified] = useState(false);
+  
+  // Dropdown States
+  const [district, setDistrict] = useState('Shivamogga');
+  const [taluk, setTaluk] = useState('Thirthahalli');
+  const [hobli, setHobli] = useState('Mandagadde');
+  const [village, setVillage] = useState('CHIKSIKENCHIGUDDE');
+  const [surveyNumber, setSurveyNumber] = useState('');
+  const [surnoc, setSurnoc] = useState('');
+  const [hissa, setHissa] = useState('');
+  const [period, setPeriod] = useState('2026-2027');
 
-  // Load saved land data from localStorage on component mount
+  // Loaded plots and filters
+  const [allPlots, setAllPlots] = useState<Plot[]>([]);
+  const [isLoadingPlots, setIsLoadingPlots] = useState(true);
+  const [verifiedPlot, setVerifiedPlot] = useState<Plot | null>(null);
+  
+  // Map and Link Actions
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
+  const [linking, setLinking] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [fetching, setFetching] = useState(false);
+  
+  // Leaflet Map instance ref for centering
+  const mapInstanceRef = useRef<any>(null);
+  const plotLayerRef = useRef<any>(null);
+
+  // 1. Get current logged-in user and check verification status
   useEffect(() => {
-    const savedLandData = localStorage.getItem('landDetailsData');
-    if (savedLandData) {
+    const getCurrentUserAndStatus = async () => {
       try {
-        const parsedData = JSON.parse(savedLandData);
-        setLandData(parsedData);
-        
-        // If we have saved data, restore it to the farmland tool when it initializes
-        setTimeout(() => {
-          if ((window as any).restoreLandData) {
-            (window as any).restoreLandData(parsedData);
-          }
-        }, 1000); // Give time for the farmland tool to initialize
-      } catch (error) {
-        console.error('Error parsing saved land data:', error);
-      }
-    }
-  }, []);
-
-  // Save land data to localStorage whenever it changes
-  useEffect(() => {
-    if (landData) {
-      localStorage.setItem('landDetailsData', JSON.stringify(landData));
-    }
-  }, [landData]);
-
-  // Save sketch image to localStorage whenever it changes
-  useEffect(() => {
-    if (sketchImage) {
-      // Convert file to base64 for localStorage storage
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        localStorage.setItem('landSketchImage', reader.result as string);
-      };
-      reader.readAsDataURL(sketchImage);
-    }
-  }, [sketchImage]);
-
-  // Load saved sketch image from localStorage on component mount
-  useEffect(() => {
-    const savedImage = localStorage.getItem('landSketchImage');
-    if (savedImage) {
-      try {
-        // Convert base64 back to file
-        const base64Data = savedImage.split(',')[1];
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        const file = new File([blob], 'restored-sketch.jpg', { type: 'image/jpeg' });
-        setSketchImage(file);
-      } catch (error) {
-        console.error('Error restoring sketch image:', error);
-      }
-    }
-  }, []);
-
-  // Get current logged-in user
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me'); // Assuming you have an auth endpoint
+        const response = await fetch('/api/auth/me');
         if (response.ok) {
           const userData = await response.json();
-          console.log('Auth response:', userData);
-          
-          // Check for both possible ID fields (id or _id)
-          const userId = userData.user?.id || userData.user?._id;
-          
-          if (userId) {
-            setUserId(userId);
-            console.log('Current user ID:', userId);
-          } else {
-            console.error('No user ID found in auth response:', userData);
-          }
-        } else {
-          // Fallback: try to get from KYC endpoint which should have user info
-          const kycResponse = await fetch('/api/farmer/kyc');
-          if (kycResponse.ok) {
-            const kycData = await kycResponse.json();
-            console.log('KYC response:', kycData);
+          const id = userData.user?.id || userData.user?._id;
+          if (id) {
+            setUserId(id);
+            setRegisteredName(userData.user?.fullName || '');
             
-            if (kycData.profile && kycData.profile.user) {
-              setUserId(kycData.profile.user);
-              console.log('User ID from KYC:', kycData.profile.user);
-            } else {
-              console.error('No user ID found in KYC response:', kycData);
+            // Check if user already has verified land linked
+            const landRes = await fetch(`/api/farmer/land-details?userId=${id}`);
+            const landData = await landRes.json();
+            if (landRes.ok && landData.success && landData.data && landData.data.length > 0) {
+              setIsVerified(true);
+              
+              const dbLand = landData.data[0];
+              const mappedPlot: Plot = {
+                plotId: dbLand._id,
+                type: 'polygon',
+                points: dbLand.landData?.vertices?.map((v: any) => [v.latitude, v.longitude]) || [],
+                administrative: {
+                  district: dbLand.rtcDetails?.district || 'Shivamogga',
+                  taluk: dbLand.rtcDetails?.taluk || 'Thirthahalli',
+                  hobli: dbLand.rtcDetails?.hobli || 'Mandagadde',
+                  village: dbLand.rtcDetails?.village || 'CHIKSIKENCHIGUDDE',
+                  survey: dbLand.rtcDetails?.surveyNumber || '',
+                  surnoc: dbLand.rtcDetails?.surnoc || '',
+                  hissa: dbLand.rtcDetails?.hissa || '',
+                },
+                owner: {
+                  name: dbLand.rtcDetails?.ownerName || userData.user?.fullName,
+                  father: dbLand.rtcDetails?.fatherName || '',
+                  khata: dbLand.rtcDetails?.khataNumber || '',
+                  ownership_type: dbLand.rtcDetails?.ownershipType || '',
+                },
+                land: {
+                  total_area: dbLand.rtcDetails?.extent || '',
+                  cultivable_area: dbLand.rtcDetails?.cultivable_area || dbLand.rtcDetails?.extent || '',
+                  pot_kharab_a: dbLand.rtcDetails?.potKharabA || '0',
+                  pot_kharab_b: dbLand.rtcDetails?.potKharabB || '0',
+                  revenue: dbLand.rtcDetails?.revenue || '0.00',
+                  jodi: dbLand.rtcDetails?.jodi || '0.00',
+                  cess: dbLand.rtcDetails?.cess || '0.00',
+                  water_rate: dbLand.rtcDetails?.waterRate || '0.00',
+                  soil: dbLand.rtcDetails?.soilType || '',
+                  land_type: dbLand.rtcDetails?.landType || 'Dry',
+                  irrigation_source: dbLand.rtcDetails?.irrigationSource || 'Rainfed',
+                  trees: dbLand.rtcDetails?.trees || 'None',
+                },
+                gis: {
+                  geojson_geom: dbLand.landData?.geojson ? JSON.parse(dbLand.landData.geojson) : null,
+                  centroid: [dbLand.landData?.centroidLatitude || 0, dbLand.landData?.centroidLongitude || 0],
+                  bbox: [],
+                  area: 0,
+                  perimeter: 0,
+                  side_lengths: dbLand.landData?.sideLengths || [],
+                  latitude: dbLand.landData?.latitude,
+                  longitude: dbLand.landData?.longitude,
+                },
+                crops: dbLand.rtcDetails?.allCrops || (dbLand.rtcDetails?.cropType 
+                  ? dbLand.rtcDetails.cropType.split(',').map((name: string) => ({ name: name.trim() })) 
+                  : [])
+              };
+              setVerifiedPlot(mappedPlot);
             }
-          } else {
-            console.error('Both auth and KYC endpoints failed');
           }
         }
       } catch (error) {
@@ -123,107 +171,32 @@ export default function LandDetailsPage() {
         setIsLoadingUser(false);
       }
     };
-
-    getCurrentUser();
+    getCurrentUserAndStatus();
   }, []);
 
-  const saveLandDetails = async (computedData: LandData, geojsonString: string) => {
-    if (!userId) {
-      console.error('User ID is required for saving land details');
-      return; // Don't show error message, just log and return
-    }
-
-    setIsSaving(true);
-    setSaveMessage('');
-
-    try {
-        // Fetch RTC data from user's profile to get land extent
-        let rtcExtent = '';
-        try {
-          const kycResponse = await fetch('/api/farmer/kyc');
-          if (kycResponse.ok) {
-            const kycData = await kycResponse.json();
-            console.log('KYC response data:', kycData);
-            
-            // Try multiple possible fields for land extent
-            rtcExtent = kycData.profile?.totalCultivableArea || 
-                        kycData.profile?.landParcelIdentity || 
-                        kycData.profile?.rtcOcrText || '';
-            
-            console.log('RTC extent found:', rtcExtent);
-            console.log('Available land fields:', {
-              totalCultivableArea: kycData.profile?.totalCultivableArea,
-              landParcelIdentity: kycData.profile?.landParcelIdentity,
-              rtcOcrText: kycData.profile?.rtcOcrText ? 'present' : 'missing'
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching RTC data:', error);
-        }
-
-        const formData = new FormData();
-        formData.append('userId', userId);
-        formData.append('centroidLatitude', computedData.centroidLatitude.toString());
-        formData.append('centroidLongitude', computedData.centroidLongitude.toString());
-        formData.append('sideLengths', JSON.stringify(computedData.sideLengths));
-        formData.append('vertices', JSON.stringify(computedData.vertices));
-        formData.append('geojson', geojsonString);
-        
-        // Include RTC extent for land size calculation
-        if (rtcExtent) {
-          formData.append('extent', rtcExtent);
-          console.log('Including RTC extent in save:', rtcExtent);
-        } else {
-          console.log('No RTC extent found, land size will not be calculated');
-        }
-      
-      if (sketchImage) {
-        formData.append('sketchImage', sketchImage);
-      }
-
-      const response = await fetch('/api/farmer/land-details', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setSaveMessage('Land details saved successfully!');
-        setLandData(computedData);
-        
-        // Keep form state intact - no clearing or refreshing
-        // The canvas, inputs, and all data remain as they were
-        console.log('Land details saved successfully, form state preserved');
-        
-        // Optional: Clear the success message after a few seconds
-        setTimeout(() => {
-          setSaveMessage('');
-        }, 3000);
-      } else {
-        setSaveMessage(result.error || 'Failed to save land details');
-      }
-    } catch (error) {
-      console.error('Error saving land details:', error);
-      setSaveMessage('Failed to save land details');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
+  // 2. Fetch all digitized plots for dropdowns (only if not verified yet)
   useEffect(() => {
-    // Make saveLandDetails available globally for the farmland tool
-    (window as any).saveLandDetails = saveLandDetails;
-  }, [saveLandDetails, userId, sketchImage]);
+    if (isVerified) return;
+    const fetchPlots = async () => {
+      try {
+        const res = await fetch('/api/digitizer/plots');
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setAllPlots(data.data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching digitized plots:', err);
+      } finally {
+        setIsLoadingPlots(false);
+      }
+    };
+    fetchPlots();
+  }, [isVerified]);
 
+  // 3. Load Leaflet dynamic assets
   useEffect(() => {
-    // Only initialize Leaflet after user is loaded and we have a userId
-    if (isLoadingUser || !userId) return;
-    
-    // Only run on client side
     if (typeof window === 'undefined') return;
 
-    // Load Leaflet CSS and JS
     const leafletCSS = document.createElement('link');
     leafletCSS.rel = 'stylesheet';
     leafletCSS.href = 'https://unpkg.com/leaflet/dist/leaflet.css';
@@ -232,477 +205,950 @@ export default function LandDetailsPage() {
     const leafletJS = document.createElement('script');
     leafletJS.src = 'https://unpkg.com/leaflet/dist/leaflet.js';
     leafletJS.onload = () => {
-      // After Leaflet loads, initialize the farmland tool
-      initializeFarmlandTool();
+      setLeafletLoaded(true);
     };
     document.head.appendChild(leafletJS);
 
     return () => {
-      // Cleanup
-      if (leafletCSS.parentNode) {
-        leafletCSS.parentNode.removeChild(leafletCSS);
-      }
-      if (leafletJS.parentNode) {
-        leafletJS.parentNode.removeChild(leafletJS);
+      if (leafletCSS.parentNode) leafletCSS.parentNode.removeChild(leafletCSS);
+      if (leafletJS.parentNode) leafletJS.parentNode.removeChild(leafletJS);
+    };
+  }, []);
+
+  // 4. Render Leaflet Map for CRS.Simple on plot selection / verification
+  useEffect(() => {
+    if (!leafletLoaded || !verifiedPlot || !mapContainerRef.current) return;
+
+    const L = (window as any).L;
+    if (!L) return;
+
+    mapContainerRef.current.innerHTML = '<div id="leaflet-simple-map" style="height: 480px; border-radius: 16px; border: 1px solid #cbd5e1; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);"></div>';
+
+    const map = L.map('leaflet-simple-map', {
+      crs: L.CRS.Simple,
+      minZoom: -2,
+      maxZoom: 3,
+      zoomControl: false
+    });
+    mapInstanceRef.current = map;
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    const img = new Image();
+    img.src = '/village_map_clear.png';
+    img.onload = () => {
+      const w = img.width;
+      const h = img.height;
+
+      const bounds = [[-h, 0], [0, w]];
+      L.imageOverlay('/village_map_clear.png', bounds).addTo(map);
+      map.fitBounds(bounds);
+
+      const geojsonGeom = verifiedPlot.gis.geojson_geom;
+      if (geojsonGeom) {
+        const plotLayer = L.geoJSON(geojsonGeom, {
+          coordsToLatLng: function (coords: number[]) {
+            return L.latLng([-coords[1], coords[0]]);
+          },
+          style: {
+            color: '#15803d',
+            weight: 4,
+            dashArray: '2, 5',
+            fillColor: '#22c55e',
+            fillOpacity: 0.25
+          }
+        }).addTo(map);
+        plotLayerRef.current = plotLayer;
+
+        plotLayer.on('mouseover', () => {
+          plotLayer.setStyle({
+            color: '#166534',
+            weight: 5,
+            fillOpacity: 0.4,
+            fillColor: '#15803d'
+          });
+        });
+        plotLayer.on('mouseout', () => {
+          plotLayer.setStyle({
+            color: '#15803d',
+            weight: 4,
+            fillOpacity: 0.25,
+            fillColor: '#22c55e'
+          });
+        });
+
+        const c = verifiedPlot.gis.centroid;
+        if (c && c.length === 2) {
+          const pinIcon = L.divIcon({
+            html: `<div class="relative flex items-center justify-center">
+                     <span class="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-emerald-400 opacity-75"></span>
+                     <div class="h-4 w-4 rounded-full bg-emerald-600 border-2 border-white shadow-md"></div>
+                   </div>`,
+            className: 'custom-pin-icon',
+            iconSize: [16, 16]
+          });
+          L.marker([-c[1], c[0]], { icon: pinIcon }).addTo(map)
+            .bindPopup(`<strong>Farmland Center:</strong><br/>Survey No: ${verifiedPlot.administrative.survey}<br/>Coordinates: ${c[0].toFixed(1)}, ${c[1].toFixed(1)} px`)
+            .openPopup();
+        }
+
+        map.fitBounds(plotLayer.getBounds());
       }
     };
-  }, [isLoadingUser, userId]); // Only re-run when user loading state changes
+  }, [leafletLoaded, verifiedPlot]);
 
-  const initializeFarmlandTool = () => {
-    if (!containerRef.current) return;
-
-    // Clear any existing content
-    containerRef.current.innerHTML = '';
-
-    // === tiny DOM helpers ===
-    function make(tag: string, attrs: any = {}, parent: HTMLElement = containerRef.current!) {
-      const e = document.createElement(tag);
-      for (const k in attrs) if (k !== 'text') e.setAttribute(k, attrs[k]);
-      if (attrs.text) e.textContent = attrs.text;
-      parent.appendChild(e);
-      return e;
+  const handleResetMap = () => {
+    if (mapInstanceRef.current && plotLayerRef.current) {
+      mapInstanceRef.current.fitBounds(plotLayerRef.current.getBounds());
     }
+  };
 
-    // === geo helpers ===
-    // convert east(dx), north(dy) meters to lat/lon (approx for local areas)
-    function addMeters(lat: number, lon: number, dx: number, dy: number) {
-      const R = 6378137;
-      const newLat = lat + (dy / R) * (180 / Math.PI);
-      const newLon = lon + (dx / (R * Math.cos(lat * Math.PI / 180))) * (180 / Math.PI);
-      return [newLat, newLon];
-    }
+  // Unique lists for dropdown options based on all plots
+  const availableSurveys = Array.from(
+    new Set(
+      allPlots
+        .filter(p => p.administrative.district === district && p.administrative.village === village)
+        .map(p => p.administrative.survey)
+    )
+  ).sort();
 
-    // area-weighted centroid for polygon in planar coordinates (x=east, y=north)
-    function polygonCentroidMeters(pts: number[][]) {
-      const n = pts.length;
-      if (n < 3) return [0, 0];
-      // ensure closed
-      const P = pts.slice();
-      if (P[0][0] !== P[P.length - 1][0] || P[0][1] !== P[P.length - 1][1]) P.push([P[0][0], P[0][1]]);
+  const availableSurnocs = Array.from(
+    new Set(
+      allPlots
+        .filter(p => p.administrative.survey === surveyNumber)
+        .map(p => p.administrative.surnoc || '—')
+    )
+  ).sort();
 
-      let A = 0; let Cx = 0; let Cy = 0;
-      for (let i = 0; i < P.length - 1; i++) {
-        const x0 = P[i][0], y0 = P[i][1];
-        const x1 = P[i + 1][0], y1 = P[i + 1][1];
-        const cross = x0 * y1 - x1 * y0;
-        A += cross;
-        Cx += (x0 + x1) * cross;
-        Cy += (y0 + y1) * cross;
-      }
-      A = A / 2.0;
-      if (Math.abs(A) < 1e-9) {
-        // fallback to mean
-        let sx = 0, sy = 0;
-        for (const p of pts) { sx += p[0]; sy += p[1]; }
-        return [sx / pts.length, sy / pts.length];
-      }
-      Cx = Cx / (6 * A);
-      Cy = Cy / (6 * A);
-      return [Cx, Cy];
-    }
+  const availableHissas = Array.from(
+    new Set(
+      allPlots
+        .filter(p => p.administrative.survey === surveyNumber && (p.administrative.surnoc || '—') === surnoc)
+        .map(p => p.administrative.hissa || '—')
+    )
+  ).sort();
 
-    // convert feet->meters if needed
-    function toMetersList(arr: number[], unit: string) {
-      if (unit === 'feet') return arr.map(v => v * 0.3048);
-      return arr.slice();
-    }
+  // Fetch details & match user name with digitized database owner name
+  const handleFetchAndVerify = async () => {
+    setErrorMessage('');
+    setSaveMessage('');
+    setVerifiedPlot(null);
+    setFetching(true);
 
-    // --- Build UI ---
-    const wrap = make('div', { style: 'display:flex;gap:12px;padding:12px;font-family:Arial;color:#1f3b2c;' });
-    const left = make('div', { style: 'width:520px;' }, wrap);
-    const right = make('div', { style: 'flex:1;' }, wrap);
-
-    // canvas area
-    make('h3', { text: 'Sketch (click vertices in order)', style: 'color:#1f3b2c;font-weight:600;margin-bottom:8px;' }, left);
-    const fileInput = make('input', { type: 'file', accept: 'image/*', style: 'width:100%;color:#1f3b2c;border:1px solid #e2d4b7;padding:8px;border-radius:4px;background:white;' }, left);
-    const canvas = make('canvas', { style: 'border:1px solid #e2d4b7;margin-top:8px;cursor:crosshair;background:white;' }, left) as HTMLCanvasElement;
-    canvas.width = 500; canvas.height = 700;
-    const ctx = canvas.getContext('2d')!;
-
-    // controls
-    make('h4', { text: 'Controls', style: 'color:#1f3b2c;font-weight:600;margin:16px 0 8px 0;' }, left);
-    const btnClear = make('button', { text: 'Clear Points', style: 'margin-right:6px;color:#1f3b2c;border:1px solid #e2d4b7;background:#fffaf1;padding:6px 12px;border-radius:4px;cursor:pointer;' }, left);
-    const btnComplete = make('button', { text: 'Complete Polygon', style: 'color:#1f3b2c;border:1px solid #e2d4b7;background:#fffaf1;padding:6px 12px;border-radius:4px;cursor:pointer;' }, left);
-
-    // inputs
-    make('h4', { text: 'Inputs', style: 'color:#1f3b2c;font-weight:600;margin:16px 0 8px 0;' }, left);
-    make('label', { text: 'Centroid Latitude', style: 'color:#1f3b2c;display:block;margin-bottom:4px;font-weight:500;' }, left);
-    const inLat = make('input', { type: 'number', step: '0.0000001', style: 'width:100%;color:#1f3b2c;border:1px solid #e2d4b7;padding:8px;border-radius:4px;background:white;margin-bottom:12px;' }, left) as HTMLInputElement;
-    make('label', { text: 'Centroid Longitude', style: 'color:#1f3b2c;display:block;margin-bottom:4px;font-weight:500;' }, left);
-    const inLon = make('input', { type: 'number', step: '0.0000001', style: 'width:100%;color:#1f3b2c;border:1px solid #e2d4b7;padding:8px;border-radius:4px;background:white;margin-bottom:12px;' }, left) as HTMLInputElement;
-    
-    // Add info text about automatic calculation
-    make('div', { 
-      text: 'Note: Side lengths and land area will be calculated automatically from the polygon vertices you mark on the sketch.', 
-      style: 'color:#6b7280;font-size:12px;margin-bottom:12px;padding:8px;background:#f9fafb;border-radius:4px;' 
-    }, left);
-
-    const btnCompute = make('button', { text: 'Compute Coordinates', style: 'margin-top:8px;width:100%;color:#1f3b2c;border:1px solid #e2d4b7;background:#fffaf1;padding:10px;border-radius:4px;cursor:pointer;font-weight:600;' }, left);
-
-    // outputs
-    make('h4', { text: 'Output', style: 'color:#1f3b2c;font-weight:600;margin-bottom:8px;' }, right);
-    const outPre = make('pre', { style: 'height:230px;overflow:auto;border:1px solid #e2d4b7;padding:8px;background:#fafafa;color:#1f3b2c;font-family:monospace;font-size:12px;' }, right);
-    const btnDownload = make('button', { text: 'Download GeoJSON', style: 'color:#1f3b2c;border:1px solid #e2d4b7;background:#fffaf1;padding:8px 12px;border-radius:4px;cursor:pointer;margin-top:8px;' }, right);
-
-    // map
-    make('h4', { text: 'Map', style: 'color:#1f3b2c;font-weight:600;margin:16px 0 8px 0;' }, right);
-    const mapDiv = make('div', { id: 'ft-map', style: 'height:400px;border:1px solid #e2d4b7;border-radius:4px;' }, right);
-
-    // init leaflet
-    const L = (window as any).L;
-    const map = L.map(mapDiv).setView([12.97, 77.59], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 22 }).addTo(map);
-    let parcelLayer: any = null;
-
-    // canvas state
-    let img: HTMLImageElement | null = null;
-    let pts: number[][] = []; // pixel points
-    let closed = false;
-
-    function drawCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (img) {
-        const ar = img.width / img.height;
-        let dw = canvas.width, dh = dw / ar;
-        if (dh > canvas.height) { dh = canvas.height; dw = dh * ar; }
-        const ox = (canvas.width - dw) / 2, oy = (canvas.height - dh) / 2;
-        (canvas as any)._imgOffset = { ox, oy, dw, dh };
-        ctx.drawImage(img, 0, 0, img.width, img.height, ox, oy, dw, dh);
-      } else {
-        (canvas as any)._imgOffset = { ox: 0, oy: 0, dw: canvas.width, dh: canvas.height };
-      }
-
-      ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.fillStyle = '#111';
-      if (pts.length > 0) {
-        ctx.beginPath();
-        for (let i = 0; i < pts.length; i++) {
-          const [x, y] = pts[i];
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        if (closed) ctx.closePath();
-        ctx.stroke();
-        for (const [x, y] of pts) {
-          ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
-        }
-      }
-    }
-
-    fileInput.addEventListener('change', (e: any) => {
-      const f = (e.target as HTMLInputElement).files?.[0];
-      if (!f) return;
-      setSketchImage(f); // Store the image file
-      const r = new FileReader();
-      r.onload = function (ev: any) {
-        img = new Image();
-        img.onload = function () {
-          if (!img) return;
-          // resize canvas to keep reasonable size, but preserve aspect
-          const maxW = 520;
-          const scale = Math.min(maxW / img.width, 1);
-          canvas.width = Math.round(img.width * scale);
-          canvas.height = Math.round(img.height * scale);
-          drawCanvas();
-        };
-        img.src = ev.target.result;
-      };
-      r.readAsDataURL(f);
-    });
-
-    canvas.addEventListener('click', function (e: any) {
-      if (closed) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left, y = e.clientY - rect.top;
-      pts.push([x, y]);
-      drawCanvas();
-    });
-
-    btnClear.addEventListener('click', function () { pts = []; closed = false; drawCanvas(); outPre.textContent = ''; if (parcelLayer) { map.removeLayer(parcelLayer); parcelLayer = null; } });
-    btnComplete.addEventListener('click', function () { if (pts.length < 3) { alert('Add at least 3 vertices'); return; } closed = true; drawCanvas(); });
-
-    // MAIN compute function (updated to auto-calculate side lengths)
-    btnCompute.addEventListener('click', function () {
-      if (!closed) { alert('Complete polygon first'); return; }
-      const latC = parseFloat(inLon.value), lonC = parseFloat(inLat.value);
-      if (isNaN(latC) || isNaN(lonC)) { alert('Enter valid centroid'); return; }
-
-      // Auto-calculate side lengths from pixel coordinates
-      const pixelSideLengths = [];
-      for (let i = 0; i < pts.length; i++) {
-        const [x1, y1] = pts[i];
-        const [x2, y2] = pts[(i + 1) % pts.length];
-        pixelSideLengths.push(Math.hypot(x2 - x1, y2 - y1));
-      }
-
-      // Use a default scale factor (you can adjust this based on your needs)
-      // For now, we'll assume 1 pixel = 1 meter for simplicity
-      // In a real application, you might want to calibrate this
-      const metersPerPixel = 1.0;
-      const measuredMeters = pixelSideLengths.map(length => length * metersPerPixel);
-
-      // pixel centroid (centroid in pixel coordinates)
-      let cx = 0, cy = 0;
-      for (const p of pts) { cx += p[0]; cy += p[1]; }
-      cx /= pts.length; cy /= pts.length;
-
-      // build offsets in meters relative to pixel centroid
-      const offsets = pts.map(([x, y]) => {
-        const dx_px = x - cx;           // east positive
-        const dy_px = cy - y;          // north positive (invert y)
-        return [dx_px * metersPerPixel, dy_px * metersPerPixel]; // [east_m, north_m]
+    try {
+      const response = await fetch('/api/farmer/verify-land', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          district,
+          taluk,
+          hobli,
+          village,
+          survey: surveyNumber,
+          surnoc,
+          hissa
+        })
       });
 
-      // compute polygon centroid in meters (area-weighted) using offsets as vertices
-      const centroid_m = polygonCentroidMeters(offsets); // [cx_m, cy_m] in meters
-
-      // translate offsets so centroid becomes (0,0) in meter-space
-      const translated_offsets = offsets.map(([ex, ny]) => [ex - centroid_m[0], ny - centroid_m[1]]);
-
-      // convert translated_offsets to lat/lon using addMeters with given centroid latC,lonC as anchor
-      const latlonVerts = translated_offsets.map(([east_m, north_m]) => addMeters(latC, lonC, east_m, north_m));
-
-      // build GeoJSON (lon,lat)
-      const coords = latlonVerts.map(([lat, lon]) => [lon, lat]);
-      coords.push(coords[0]);
-      const geojson = {
-        type: "FeatureCollection",
-        features: [{
-          type: "Feature",
-          geometry: { type: "Polygon", coordinates: [coords] },
-          properties: {}
-        }]
-      };
-
-      // Calculate actual geographic side lengths in meters
-      const geoSideLengths = [];
-      for (let i = 0; i < latlonVerts.length; i++) {
-        const [lat1, lon1] = latlonVerts[i];
-        const [lat2, lon2] = latlonVerts[(i + 1) % latlonVerts.length];
-        
-        // Haversine formula to calculate distance between two lat/lon points
-        const R = 6371000; // Earth's radius in meters
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon/2) * Math.sin(dLon/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        const distance = R * c;
-        
-        geoSideLengths.push(distance);
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setVerifiedPlot(data.plot);
+        setSaveMessage('Identity and land ownership matching successful! Press confirm below to link.');
+      } else {
+        setErrorMessage(data.error || 'Name match verification failed.');
       }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('Network error occurred verifying ownership.');
+    } finally {
+      setFetching(false);
+    }
+  };
 
-      // Calculate total area in square meters using Shoelace formula
-      let totalArea = 0;
-      if (latlonVerts.length >= 3) {
-        for (let i = 0; i < latlonVerts.length; i++) {
-          const j = (i + 1) % latlonVerts.length;
-          totalArea += latlonVerts[i][0] * latlonVerts[j][1];
-          totalArea -= latlonVerts[j][0] * latlonVerts[i][1];
-        }
-        totalArea = Math.abs(totalArea) / 2;
+  // Link selected plot to farmer profile
+  const handleLinkLand = async () => {
+    if (!verifiedPlot || !userId) return;
+
+    setLinking(true);
+    setSaveMessage('');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/farmer/link-land', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, plotId: verifiedPlot.plotId })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setSaveMessage('Land integration complete! Redirecting to dashboard...');
+        setIsVerified(true);
+        setTimeout(() => {
+          window.location.href = `/dashboard/farmer?userId=${userId}`;
+        }, 2000);
+      } else {
+        setErrorMessage(data.error || 'Failed to complete land integration.');
       }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('Something went wrong during land integration. Please try again.');
+    } finally {
+      setLinking(false);
+    }
+  };
 
-      // Output vertices and calculated data
-      let out = 'Vertices (lat, lon):\n';
-      for(let i=0;i<latlonVerts.length;i++){
-        out += `${i+1}: ${latlonVerts[i][0].toFixed(7)}, ${latlonVerts[i][1].toFixed(7)}\n`;
-      }
-      out += `\nCalculated Side Lengths (meters):\n`;
-      for(let i=0;i<geoSideLengths.length;i++){
-        out += `Side ${i+1}: ${geoSideLengths[i].toFixed(2)} m\n`;
-      }
-      out += `\nCentroid: ${latC.toFixed(7)}, ${lonC.toFixed(7)}\n`;
-      outPre.textContent = out;
+  // Trigger PDF Generation / Printing of Land Details Akarband Certificate
+  const handleDownloadPDF = () => {
+    if (!verifiedPlot) return;
 
-      // render on map
-      if(parcelLayer) map.removeLayer(parcelLayer);
-      parcelLayer = L.geoJSON(geojson, { style: { color: '#e63946', weight: 2, fillOpacity: 0.25 } }).addTo(map);
-      // add anchor marker
-      L.circleMarker([latC, lonC], { radius: 5, color: 'blue', fill: true, fillColor: 'blue' }).addTo(map);
-      map.fitBounds(parcelLayer.getBounds());
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Pop-up blocker is preventing document printing. Please allow popups.');
+      return;
+    }
 
-      // download
-      btnDownload.onclick = function () {
-        const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a'); (a as any).href = URL.createObjectURL(blob); a.download = 'parcel.geojson'; a.click();
-      };
+    const points = verifiedPlot.points || [];
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
 
-      // Save to database with calculated data
-      console.log('DEBUG: Frontend computed coordinates - latC:', latC, 'lonC:', lonC);
-      const computedData: LandData = {
-        centroidLatitude: latC,
-        centroidLongitude: lonC,
-        sideLengths: geoSideLengths, // Use calculated geographic side lengths
-        vertices: latlonVerts.map((coord, index) => ({
-          latitude: coord[0],
-          longitude: coord[1],
-          order: index + 1
-        })),
-        totalArea: totalArea // Use calculated area
-      };
-
-      // Call the save function from component scope
-      (window as any).saveLandDetails?.(computedData, JSON.stringify(geojson));
-      
-      // IMPORTANT: Do not clear any form data after save
-      // Keep all inputs, canvas, and computed results visible
-      // The user can continue working or make adjustments if needed
+    points.forEach(pt => {
+      if (pt[0] < minX) minX = pt[0];
+      if (pt[0] > maxX) maxX = pt[0];
+      if (pt[1] < minY) minY = pt[1];
+      if (pt[1] > maxY) maxY = pt[1];
     });
 
-    // initial help
-    outPre.textContent = "Steps:\\n1. Upload sketch image.\\n2. Click polygon vertices in order (anticlockwise or clockwise).\\n3. Click 'Complete Polygon'.\\n4. Enter centroid (lat,lon).\\n5. Click 'Compute Coordinates'.";
-    drawCanvas();
+    const w = maxX - minX;
+    const h = maxY - minY;
 
-    // Make restoreLandData available globally
-    (window as any).restoreLandData = (savedData: LandData) => {
-      // Restore centroid inputs (swapped to match corrected logic)
-      if (inLat && savedData.centroidLongitude) {
-        inLat.value = savedData.centroidLongitude.toString();
-      }
-      if (inLon && savedData.centroidLatitude) {
-        inLon.value = savedData.centroidLatitude.toString();
-      }
-      
-      // Restore output display
-      if (outPre && savedData.vertices && savedData.sideLengths) {
-        let out = 'Vertices (lat, lon):\n';
-        for(let i = 0; i < savedData.vertices.length; i++){
-          out += `${i+1}: ${savedData.vertices[i].latitude.toFixed(7)}, ${savedData.vertices[i].longitude.toFixed(7)}\n`;
-        }
-        out += `\nCalculated Side Lengths (meters):\n`;
-        for(let i = 0; i < savedData.sideLengths.length; i++){
-          out += `Side ${i+1}: ${savedData.sideLengths[i].toFixed(2)} m\n`;
-        }
-        out += `\nCentroid: ${savedData.centroidLatitude.toFixed(7)}, ${savedData.centroidLongitude.toFixed(7)}\n`;
-        out += `\n\n(Restored from previous session)`;
-        outPre.textContent = out;
-      }
-      
-      // Restore map if we have GeoJSON
-      if (savedData.geojson && map && parcelLayer) {
-        try {
-          const geojson = JSON.parse(savedData.geojson);
-          if (parcelLayer) {
-            map.removeLayer(parcelLayer);
-          }
-          parcelLayer = L.geoJSON(geojson, { style: { color: '#e63946', weight: 2, fillOpacity: 0.25 } }).addTo(map);
-          
-          // Add centroid marker
-          if (savedData.centroidLatitude && savedData.centroidLongitude) {
-            L.circleMarker([savedData.centroidLatitude, savedData.centroidLongitude], { 
-              radius: 5, 
-              color: 'blue', 
-              fill: true, 
-              fillColor: 'blue' 
-            }).addTo(map);
-          }
-          
-          map.fitBounds(parcelLayer.getBounds());
-        } catch (error) {
-          console.error('Error restoring map data:', error);
-        }
-      }
-    };
+    const htmlContent = `
+      <html>
+        <head>
+          <title>Akarband Certificate - Survey No. ${verifiedPlot.administrative.survey}</title>
+          <style>
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              color: #1f3b2c;
+              margin: 40px;
+              padding: 0;
+            }
+            .header {
+              border-bottom: 3px double #166534;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .logo {
+              font-size: 26px;
+              font-weight: 800;
+              color: #166534;
+              letter-spacing: 1px;
+            }
+            .certificate-title {
+              font-size: 20px;
+              font-weight: 700;
+              color: #1f3b2c;
+              margin: 0;
+              text-align: right;
+            }
+            .meta-details {
+              font-size: 11px;
+              color: #6b7280;
+              text-align: right;
+              margin-top: 5px;
+            }
+            h3 {
+              color: #166534;
+              border-bottom: 1px solid #e2d4b7;
+              padding-bottom: 6px;
+              margin-top: 25px;
+              font-size: 15px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 15px;
+            }
+            th, td {
+              border: 1px solid #e2d4b7;
+              padding: 8px 10px;
+              text-align: left;
+              font-size: 12.5px;
+            }
+            th {
+              background-color: #f0fdf4;
+              color: #1f3b2c;
+              font-weight: 600;
+              width: 25%;
+            }
+            .sketch-container {
+              text-align: center;
+              margin-top: 20px;
+              padding: 15px;
+              border: 1px solid #e2d4b7;
+              background-color: #fafafa;
+              border-radius: 8px;
+            }
+            .sketch-canvas {
+              background-color: #ffffff;
+              border: 1px solid #cbd5e1;
+            }
+            .sketch-caption {
+              font-size: 11px;
+              color: #6b7280;
+              margin-top: 8px;
+            }
+            .signatures {
+              margin-top: 50px;
+              display: flex;
+              justify-content: space-between;
+              page-break-inside: avoid;
+            }
+            .sig-box {
+              width: 250px;
+              text-align: center;
+              border-top: 1px solid #1f3b2c;
+              padding-top: 10px;
+              font-size: 11.5px;
+            }
+            @media print {
+              body { margin: 20px; }
+              button { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">AGRILINK CADASTRAL SURVEY</div>
+            <div>
+              <div class="certificate-title">Official Land Akarband Ledger</div>
+              <div class="meta-details">ID: AL-RTC-${verifiedPlot.plotId.substring(0, 8).toUpperCase()} | Date: ${new Date().toLocaleDateString('en-IN')}</div>
+            </div>
+          </div>
 
-    // Try to restore saved data if available
-    const savedLandData = localStorage.getItem('landDetailsData');
-    const savedImage = localStorage.getItem('landSketchImage');
-    
-    if (savedLandData) {
-      try {
-        const parsedData = JSON.parse(savedLandData);
-        setTimeout(() => {
-          (window as any).restoreLandData(parsedData);
-        }, 500); // Small delay to ensure map is ready
-      } catch (error) {
-        console.error('Error restoring saved land data:', error);
-      }
-    }
-    
-    // Restore sketch image if available
-    if (savedImage) {
-      try {
-        const restoredImg = new Image();
-        restoredImg.onload = function () {
-          if (!restoredImg) return;
-          // resize canvas to keep reasonable size, but preserve aspect
-          const maxW = 520;
-          const scale = Math.min(maxW / restoredImg.width, 1);
-          canvas.width = Math.round(restoredImg.width * scale);
-          canvas.height = Math.round(restoredImg.height * scale);
-          img = restoredImg; // Set the global img variable
-          drawCanvas();
-        };
-        restoredImg.src = savedImage;
-      } catch (error) {
-        console.error('Error restoring sketch image:', error);
-      }
-    }
+          <p style="font-size: 12.5px; line-height: 1.6;">
+            This document certifies the cadastral boundaries, revenue classifications, ownership credentials, and agricultural statistics for the land parcel described below, matching verified records of the Grama Land Register.
+          </p>
+
+          <h3>1. Location & Administrative Details</h3>
+          <table>
+            <tr>
+              <th>District</th>
+              <td>${verifiedPlot.administrative.district}</td>
+              <th>Taluk</th>
+              <td>${verifiedPlot.administrative.taluk}</td>
+            </tr>
+            <tr>
+              <th>Hobli</th>
+              <td>${verifiedPlot.administrative.hobli}</td>
+              <th>Village</th>
+              <td>${verifiedPlot.administrative.village}</td>
+            </tr>
+            <tr>
+              <th>Survey / Surnoc / Hissa</th>
+              <td colspan="3"><strong>${verifiedPlot.administrative.survey} / ${verifiedPlot.administrative.surnoc || '—'} / ${verifiedPlot.administrative.hissa || '—'}</strong></td>
+            </tr>
+          </table>
+
+          <h3>2. Land Ownership Registry</h3>
+          <table>
+            <tr>
+              <th>Land Owner Name</th>
+              <td><strong>${verifiedPlot.owner.name || '—'}</strong></td>
+              <th>Father's / Husband's Name</th>
+              <td>${verifiedPlot.owner.father || '—'}</td>
+            </tr>
+            <tr>
+              <th>Khata Number</th>
+              <td>${verifiedPlot.owner.khata || '—'}</td>
+              <th>Ownership Type</th>
+              <td>${verifiedPlot.owner.ownership_type || 'Joint / Single'}</td>
+            </tr>
+            <tr>
+              <th>Registered Address</th>
+              <td colspan="3">${verifiedPlot.owner.address || 'CHIKSIKENCHIGUDDE, Thirthahalli'}</td>
+            </tr>
+          </table>
+
+          <h3>3. Area Classification & Revenue Assessment</h3>
+          <table>
+            <tr>
+              <th>Total Extent Area</th>
+              <td>${verifiedPlot.land.total_area || '—'} Acres</td>
+              <th>Cultivable Extent</th>
+              <td>${verifiedPlot.land.cultivable_area || '—'} Acres</td>
+            </tr>
+            <tr>
+              <th>Pot Kharab Class A</th>
+              <td>${verifiedPlot.land.pot_kharab_a || '0'} Acres</td>
+              <th>Pot Kharab Class B</th>
+              <td>${verifiedPlot.land.pot_kharab_b || '0'} Acres</td>
+            </tr>
+            <tr>
+              <th>Assessed Land Revenue</th>
+              <td>₹ ${verifiedPlot.land.revenue || '0.00'}</td>
+              <th>Jodi / Quit Rent</th>
+              <td>₹ ${verifiedPlot.land.jodi || '0.00'}</td>
+            </tr>
+            <tr>
+              <th>Cesses Assessed</th>
+              <td>₹ ${verifiedPlot.land.cess || '0.00'}</td>
+              <th>Water Rates Assessment</th>
+              <td>₹ ${verifiedPlot.land.water_rate || '0.00'}</td>
+            </tr>
+          </table>
+
+          <h3>4. Soil Properties & Agriculture Classification</h3>
+          <table>
+            <tr>
+              <th>Soil Properties / Class</th>
+              <td>${verifiedPlot.land.soil || 'Not Specified'}</td>
+              <th>Land Category Type</th>
+              <td>${verifiedPlot.land.land_type || 'Dry'}</td>
+            </tr>
+            <tr>
+              <th>Irrigation Source</th>
+              <td>${verifiedPlot.land.irrigation_source || 'Rainfed'}</td>
+              <th>Timber / Fruit Trees</th>
+              <td>${verifiedPlot.land.trees || 'None'}</td>
+            </tr>
+          </table>
+
+          <div class="agreement-section" style="page-break-inside: avoid;">
+            <h3>5. Definitive Digital Boundary Plot Outline</h3>
+            <div class="sketch-container">
+              <canvas id="canvasPrint" class="sketch-canvas" width="600" height="300"></canvas>
+              <div class="sketch-caption">Digital boundary outline showing merged plots (Survey No: ${verifiedPlot.administrative.survey})</div>
+            </div>
+          </div>
+
+          <div class="signatures">
+            <div class="sig-box">
+              <strong>AgriLink Survey Officer</strong><br>
+              Signed Digitally with Blockchain Log
+            </div>
+            <div class="sig-box">
+              <strong>Verified Farmer Signatory</strong><br>
+              ${verifiedPlot.owner.name || '—'}
+            </div>
+          </div>
+
+          <script>
+            const points = ${JSON.stringify(points)};
+            const minX = ${minX}, maxX = ${maxX};
+            const minY = ${minY}, maxY = ${maxY};
+            const w = ${w}, h = ${h};
+            
+            const canvas = document.getElementById('canvasPrint');
+            if (canvas) {
+              const ctx = canvas.getContext('2d');
+              
+              ctx.strokeStyle = '#f1f5f9';
+              ctx.lineWidth = 1;
+              for (let x = 0; x < canvas.width; x += 25) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+              }
+              for (let y = 0; y < canvas.height; y += 25) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+              }
+
+              const padding = 30;
+              const drawW = canvas.width - padding * 2;
+              const drawH = canvas.height - padding * 2;
+              const sScale = Math.min(drawW / w, drawH / h);
+              const sOffsetX = (canvas.width - w * sScale) / 2;
+              const sOffsetY = (canvas.height - h * sScale) / 2;
+
+              function toScreen(pt) {
+                return [
+                  (pt[0] - minX) * sScale + sOffsetX,
+                  (pt[1] - minY) * sScale + sOffsetY
+                ];
+              }
+
+              if (points.length >= 3) {
+                ctx.beginPath();
+                const [x0, y0] = toScreen(points[0]);
+                ctx.moveTo(x0, y0);
+                for (let i = 1; i < points.length; i++) {
+                  const [x, y] = toScreen(points[i]);
+                  ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                
+                ctx.fillStyle = 'rgba(34, 197, 94, 0.15)';
+                ctx.fill();
+                ctx.lineWidth = 3.5;
+                ctx.strokeStyle = '#15803d';
+                ctx.stroke();
+
+                const cx = (minX + maxX) / 2;
+                const cy = (minY + maxY) / 2;
+                const [sx, sy] = toScreen([cx, cy]);
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillStyle = '#166534';
+                ctx.textAlign = 'center';
+                ctx.strokeText("Survey " + "${verifiedPlot.administrative.survey}", sx, sy);
+                ctx.fillText("Survey " + "${verifiedPlot.administrative.survey}", sx, sy);
+              }
+            }
+
+            window.onload = function() {
+              setTimeout(() => {
+                window.print();
+                window.close();
+              }, 300);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-[#1f3b2c]">Land Details</h1>
+          <h1 className="text-2xl font-bold text-[#1f3b2c]">
+            {isVerified ? 'My Farmland Details' : 'Land Records Verification'}
+          </h1>
           <p className="text-sm text-[#6b7280] mt-1">
-            Upload your land sketch and map it to geographic coordinates.
+            {isVerified 
+              ? 'Your verified land boundaries and crop records synced from the village cadastral database.' 
+              : 'Link your digital RTC records by matching your registered name against the village database.'
+            }
           </p>
         </div>
-        <Link
-          href="/dashboard/farmer/land"
-          className="inline-flex items-center justify-center rounded-md border border-[#e2d4b7] px-4 py-2 text-xs font-medium text-[#1f3b2c] hover:bg-[#f7f0de]"
-        >
-          ← Back to Land Integration
-        </Link>
+        {isVerified && (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDownloadPDF}
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-sm transition-all active:scale-[0.98]"
+            >
+              <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Akarband PDF
+            </button>
+            <Link
+              href={`/dashboard/farmer?userId=${userId}`}
+              className="inline-flex items-center justify-center rounded-xl bg-[#166534] px-4 py-2 text-xs font-semibold text-white hover:bg-[#14532d]"
+            >
+              Go to Dashboard Overview
+            </Link>
+          </div>
+        )}
       </div>
 
-      {/* User Loading State */}
-      {isLoadingUser && (
-        <div className="bg-white border border-[#e2d4b7] rounded-lg p-6 text-center">
-          <p className="text-[#6b7280]">Loading user information...</p>
-        </div>
-      )}
-
-      {/* No User Found */}
-      {!isLoadingUser && !userId && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800">Please log in to save land details. The mapping tool will still work, but data won't be saved.</p>
-        </div>
-      )}
-
-      {/* Save Status */}
+      {/* Status Messages */}
       {saveMessage && (
-        <div className={`p-4 rounded-lg border ${
-          saveMessage.includes('successfully') 
-            ? 'bg-green-50 border-green-200 text-green-800' 
-            : 'bg-red-50 border-red-200 text-red-800'
-        }`}>
+        <div className="p-4 rounded-xl border bg-green-50 border-green-200 text-green-800 text-sm animate-fadeIn">
           {saveMessage}
         </div>
       )}
+      {errorMessage && (
+        <div className="p-4 rounded-xl border bg-red-50 border-red-200 text-red-800 text-sm animate-fadeIn">
+          {errorMessage}
+        </div>
+      )}
 
-      <div className="bg-white border border-[#e2d4b7] rounded-lg p-6">
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-[#1f3b2c] mb-2">Land Mapping Tool</h2>
-          <p className="text-sm text-[#6b7280]">
-            Use this tool to convert your land sketch to precise geographic coordinates. Upload an image of your land sketch, mark the boundaries, and enter the centroid coordinates.
-          </p>
-          <p className="text-sm text-[#6b7280] mt-2">
-            <strong>Note:</strong> After computing coordinates, your land details will be automatically saved to the database for your account.
-          </p>
-          {!userId && !isLoadingUser && (
-            <p className="text-sm text-orange-600 mt-2">
-              <strong>Warning:</strong> You are not logged in. Your land details will not be saved.
-            </p>
+      {/* Loading States */}
+      {isLoadingUser && (
+        <div className="bg-white border border-[#e2d4b7] rounded-xl p-8 text-center shadow-sm">
+          <p className="text-gray-500">Loading user credentials...</p>
+        </div>
+      )}
+
+      {!isLoadingUser && !isVerified && (
+        <div className="space-y-6">
+          {/* Dropdown Selector Panel */}
+          <div className="bg-white border border-[#e2d4b7] rounded-2xl shadow-sm p-6 space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <h2 className="text-sm font-bold text-[#1f3b2c]">Select Land Coordinates</h2>
+              <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                Registered Name: <strong>{registeredName}</strong>
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">District</label>
+                <select
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-gray-50 px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534]"
+                >
+                  <option value="Shivamogga">Shivamogga</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Taluk</label>
+                <select
+                  value={taluk}
+                  onChange={(e) => setTaluk(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-gray-50 px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534]"
+                >
+                  <option value="Thirthahalli">Thirthahalli</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Hobli</label>
+                <select
+                  value={hobli}
+                  onChange={(e) => setHobli(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-gray-50 px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534]"
+                >
+                  <option value="Mandagadde">Mandagadde</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Village</label>
+                <select
+                  value={village}
+                  onChange={(e) => setVillage(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-gray-50 px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534]"
+                >
+                  <option value="CHIKSIKENCHIGUDDE">CHIKSIKENCHIGUDDE</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Survey Number</label>
+                <select
+                  value={surveyNumber}
+                  onChange={(e) => {
+                    setSurveyNumber(e.target.value);
+                    setSurnoc('');
+                    setHissa('');
+                  }}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-white px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534]"
+                >
+                  <option value="">Select Survey No</option>
+                  {availableSurveys.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Surnoc</label>
+                <select
+                  value={surnoc}
+                  onChange={(e) => {
+                    setSurnoc(e.target.value);
+                    setHissa('');
+                  }}
+                  disabled={!surveyNumber}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-white px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534] disabled:bg-gray-100"
+                >
+                  <option value="">Select Surnoc</option>
+                  {availableSurnocs.map(sn => (
+                    <option key={sn} value={sn}>{sn}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Hissa No</label>
+                <select
+                  value={hissa}
+                  onChange={(e) => setHissa(e.target.value)}
+                  disabled={!surnoc}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-white px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534] disabled:bg-gray-100"
+                >
+                  <option value="">Select Hissa</option>
+                  {availableHissas.map(h => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Period</label>
+                <select
+                  value={period}
+                  onChange={(e) => setPeriod(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-[#e2d4b7] bg-white px-3 py-2 text-black focus:outline-none focus:ring-1 focus:ring-[#166534]"
+                >
+                  <option value="2026-2027">2026-2027</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={handleFetchAndVerify}
+                disabled={!hissa || fetching}
+                className="rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+              >
+                {fetching ? 'Matching Owners...' : 'Verify Ownership Details'}
+              </button>
+            </div>
+          </div>
+
+          {/* Verification Results & Boundary Overlay Map */}
+          {verifiedPlot && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
+              {/* Info Card */}
+              <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 space-y-6">
+                <div className="border-b border-[#e2d4b7] pb-4 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-[#1f3b2c]">RTC Land Record Information</h3>
+                    <p className="text-xs text-gray-500">Survey No. {verifiedPlot.administrative.survey} / Surnoc {verifiedPlot.administrative.surnoc || '—'} / Hissa {verifiedPlot.administrative.hissa || '—'}</p>
+                  </div>
+                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
+                    Digitized & Matched
+                  </span>
+                </div>
+
+                {/* Owner & Khata details */}
+                <div className="bg-[#fcfbf9] border border-[#e2d4b7]/50 rounded-xl p-4 space-y-3">
+                  <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wide">Owner Registry</h4>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <span className="text-gray-500 block">Registered Owner</span>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.name || '—'}</strong>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 block">Father's Name</span>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.father || '—'}</strong>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 block">Khata Number</span>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.khata || '—'}</strong>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 block">Ownership Class</span>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.ownership_type || '—'}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cultivated metrics */}
+                <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                  <div>
+                    <span className="text-xs text-gray-500 block">Total Area</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.total_area || '—'} Acres</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Cultivable Area</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.cultivable_area || '—'} Acres</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Pot Kharab Class A</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.pot_kharab_a || '0'} Acres</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Pot Kharab Class B</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.pot_kharab_b || '0'} Acres</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Assessed Revenue</span>
+                    <strong className="text-[#1f3b2c] font-semibold">₹ {verifiedPlot.land.revenue || '0.00'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Soil Properties</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.soil || '—'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Latitude Reference</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.latitude || '—'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Longitude Reference</span>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.longitude || '—'}</strong>
+                  </div>
+                </div>
+
+                <div className="border-t border-[#e2d4b7] pt-4">
+                  <span className="text-xs text-gray-500 block mb-2 font-semibold text-[#1f3b2c]">Active Crops ({verifiedPlot.crops.length})</span>
+                  {verifiedPlot.crops.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {verifiedPlot.crops.map((crop, index) => (
+                        <span key={index} className="rounded-lg bg-amber-50 border border-amber-200 text-amber-800 px-2.5 py-1 text-xs font-medium">
+                          {crop.name} ({crop.area || 'All'}) - {crop.season || 'Annual'}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-xs text-gray-400 italic">No crops recorded</span>
+                  )}
+                </div>
+
+                <div className="pt-4">
+                  <button
+                    onClick={handleLinkLand}
+                    disabled={linking}
+                    className="w-full rounded-xl bg-[#166534] py-3 text-sm font-bold text-white shadow-md hover:bg-[#14532d] active:scale-98 transition-all disabled:opacity-70 disabled:pointer-events-none"
+                  >
+                    {linking ? 'Linking Land...' : 'Confirm Verification & Integrate Land'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Map Card */}
+              <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 flex flex-col relative">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-base font-bold text-[#1f3b2c]">Farmland Boundary Overlay</h3>
+                  <button 
+                    onClick={handleResetMap}
+                    className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 font-semibold hover:bg-emerald-100 transition-colors"
+                  >
+                    Recenter Boundary
+                  </button>
+                </div>
+                <div ref={mapContainerRef} className="flex-grow min-h-[400px] bg-gray-50 rounded-xl overflow-hidden relative">
+                  {!leafletLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+                      <p className="text-sm text-gray-500">Loading interactive mapping engine...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
-        
-        <div 
-          ref={containerRef}
-          className="border border-[#e2d4b7] rounded-lg overflow-hidden"
-        />
-      </div>
+      )}
+
+      {/* Verified User Display */}
+      {!isLoadingUser && isVerified && verifiedPlot && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
+          {/* Info Card */}
+          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 space-y-5 shadow-sm">
+            <div className="border-b border-[#e2d4b7] pb-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-[#1f3b2c]">Verified Land Record Information</h3>
+                <p className="text-xs text-gray-500">Survey No. {verifiedPlot.administrative.survey} / Surnoc {verifiedPlot.administrative.surnoc || '—'} / Hissa {verifiedPlot.administrative.hissa || '—'}</p>
+              </div>
+              <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800 animate-pulse">
+                Verified
+              </span>
+            </div>
+
+            {/* Owner Details Registry */}
+            <div className="bg-[#fcfbf9] border border-[#e2d4b7]/50 rounded-xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wide">Owner Registry</h4>
+              <div className="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                  <span className="text-gray-500 block">Registered Owner</span>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.name || '—'}</strong>
+                </div>
+                <div>
+                  <span className="text-gray-500 block">Father's Name</span>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.father || '—'}</strong>
+                </div>
+                <div>
+                  <span className="text-gray-500 block">Khata Number</span>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.khata || '—'}</strong>
+                </div>
+                <div>
+                  <span className="text-gray-500 block">Ownership Class</span>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.ownership_type || '—'}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+              <div>
+                <span className="text-xs text-gray-500 block">Total Area</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.total_area || '—'} Acres</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Cultivable Area</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.cultivable_area || '—'} Acres</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Pot Kharab Class A</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.pot_kharab_a || '0'} Acres</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Pot Kharab Class B</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.pot_kharab_b || '0'} Acres</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Assessed Revenue</span>
+                <strong className="text-[#1f3b2c] font-semibold">₹ {verifiedPlot.land.revenue || '0.00'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Quit Rent (Jodi)</span>
+                <strong className="text-[#1f3b2c] font-semibold">₹ {verifiedPlot.land.jodi || '0.00'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Land Category Type</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.land_type || 'Dry'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Soil Properties</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.soil || '—'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Irrigation Source</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.irrigation_source || 'Rainfed'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Registered Trees</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.trees || 'None'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Latitude Reference</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.latitude || '—'}</strong>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">Longitude Reference</span>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.longitude || '—'}</strong>
+              </div>
+            </div>
+
+            {/* Crops list */}
+            <div className="border-t border-[#e2d4b7] pt-4">
+              <span className="text-xs text-gray-500 block mb-2 font-semibold text-[#1f3b2c]">Crops Cultivated</span>
+              {verifiedPlot.crops.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {verifiedPlot.crops.map((crop, index) => (
+                    <span key={index} className="rounded-lg bg-[#f0fdf4] border border-green-200 text-green-800 px-2.5 py-1 text-xs font-medium">
+                      {crop.name} {crop.area ? `(${crop.area} ac)` : ''}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-xs text-gray-400 italic">No crops recorded</span>
+              )}
+            </div>
+          </div>
+
+          {/* Map Card */}
+          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 flex flex-col shadow-sm relative">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-base font-bold text-[#1f3b2c]">Farmland Boundary Overlay</h3>
+              <button 
+                onClick={handleResetMap}
+                className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 font-semibold hover:bg-emerald-100 transition-colors"
+              >
+                Recenter Boundary
+              </button>
+            </div>
+            <div ref={mapContainerRef} className="flex-grow min-h-[400px] bg-gray-50 rounded-xl overflow-hidden relative">
+              {!leafletLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+                  <p className="text-sm text-gray-500">Loading interactive mapping engine...</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

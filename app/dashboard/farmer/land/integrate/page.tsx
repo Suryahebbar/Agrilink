@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import AgreementModal from '../../../../components/AgreementModal/AgreementModal';
+import { useRouter, useSearchParams } from 'next/navigation';
+import AgreementModal from '@/app/components/AgreementModal/AgreementModal';
 
 interface LandDetails {
   _id: string;
@@ -52,6 +52,8 @@ interface IntegrationRequest {
 
 export default function LandIntegrationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get('userId');
   const [userLand, setUserLand] = useState<LandDetails | null>(null);
   const [neighbouringLands, setNeighbouringLands] = useState<NeighbouringLand[]>([]);
   const [integrationRequests, setIntegrationRequests] = useState<IntegrationRequest[]>([]);
@@ -66,12 +68,12 @@ export default function LandIntegrationPage() {
     loadUserLandDetails();
     loadReadyStatus();
     loadIntegrationRequests();
-  }, []);
+  }, [userId]);
 
   const loadReadyStatus = async () => {
     try {
       console.log('Loading ready status from database...');
-      const response = await fetch('/api/farmer/land-integration/ready-status');
+      const response = await fetch(`/api/farmer/land-integration/ready-status?userId=${userId || ''}`);
       if (response.ok) {
         const data = await response.json();
         console.log('Ready status response:', data);
@@ -89,16 +91,19 @@ export default function LandIntegrationPage() {
   const loadUserLandDetails = async () => {
     try {
       setLoading(true);
-      const authResponse = await fetch('/api/auth/me');
-      if (!authResponse.ok) {
-        setError('Please log in to continue');
-        return;
+      
+      let finalUserId = userId;
+      if (!finalUserId) {
+        const authResponse = await fetch('/api/auth/me');
+        if (!authResponse.ok) {
+          setError('Please log in to continue');
+          return;
+        }
+        const userData = await authResponse.json();
+        finalUserId = userData.user?.id || userData.user?._id;
       }
 
-      const userData = await authResponse.json();
-      const userId = userData.user?.id || userData.user?._id;
-
-      const landResponse = await fetch(`/api/farmer/land-details?userId=${userId}`);
+      const landResponse = await fetch(`/api/farmer/land-details?userId=${finalUserId}`);
       const landData = await landResponse.json();
 
       if (landResponse.ok && landData.data && landData.data.length > 0) {
@@ -115,7 +120,7 @@ export default function LandIntegrationPage() {
 
   const loadIntegrationRequests = async () => {
     try {
-      const response = await fetch('/api/farmer/land-integration/requests');
+      const response = await fetch(`/api/farmer/land-integration/requests?userId=${userId || ''}`);
       if (response.ok) {
         const data = await response.json();
         setIntegrationRequests(data.requests || []);
@@ -133,10 +138,10 @@ export default function LandIntegrationPage() {
       const newReadyState = !readyToIntegrate;
       console.log('Toggling ready status from', readyToIntegrate, 'to', newReadyState);
       
-      const response = await fetch('/api/farmer/land-integration/ready-status', {
+      const response = await fetch(`/api/farmer/land-integration/ready-status?userId=${userId || ''}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ready: newReadyState })
+        body: JSON.stringify({ ready: newReadyState, userId })
       });
 
       if (response.ok) {
@@ -172,12 +177,13 @@ export default function LandIntegrationPage() {
 
     try {
       setLoading(true);
-      const response = await fetch('/api/farmer/land-integration/find-neighbours', {
+      const response = await fetch(`/api/farmer/land-integration/find-neighbours?userId=${userId || ''}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           centroidLatitude: userLand.landData.centroidLatitude,
-          centroidLongitude: userLand.landData.centroidLongitude
+          centroidLongitude: userLand.landData.centroidLongitude,
+          userId
         })
       });
 

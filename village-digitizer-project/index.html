@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agrilink - Village Map Digitizer & Integration Tool</title>
+  <!-- Google Fonts for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="app">
+    <!-- Map Canvas Section -->
+    <div id="canvasWrap">
+      <canvas id="canvas"></canvas>
+      <div class="zoomHint">
+        <span>Scroll to Zoom</span> ·
+        <span>Right-Click + Drag (or Space + Drag) to Pan</span> ·
+        <span>Left-Click to place points</span>
+      </div>
+      <!-- Floating Toolbar for map control -->
+      <div class="map-controls">
+        <div class="mode-select">
+          <label for="drawingMode">Drawing Mode:</label>
+          <select id="drawingMode">
+            <option value="polygon">Land Parcel (Polygon)</option>
+            <option value="line">Correction Line (LineString)</option>
+          </select>
+        </div>
+        <button id="undoPointBtn">Undo Point</button>
+        <button id="finishBtn" class="primary">Finish Feature</button>
+        <button id="cancelBtn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Interactive Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">AGRILINK</div>
+        <h1>Village Digitizer</h1>
+        <p class="sub">Digitize village boundaries, correct hissa lines, and prepare digital integration agreements.</p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="digitize">Digitize</button>
+        <button class="tab-btn" data-tab="database">Database</button>
+        <button class="tab-btn" data-tab="agreement">Agreement</button>
+      </div>
+
+      <!-- TAB 1: DIGITIZE (Drawing & Forms) -->
+      <div id="tab-digitize" class="tab-content active">
+        <div id="status">Select a drawing mode, click on the map to begin drawing.</div>
+
+        <!-- Feature details form (displays after finishing a polygon/line) -->
+        <div id="formArea" style="display:none;">
+          <h2 id="formTitle">Land Parcel Details</h2>
+
+          <div class="form-tabs">
+            <button type="button" class="form-tab-btn active" data-form-sec="admin-sec">Admin</button>
+            <button type="button" class="form-tab-btn" data-form-sec="owner-sec">Owner</button>
+            <button type="button" class="form-tab-btn" data-form-sec="land-sec">Land</button>
+            <button type="button" class="form-tab-btn" data-form-sec="gis-sec">GIS</button>
+            <button type="button" class="form-tab-btn" data-form-sec="crops-sec">Crops</button>
+          </div>
+
+          <form id="parcelForm" onsubmit="return false;">
+
+            <!-- SECTION 1: Administrative Details -->
+            <div id="form-sec-admin-sec" class="form-section active">
+              <div class="field-grid">
+                <div class="field"><label>District</label><input id="f_district" placeholder="District"
+                    value="Shivamogga" /></div>
+                <div class="field"><label>Taluk</label><input id="f_taluk" placeholder="Taluk" value="Thirthahalli" /></div>
+                <div class="field"><label>Hobli</label><input id="f_hobli" placeholder="Hobli" value="Mandagadde" /></div>
+                <div class="field"><label>Village</label><input id="f_village" placeholder="Village"
+                    value="CHIKSIKENCHIGUDDE" /></div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>Survey No. *</label><input id="f_survey" placeholder="e.g. 82" required />
+                </div>
+                <div class="field"><label>Surnoc</label><input id="f_surnoc" placeholder="e.g. 1" /></div>
+                <div class="field"><label>Hissa</label><input id="f_hissa" placeholder="e.g. A" /></div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>ULPIN</label><input id="f_ulpin" placeholder="Unique Parcel ID" /></div>
+                <div class="field"><label>OLC Code</label><input id="f_olc" placeholder="Digitized Sketch OLC" /></div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: Owner Details -->
+            <div id="form-sec-owner-sec" class="form-section">
+              <div class="field"><label>Owner Name</label><input id="f_owner" placeholder="Full Name" /></div>
+              <div class="field"><label>Father's Name</label><input id="f_father" placeholder="Father's Name" /></div>
+              <div class="field-grid">
+                <div class="field"><label>Khata Number</label><input id="f_khata" placeholder="Khata No." /></div>
+                <div class="field">
+                  <label>Ownership Type</label>
+                  <select id="f_ownership_type">
+                    <option value="Patta">Patta</option>
+                    <option value="Government">Government</option>
+                    <option value="Inam">Inam</option>
+                    <option value="Joint">Joint Holding</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field"><label>Owner Address</label><input id="f_address" placeholder="Address" value="CHIKSIKENCHIGUDDE, Kudumallige, Thirthahalli, Shivamogga, 577234." /></div>
+            </div>
+
+            <!-- SECTION 3: Land Details -->
+            <div id="form-sec-land-sec" class="form-section">
+              <div class="field-grid">
+                <div class="field"><label>Total Area (Acre-Gunta)</label><input id="f_total_area"
+                    placeholder="e.g. 2-15" /></div>
+                <div class="field"><label>Cultivable Net Area</label><input id="f_cultivable_area"
+                    placeholder="e.g. 2-10" /></div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>Pot Kharab A</label><input id="f_pot_kharab_a" placeholder="Acre-Gunta" />
+                </div>
+                <div class="field"><label>Pot Kharab B</label><input id="f_pot_kharab_b" placeholder="Acre-Gunta" />
+                </div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>Land Revenue</label><input id="f_revenue" placeholder="₹" /></div>
+                <div class="field"><label>Jodi</label><input id="f_jodi" placeholder="₹" /></div>
+                <div class="field"><label>Cess</label><input id="f_cess" placeholder="₹" /></div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>Water Rate</label><input id="f_water_rate" placeholder="₹" /></div>
+                <div class="field"><label>Soil Type</label><input id="f_soil" placeholder="e.g. Red Sandy / Clay" />
+                </div>
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label>Land Type</label>
+                  <select id="f_land_type">
+                    <option value="Dry">Dry</option>
+                    <option value="Wet">Wet</option>
+                    <option value="Garden">Garden</option>
+                    <option value="Forest">Forest</option>
+                  </select>
+                </div>
+                <div class="field"><label>Irrigation Source</label><input id="f_irrigation_source"
+                    placeholder="e.g. Borewell / Canal" /></div>
+              </div>
+              <div class="field"><label>Tree Details</label><input id="f_trees"
+                  placeholder="e.g. Coconut (10), Mango (2)" /></div>
+            </div>
+
+            <!-- SECTION 4: GIS Details -->
+            <div id="form-sec-gis-sec" class="form-section">
+              <div class="field"><label>Polygon GeoJSON (Read Only)</label><textarea id="f_geojson" readonly rows="2"
+                  style="width:100%; font-family:monospace; font-size:10px; padding:6px; border-radius:6px; border:1px solid var(--line); background:#faf9f6; resize:vertical;"></textarea>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>Centroid</label><input id="f_centroid" readonly placeholder="X, Y" /></div>
+                <div class="field"><label>Bounding Box</label><input id="f_bbox" readonly
+                    placeholder="minX, minY to maxX, maxY" /></div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label>Pixel Area</label><input id="f_pixel_area" readonly
+                    placeholder="Calculated area" /></div>
+                <div class="field"><label>Pixel Perimeter</label><input id="f_pixel_perimeter" readonly
+                    placeholder="Calculated perimeter" /></div>
+              </div>
+              <div class="field"><label>Side Lengths (px)</label><input id="f_side_lengths" readonly
+                  placeholder="Calculated lengths" /></div>
+              <div class="field-grid">
+                <div class="field"><label>Latitude Reference</label><input id="f_latitude" type="number" step="any"
+                    placeholder="e.g. 12.9716" value="13.6828" /></div>
+                <div class="field"><label>Longitude Reference</label><input id="f_longitude" type="number" step="any"
+                    placeholder="e.g. 77.5946" value="75.2104" /></div>
+              </div>
+            </div>
+
+            <!-- SECTION 5: Crop Details (Dynamic List) -->
+            <div id="form-sec-crops-sec" class="form-section">
+              <div class="nested-crop-form">
+                <h3>Add Crop</h3>
+                <div class="field"><label>Crop Name</label><input id="c_name"
+                    placeholder="e.g. Paddy, Ragi, sugarcane" /></div>
+                <div class="field-grid">
+                  <div class="field"><label>Season</label><input id="c_season" placeholder="e.g. Kharif / Rabi" /></div>
+                  <div class="field"><label>Area (Acre-Gunta)</label><input id="c_area" placeholder="e.g. 1-00" /></div>
+                </div>
+                <div class="field-grid">
+                  <div class="field">
+                    <label>Land Use Type</label>
+                    <select id="c_land_use">
+                      <option value="Dry">Dry</option>
+                      <option value="Wet">Wet</option>
+                      <option value="Garden">Garden</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>Irrigation Type</label><input id="c_irrigation"
+                      placeholder="e.g. Drip / Flood" /></div>
+                </div>
+                <button type="button" id="addCropBtn" class="small-btn">Add to List</button>
+              </div>
+
+              <div class="crop-list-container">
+                <h3>Crops Added</h3>
+                <table id="cropsTable">
+                  <thead>
+                    <tr>
+                      <th>Crop</th>
+                      <th>Season</th>
+                      <th>Area</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Filled dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="form-actions" style="margin-top: 16px; display: flex; gap: 8px;">
+              <button type="button" id="savePlotBtn" class="primary" style="flex: 1;">Save Feature</button>
+              <button type="button" id="cancelEditBtn" class="danger" style="flex: 1; display: none;">Cancel Edit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 2: DATABASE (Saved Records) -->
+      <div id="tab-database" class="tab-content">
+        <div class="db-controls">
+          <input type="text" id="searchBox" placeholder="Search by Survey No, Owner, or Type..." />
+          <div class="toolbar" style="margin-top:8px; display: flex; gap: 8px;">
+            <button id="exportBtn" class="primary">Export GeoJSON</button>
+            <button id="syncBtn" class="primary" style="background-color: #166534;">Sync to AgriLink DB</button>
+            <button id="clearBtn" class="danger">Clear Database</button>
+          </div>
+        </div>
+        <div id="plotList">
+          <!-- Filled dynamically -->
+        </div>
+        <div class="count" id="countLabel">0 plots saved</div>
+      </div>
+
+      <!-- TAB 3: AGREEMENT GENERATOR -->
+      <div id="tab-agreement" class="tab-content">
+        <div class="agreement-setup">
+          <h3>1. Select Lands to Integrate</h3>
+          <p class="instruction">Choose the land parcels that are being merged or integrated into the agreement:</p>
+          <div id="agreementParcelSelector" class="parcel-checkbox-list">
+            <!-- Filled dynamically -->
+          </div>
+
+          <h3 style="margin-top: 20px;">2. Agreement Details</h3>
+          <div class="field">
+            <label>Agreement First Party Name</label>
+            <input id="ag_first_party" placeholder="First Party (e.g., Agrilink Integrator)"
+              value="Agrilink Farm Services Ltd." />
+          </div>
+          <div class="field">
+            <label>Agreement Second Party Name</label>
+            <input id="ag_second_party" placeholder="Second Party (e.g., Lead Farmer)"
+              value="Joint Farmer Consortium" />
+          </div>
+          <div class="field">
+            <label>Agreement Date</label>
+            <input id="ag_date" type="date" />
+          </div>
+          <div class="field">
+            <label>Terms of Integration</label>
+            <textarea id="ag_terms" rows="4"
+              style="width:100%; font-family:inherit; padding:8px; border-radius:6px; border:1px solid var(--line);">This agreement confirms the integration of the selected land parcels under Agrilink's smart farming collective. The parties agree to combine cultivation strategies, coordinate shared irrigation access, and utilize digitized boundary sketches as the definitive reference for physical acreage boundaries.</textarea>
+          </div>
+
+          <button id="generateAgreementBtn" class="primary" style="width:100%; margin-top:10px;">Compile & Preview
+            Agreement</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Agreement Preview & Printing -->
+  <div id="agreementModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Integrated Farm Agreement</h2>
+        <div class="modal-actions">
+          <button onclick="window.print()" class="primary">Print / Save PDF</button>
+          <button id="closeModalBtn">Close Preview</button>
+        </div>
+      </div>
+      <div id="agreementPrintout" class="agreement-document">
+        <!-- Generated content goes here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
