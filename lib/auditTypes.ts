@@ -96,6 +96,8 @@ export enum ResourceType {
   SYSTEM             = 'system',
   SECURITY           = 'security',
   NOTIFICATION       = 'notification',
+  FARM_EXPENSE       = 'farm_expense',
+  FARM_INVESTMENT    = 'farm_investment',
   // Legacy
   ORDER        = 'order',
   PRODUCT      = 'product',

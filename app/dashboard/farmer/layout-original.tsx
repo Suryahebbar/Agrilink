@@ -78,6 +78,7 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
         },
         { label: 'Digital Farm Pooling', href: '/dashboard/farmer/pooling', icon: Users },
         { label: 'Farm Management', href: '/dashboard/farmer/farm-management', icon: Calendar },
+        { label: 'Farm Finance & P&L', href: '/dashboard/farmer/finance', icon: TrendingUp },
         { label: 'Government Schemes', href: '/dashboard/farmer/schemes', icon: ScrollText },
       ]
     },
