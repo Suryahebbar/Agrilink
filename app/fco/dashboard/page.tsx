@@ -159,6 +159,9 @@ function DashboardContent() {
     router.push(`/fco/dashboard?${params.toString()}`);
   };
 
+  // Active Manage Pools Sub-Tab
+  const [managePoolTab, setManagePoolTab] = useState<'contributions' | 'settlement' | 'tasks' | 'expenses' | 'blockchain' | 'disputes' | 'files'>('contributions');
+
   // Reminders / Calendar States
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [newReminderText, setNewReminderText] = useState('');
@@ -1357,9 +1360,9 @@ function DashboardContent() {
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7] font-sans animate-fade-in">
       {/* Left Navigation Sidebar */}
-      <aside className="w-64 bg-white/85 backdrop-blur-md border-r border-[#e5e7eb] shadow-xl flex flex-col fixed left-0 top-0 bottom-0 overflow-y-auto pt-4 z-20">
+      <aside className="w-64 bg-white/95 backdrop-blur-md border-r border-[#e5e7eb] shadow-lg flex flex-col fixed left-0 top-0 bottom-0 overflow-y-auto pt-4 z-20">
         {/* Sidebar Header */}
-        <div className="px-5 py-6 border-b border-[#e5e7eb]">
+        <div className="px-5 py-5 border-b border-[#e5e7eb]">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#166534] to-[#15803d] flex items-center justify-center shadow-lg">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1367,28 +1370,38 @@ function DashboardContent() {
               </svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-[#1f3b2c]">AgriLink</h2>
-              <p className="text-xs text-[#6b7280]">FCO Portal</p>
+              <div className="flex items-center gap-1.5">
+                <h2 className="text-base font-bold text-[#1f3b2c]">AgriLink</h2>
+                <span className="text-[10px] uppercase font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">FCO</span>
+              </div>
+              <p className="text-xs text-[#6b7280]">Counseling Officer</p>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="flex-grow py-6 px-3 space-y-1.5">
+        <nav className="flex-grow py-5 px-3 space-y-1.5">
+          <div className="px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">Operations</div>
+
           <button
             onClick={() => setActiveSidebarTab('assigned-farmers')}
-            className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'assigned-farmers'
+            className={`group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'assigned-farmers'
                 ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
-            <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'assigned-farmers'
-                ? 'bg-white/20'
-                : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
-              }`}>
-              <FiUsers className={`h-4 w-4 ${activeSidebarTab === 'assigned-farmers' ? 'text-white' : 'text-[#166534]'}`} />
+            <div className="flex items-center gap-3">
+              <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'assigned-farmers'
+                  ? 'bg-white/20'
+                  : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                }`}>
+                <FiUsers className={`h-4 w-4 ${activeSidebarTab === 'assigned-farmers' ? 'text-white' : 'text-[#166534]'}`} />
+              </div>
+              <span className="font-medium text-sm">Assigned Farmers</span>
             </div>
-            <span className="font-medium text-sm">Assigned Farmers</span>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${activeSidebarTab === 'assigned-farmers' ? 'bg-white/20 text-white' : 'bg-emerald-50 text-emerald-700'}`}>
+              {pools.length}
+            </span>
           </button>
 
           <button
@@ -1409,19 +1422,28 @@ function DashboardContent() {
 
           <button
             onClick={() => setActiveSidebarTab('calendar')}
-            className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'calendar'
+            className={`group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'calendar'
                 ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
-            <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'calendar'
-                ? 'bg-white/20'
-                : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
-              }`}>
-              <FiCalendar className={`h-4 w-4 ${activeSidebarTab === 'calendar' ? 'text-white' : 'text-[#166534]'}`} />
+            <div className="flex items-center gap-3">
+              <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'calendar'
+                  ? 'bg-white/20'
+                  : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                }`}>
+                <FiCalendar className={`h-4 w-4 ${activeSidebarTab === 'calendar' ? 'text-white' : 'text-[#166534]'}`} />
+              </div>
+              <span className="font-medium text-sm">Calendar</span>
             </div>
-            <span className="font-medium text-sm">Calendar</span>
+            {reminders.length > 0 && (
+              <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${activeSidebarTab === 'calendar' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'}`}>
+                {reminders.length}
+              </span>
+            )}
           </button>
+
+          <div className="pt-3 px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">Services</div>
 
           <button
             onClick={() => setActiveSidebarTab('schemes')}
@@ -1436,27 +1458,34 @@ function DashboardContent() {
               }`}>
               <FiFileText className={`h-4 w-4 ${activeSidebarTab === 'schemes' ? 'text-white' : 'text-[#166534]'}`} />
             </div>
-            <span className="font-medium text-sm">Government Schemes</span>
+            <span className="font-medium text-sm">Govt Schemes</span>
           </button>
 
           <button
             onClick={() => setActiveSidebarTab('claims')}
-            className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'claims'
+            className={`group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'claims'
                 ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
-            <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'claims'
-                ? 'bg-white/20'
-                : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
-              }`}>
-              <FiShield className={`h-4 w-4 ${activeSidebarTab === 'claims' ? 'text-white' : 'text-[#166534]'}`} />
+            <div className="flex items-center gap-3">
+              <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'claims'
+                  ? 'bg-white/20'
+                  : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                }`}>
+                <FiShield className={`h-4 w-4 ${activeSidebarTab === 'claims' ? 'text-white' : 'text-[#166534]'}`} />
+              </div>
+              <span className="font-medium text-sm">Claim Inspections</span>
             </div>
-            <span className="font-medium text-sm">Insurance Claim Inspections</span>
+            {fcoClaims.filter(c => c.status === 'submitted').length > 0 && (
+              <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-700 animate-pulse">
+                {fcoClaims.filter(c => c.status === 'submitted').length}
+              </span>
+            )}
           </button>
         </nav>
 
-        {/* Sidebar Footer with Tips & Logout */}
+        {/* Sidebar Footer with Quick Tip & Logout */}
         <div className="px-3 py-4 border-t border-[#e5e7eb] bg-white/50 space-y-3">
           <div className="bg-gradient-to-br from-[#fef3c7] to-[#fde68a] rounded-lg p-3 shadow-sm">
             <div className="flex items-center gap-1.5 mb-1.5">
@@ -1487,7 +1516,10 @@ function DashboardContent() {
           <div className="max-w-7xl mx-auto relative min-h-[500px]">
             {loading ? (
               <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#166534]"></div>
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-600 border-t-transparent"></div>
+                  <p className="text-xs font-bold text-slate-500">Loading FCO workspace...</p>
+                </div>
               </div>
             ) : activeSidebarTab === 'assigned-farmers' ? (
               /* ASSIGNED FARMERS TAB VIEW */
@@ -1495,22 +1527,25 @@ function DashboardContent() {
 
                 {/* Pool Selector & Farmer Details Sidebar */}
                 <div className="w-full lg:w-80 flex-shrink-0 space-y-6">
-                  <div className="bg-white p-5 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
-                    <h2 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2"><FiGrid /> Assigned Pools</h2>
-                    <div className="space-y-2">
+                  <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h2 className="text-base font-black text-slate-800 flex items-center gap-2"><FiGrid className="text-emerald-600" /> Assigned Pools</h2>
+                      <span className="text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">{pools.length} Total</span>
+                    </div>
+                    <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
                       {pools.map(pool => (
                         <button
                           key={pool._id}
                           onClick={() => setSelectedPoolAndUrl(pool)}
                           className={`w-full text-left p-3.5 rounded-2xl border text-sm transition-all ${selectedPool?._id === pool._id
-                              ? 'bg-gradient-to-br from-[#166534]/10 to-[#15803d]/5 border-[#166534] font-bold shadow-sm'
-                              : 'bg-white border-gray-200 hover:border-gray-300'
+                              ? 'bg-gradient-to-br from-emerald-50 to-teal-50/60 border-emerald-600 font-bold shadow-sm ring-2 ring-emerald-500/20'
+                              : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
                             }`}
                         >
-                          <p className="text-[#1f3b2c] truncate">{pool.name}</p>
-                          <div className="flex justify-between items-center mt-2 text-[11px] text-gray-400 font-normal">
-                            <span>Farmers: {pool.participants.length}</span>
-                            <span className="uppercase text-[9px] bg-gray-100 px-1.5 py-0.5 rounded font-bold">{pool.status.replace('_', ' ')}</span>
+                          <p className="text-slate-900 truncate font-bold">{pool.name}</p>
+                          <div className="flex justify-between items-center mt-2 text-[11px] text-slate-500 font-normal">
+                            <span className="font-semibold text-slate-600">{pool.participants.length} Farmers</span>
+                            <span className="uppercase text-[9px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md font-extrabold border border-slate-200/60">{pool.status.replace('_', ' ')}</span>
                           </div>
                         </button>
                       ))}
@@ -1519,25 +1554,30 @@ function DashboardContent() {
 
                   {/* Farmer Details Sidebar */}
                   {selectedPool && (
-                    <div className="bg-white p-5 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
-                      <div className="border-b border-gray-100 pb-2">
-                        <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
-                          <FiUsers /> Farmer Profiles
-                        </h3>
-                        <p className="text-[11px] text-gray-400 mt-0.5">Required details for pool alignment</p>
+                    <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+                      <div className="border-b border-slate-100 pb-2 flex justify-between items-center">
+                        <div>
+                          <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
+                            <FiUsers className="text-emerald-600" /> Farmer Profiles
+                          </h3>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Pool members & land holdings</p>
+                        </div>
+                        <span className="text-[10px] font-extrabold bg-slate-100 px-2 py-1 rounded-lg text-slate-600">
+                          {selectedPool.participants.reduce((sum, p) => sum + (p.landContribution || p.landSize || 0), 0)} Ac Total
+                        </span>
                       </div>
 
-                      <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
+                      <div className="space-y-3 max-h-[350px] overflow-y-auto pr-1">
                         {selectedPool.participants.map((p, idx) => (
-                          <div key={idx} className="p-3 bg-gradient-to-br from-[#fffaf1] to-white rounded-2xl border border-amber-100/50 space-y-2">
+                          <div key={idx} className="p-3 bg-slate-50 hover:bg-emerald-50/30 transition-all rounded-2xl border border-slate-200/70 space-y-2">
                             <div className="flex justify-between items-start">
-                              <p className="text-sm font-bold text-gray-800">{p.fullName}</p>
-                              <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-bold">{p.landContribution || p.landSize} Ac</span>
+                              <p className="text-sm font-bold text-slate-800">{p.fullName}</p>
+                              <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-black border border-emerald-200">{p.landContribution || p.landSize} Ac</span>
                             </div>
-                            <div className="space-y-1 text-xs text-gray-500">
-                              <p className="flex items-center gap-1.5"><FiPhone className="text-gray-400 w-3.5 h-3.5" /> {p.phone || 'N/A'}</p>
-                              <p className="flex items-start gap-1.5"><FiMapPin className="text-gray-400 w-3.5 h-3.5 mt-0.5" /> <span className="leading-tight">{p.address || 'Kadur, Chikkamagaluru'}</span></p>
-                              <p className="flex items-center gap-1.5"><FiMap className="text-gray-400 w-3.5 h-3.5" /> Survey: {p.surveyNumber}</p>
+                            <div className="space-y-1 text-xs text-slate-600">
+                              <p className="flex items-center gap-1.5"><FiPhone className="text-slate-400 w-3.5 h-3.5" /> {p.phone || 'N/A'}</p>
+                              <p className="flex items-start gap-1.5"><FiMapPin className="text-slate-400 w-3.5 h-3.5 mt-0.5" /> <span className="leading-tight">{p.address || 'Kadur, Chikkamagaluru'}</span></p>
+                              <p className="flex items-center gap-1.5"><FiMap className="text-slate-400 w-3.5 h-3.5" /> Survey: <span className="font-mono font-semibold">{p.surveyNumber}</span></p>
                             </div>
                           </div>
                         ))}
@@ -1673,41 +1713,56 @@ function DashboardContent() {
                           {(statusLower === 'planning' || statusLower === 'signing' || statusLower === 'active') ? (
                             <div className="space-y-6">
                               {/* Tab Navigation */}
-                              <div className="flex border-b border-gray-100 overflow-x-auto gap-2">
+                              <div className="flex bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/80 overflow-x-auto gap-1.5 scrollbar-none">
                                 <button
                                   onClick={() => setActiveTab('model')}
-                                  className={`pb-3 px-4 text-xs font-bold whitespace-nowrap transition-all border-b-2 ${activeTab === 'model' ? 'border-[#166534] text-[#166534]' : 'border-transparent text-gray-400 hover:text-gray-600'
+                                  className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'model'
+                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
-                                  Step 5: Model Selection
+                                  <FiLayers className="w-3.5 h-3.5" />
+                                  1. Model Selection
                                 </button>
                                 <button
                                   onClick={() => setActiveTab('info')}
-                                  className={`pb-3 px-4 text-xs font-bold whitespace-nowrap transition-all border-b-2 ${activeTab === 'info' ? 'border-[#166534] text-[#166534]' : 'border-transparent text-gray-400 hover:text-gray-600'
+                                  className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'info'
+                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
-                                  Crop Allocation
+                                  <FiFileText className="w-3.5 h-3.5" />
+                                  2. Crop Allocation
                                 </button>
                                 <button
                                   onClick={() => setActiveTab('financials')}
-                                  className={`pb-3 px-4 text-xs font-bold whitespace-nowrap transition-all border-b-2 ${activeTab === 'financials' ? 'border-[#166534] text-[#166534]' : 'border-transparent text-gray-400 hover:text-gray-600'
+                                  className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'financials'
+                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
-                                  Finance & Resources
+                                  <FiDollarSign className="w-3.5 h-3.5" />
+                                  3. Finance & Resources
                                 </button>
                                 <button
                                   onClick={() => setActiveTab('contributions')}
-                                  className={`pb-3 px-4 text-xs font-bold whitespace-nowrap transition-all border-b-2 ${activeTab === 'contributions' ? 'border-[#166534] text-[#166534]' : 'border-transparent text-gray-400 hover:text-gray-600'
+                                  className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'contributions'
+                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
-                                  Farmer Contribution
+                                  <FiUsers className="w-3.5 h-3.5" />
+                                  4. Farmer Contributions
                                 </button>
                                 <button
                                   onClick={() => setActiveTab('insurance')}
-                                  className={`pb-3 px-4 text-xs font-bold whitespace-nowrap transition-all border-b-2 ${activeTab === 'insurance' ? 'border-[#166534] text-[#166534]' : 'border-transparent text-gray-400 hover:text-gray-600'
+                                  className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'insurance'
+                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
-                                  Crop Insurance
+                                  <FiShield className="w-3.5 h-3.5" />
+                                  5. Crop Insurance
                                 </button>
                               </div>
 
@@ -2755,394 +2810,514 @@ function DashboardContent() {
                   {selectedPool ? (
                     <>
                       <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm">
-                        <h1 className="text-2xl font-black text-[#1f3b2c] mb-2 flex items-center gap-2">
-                          🎛️ Operations Desk: {selectedPool.name}
-                        </h1>
-                        <p className="text-xs text-gray-500">Track crop lifecycle progress, verify member labour & machinery logs, and execute seasonal harvest settlement below.</p>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                          <div>
+                            <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
+                              Active Management Desk
+                            </span>
+                            <h1 className="text-2xl font-black text-[#1f3b2c] mt-1 flex items-center gap-2">
+                              🎛️ {selectedPool.name}
+                            </h1>
+                            <p className="text-xs text-gray-500 mt-0.5">Switch between operational tabs below to audit contributions, manage tasks, log expenses, and execute harvest settlement.</p>
+                          </div>
+                          <span className="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200 self-start md:self-auto">
+                            {selectedPool.participants.length} Farmer Members
+                          </span>
+                        </div>
                       </div>
 
-                      {/* FCO Member Contribution Audit & Verification Desk */}
-                      <ContributionHistoryTable
-                        poolId={selectedPool._id}
-                        userId={userId || ''}
-                        userName="Field Counseling Officer"
-                        isFco={true}
-                        onRefreshPool={fetchPools}
-                      />
-
-                      {/* FCO Harvest Valuation & Final Settlement Desk */}
-                      <PoolSettlementView
-                        poolId={selectedPool._id}
-                        poolName={selectedPool.name}
-                        collaborationModel={selectedPool.collaborationModel || 5}
-                        isFco={true}
-                        userId={userId || ''}
-                        userName="Field Counseling Officer"
-                        onSettlementCreated={fetchPools}
-                      />
-
-                      {/* Crop Cultivation Task Management Board */}
-                      <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs">
-                        <div className="border-b border-gray-100 pb-3">
-                          <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-2">
-                            <FiSliders className="text-[#166534] w-5 h-5" /> Crop Cultivation Progress Management Board
-                          </h4>
-                          <p className="text-[11px] text-gray-500 mt-1">
-                            Verify and toggle scheduled tasks for: <span className="font-bold text-[#166534]">{selectedPool.farmPlan?.selectedCrop || 'Cooperative Crops'}</span>.
-                          </p>
-                        </div>
-
-                        {/* Tasks List */}
-                        <div className="space-y-2.5 max-h-[280px] overflow-y-auto pr-1">
-                          {(selectedPool.tasksList || []).map((task: any) => (
-                            <div key={task.id} className="flex justify-between items-center p-3.5 border border-gray-100 rounded-2xl hover:bg-gray-50/50">
-                              <div className="flex items-center gap-3">
-                                <button
-                                  onClick={() => handleToggleBoardTask(task.id)}
-                                  className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${task.status === 'completed'
-                                      ? 'bg-[#166534] border-[#166534] text-white'
-                                      : 'border-gray-300 hover:border-emerald-600'
-                                    }`}
-                                >
-                                  {task.status === 'completed' && <FiCheckCircle className="w-3.5 h-3.5" />}
-                                </button>
-                                <span className={`font-bold text-sm ${task.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                                  {task.name}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="text-[10px] text-gray-500 font-bold bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-xl">Target: {task.date}</span>
-                                <button
-                                  onClick={() => handleDeleteBoardTask(task.id)}
-                                  className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg font-bold text-xs"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                          {(!selectedPool.tasksList || selectedPool.tasksList.length === 0) && (
-                            <p className="text-center text-slate-400 py-6 italic">No tasks initialized. Dispatch contract to populate default checklist.</p>
-                          )}
-                        </div>
-
-                        {/* Add Task Form */}
-                        <form onSubmit={handleAddBoardTask} className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-gray-100">
-                          <input
-                            type="text"
-                            placeholder="Milestone Task (e.g. Apply organic urea)"
-                            value={newBoardTaskName}
-                            onChange={(e) => setNewBoardTaskName(e.target.value)}
-                            className="border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 bg-white"
-                            required
-                          />
-                          <input
-                            type="text"
-                            placeholder="Target Date (e.g. Aug 25, 2026)"
-                            value={newBoardTaskDate}
-                            onChange={(e) => setNewBoardTaskDate(e.target.value)}
-                            className="border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 bg-white"
-                            required
-                          />
-                          <button
-                            type="submit"
-                            className="bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 shadow-sm transition-all"
-                          >
-                            + Add Crop Task
-                          </button>
-                        </form>
+                      {/* Feature Tabs Bar */}
+                      <div className="flex bg-white p-1.5 rounded-2xl border border-gray-200/80 shadow-sm overflow-x-auto gap-1.5 scrollbar-none">
+                        <button
+                          onClick={() => setManagePoolTab('contributions')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'contributions'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiUsers className="w-3.5 h-3.5" />
+                          1. Audit Contributions
+                        </button>
+                        <button
+                          onClick={() => setManagePoolTab('settlement')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'settlement'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiAward className="w-3.5 h-3.5" />
+                          2. Harvest Settlement
+                        </button>
+                        <button
+                          onClick={() => setManagePoolTab('tasks')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'tasks'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiCheckSquare className="w-3.5 h-3.5" />
+                          3. Cultivation Tasks ({(selectedPool.tasksList || []).length})
+                        </button>
+                        <button
+                          onClick={() => setManagePoolTab('expenses')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'expenses'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiDollarSign className="w-3.5 h-3.5" />
+                          4. Shared Expenses ({(selectedPool.expensesList || []).length})
+                        </button>
+                        <button
+                          onClick={() => setManagePoolTab('blockchain')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'blockchain'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiCpu className="w-3.5 h-3.5" />
+                          5. Milestone Blocks
+                        </button>
+                        <button
+                          onClick={() => setManagePoolTab('disputes')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'disputes'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiAlertCircle className="w-3.5 h-3.5" />
+                          6. Disputes ({tickets.filter(t => t.status === 'pending').length})
+                        </button>
+                        <button
+                          onClick={() => setManagePoolTab('files')}
+                          className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'files'
+                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
+                            }`}
+                        >
+                          <FiFileText className="w-3.5 h-3.5" />
+                          7. Files & Contract
+                        </button>
                       </div>
 
-                      {/* Shared Expense Ledger Manager */}
-                      <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs">
-                        <div className="border-b border-gray-100 pb-3">
-                          <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-2">
-                            <FiDollarSign className="text-[#166534] w-5 h-5" /> Shared Expense Ledger Manager
-                          </h4>
-                          <p className="text-[11px] text-gray-500 mt-1">
-                            Log operational expenditures against specific farmers. Values are dynamically divided in on-chain settlements.
-                          </p>
+                      {/* TAB 1: CONTRIBUTIONS AUDIT */}
+                      {managePoolTab === 'contributions' && (
+                        <div className="space-y-4 animate-fadeIn">
+                          <ContributionHistoryTable
+                            poolId={selectedPool._id}
+                            userId={userId || ''}
+                            userName="Field Counseling Officer"
+                            isFco={true}
+                            onRefreshPool={fetchPools}
+                          />
                         </div>
+                      )}
 
-                        {/* Expenses List */}
-                        <div className="space-y-2.5 max-h-[280px] overflow-y-auto pr-1">
-                          {(selectedPool.expensesList || []).map((exp: any) => (
-                            <div key={exp.id} className="flex justify-between items-center p-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl hover:bg-gray-50">
-                              <div>
-                                <p className="font-bold text-gray-800 text-sm">{exp.category} &mdash; ₹{exp.amount.toLocaleString('en-IN')}</p>
-                                <p className="text-[10px] text-gray-400 mt-0.5">Paid by: <span className="font-semibold text-gray-600">{exp.farmerName}</span> · Date: {exp.date}</p>
-                                <p className="text-[10px] text-[#166534] italic font-semibold mt-1">&quot;{exp.reason}&quot;</p>
-                              </div>
-                              <button
-                                onClick={() => handleDeleteBoardExpense(exp.id)}
-                                className="text-rose-600 hover:text-rose-800 font-bold text-xs px-3 py-1.5 hover:bg-rose-50 rounded-xl transition-all"
-                              >
-                                Delete
-                              </button>
+                      {/* TAB 2: HARVEST SETTLEMENT */}
+                      {managePoolTab === 'settlement' && (
+                        <div className="space-y-4 animate-fadeIn">
+                          <PoolSettlementView
+                            poolId={selectedPool._id}
+                            poolName={selectedPool.name}
+                            collaborationModel={selectedPool.collaborationModel || 5}
+                            isFco={true}
+                            userId={userId || ''}
+                            userName="Field Counseling Officer"
+                            onSettlementCreated={fetchPools}
+                          />
+                        </div>
+                      )}
+
+                      {/* TAB 3: CROP TASKS MANAGEMENT */}
+                      {managePoolTab === 'tasks' && (
+                        <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs animate-fadeIn">
+                          <div className="border-b border-gray-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                            <div>
+                              <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-2">
+                                <FiCheckSquare className="text-[#166534] w-5 h-5" /> Crop Cultivation Progress Management Board
+                              </h4>
+                              <p className="text-[11px] text-gray-500 mt-1">
+                                Verify and toggle scheduled tasks for: <span className="font-bold text-[#166534]">{selectedPool.farmPlan?.selectedCrop || 'Cooperative Crops'}</span>.
+                              </p>
                             </div>
-                          ))}
-                          {(!selectedPool.expensesList || selectedPool.expensesList.length === 0) && (
-                            <p className="text-center text-slate-400 py-6 italic">No expenses log entries found.</p>
-                          )}
-                        </div>
+                            <span className="text-xs bg-emerald-50 text-emerald-800 font-bold px-3 py-1 rounded-xl border border-emerald-100">
+                              {(selectedPool.tasksList || []).filter((t: any) => t.status === 'completed').length} / {(selectedPool.tasksList || []).length} Completed
+                            </span>
+                          </div>
 
-                        {/* Add Expense Form */}
-                        <form onSubmit={handleAddBoardExpense} className="space-y-3 pt-4 border-t border-gray-100">
-                          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                            <select
-                              value={newExpCategory}
-                              onChange={(e) => setNewExpCategory(e.target.value)}
-                              className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white font-semibold"
-                            >
-                              <option value="Seeds">Seeds</option>
-                              <option value="Fertilizers">Fertilizers</option>
-                              <option value="Irrigation Repair">Irrigation Repair</option>
-                              <option value="Machinery Rent">Machinery Rent</option>
-                              <option value="Labour wages">Labour wages</option>
-                              <option value="Logistics">Logistics & Transport</option>
-                              <option value="Others">Others (Write Custom...)</option>
-                            </select>
-
-                            {newExpCategory === 'Others' && (
-                              <input
-                                type="text"
-                                placeholder="Custom Category Name"
-                                value={newExpCustomCategory}
-                                onChange={(e) => setNewExpCustomCategory(e.target.value)}
-                                className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white"
-                                required
-                              />
+                          {/* Tasks List */}
+                          <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+                            {(selectedPool.tasksList || []).map((task: any) => (
+                              <div key={task.id} className="flex justify-between items-center p-3.5 border border-gray-100 rounded-2xl hover:bg-gray-50/50">
+                                <div className="flex items-center gap-3">
+                                  <button
+                                    onClick={() => handleToggleBoardTask(task.id)}
+                                    className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${task.status === 'completed'
+                                        ? 'bg-[#166534] border-[#166534] text-white'
+                                        : 'border-gray-300 hover:border-emerald-600'
+                                      }`}
+                                  >
+                                    {task.status === 'completed' && <FiCheckCircle className="w-3.5 h-3.5" />}
+                                  </button>
+                                  <span className={`font-bold text-sm ${task.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                                    {task.name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[10px] text-gray-500 font-bold bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-xl">Target: {task.date}</span>
+                                  <button
+                                    onClick={() => handleDeleteBoardTask(task.id)}
+                                    className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg font-bold text-xs"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                            {(!selectedPool.tasksList || selectedPool.tasksList.length === 0) && (
+                              <p className="text-center text-slate-400 py-8 italic">No tasks initialized. Add milestone tasks below to populate the cultivation checklist.</p>
                             )}
+                          </div>
 
-                            <input
-                              type="number"
-                              placeholder="Amount (₹)"
-                              value={newExpAmount}
-                              onChange={(e) => setNewExpAmount(e.target.value)}
-                              className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white"
-                              required
-                            />
-                            <select
-                              value={newExpFarmerId}
-                              onChange={(e) => setNewExpFarmerId(e.target.value)}
-                              className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white font-semibold"
-                              required
-                            >
-                              <option value="">Select Farmer...</option>
-                              {selectedPool.participants.map(p => (
-                                <option key={p.userId} value={p.userId}>{p.fullName}</option>
-                              ))}
-                            </select>
+                          {/* Add Task Form */}
+                          <form onSubmit={handleAddBoardTask} className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-gray-100">
                             <input
                               type="text"
-                              placeholder="Reason/Notes"
-                              value={newExpReason}
-                              onChange={(e) => setNewExpReason(e.target.value)}
-                              className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white"
+                              placeholder="Milestone Task (e.g. Apply organic urea)"
+                              value={newBoardTaskName}
+                              onChange={(e) => setNewBoardTaskName(e.target.value)}
+                              className="border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 bg-white font-medium"
                               required
                             />
-                          </div>
-
-                          <button
-                            type="submit"
-                            className="w-full bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 shadow-sm transition-all"
-                          >
-                            + Log Expense
-                          </button>
-                        </form>
-                      </div>
-
-                      {/* Progressive Block Chain Operations Anchor Form */}
-                      {selectedPool.status === 'active' && (
-                        <div className="p-6 rounded-3xl bg-[#f0fdf4]/50 border border-emerald-100 space-y-4 text-xs">
-                          <div className="border-b border-emerald-100 pb-2.5">
-                            <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-1.5">
-                              ⛓️ Publish Operational Milestone to Blockchain Ledger
-                            </h4>
-                            <p className="text-[11px] text-gray-500 mt-0.5">
-                              Secure this crop cycle operational achievements by anchoring them onto the smart contract timeline blocks.
-                            </p>
-                          </div>
-
-                          <form onSubmit={handleAddProgressBlock} className="space-y-3">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div>
-                                <label className="block font-bold text-gray-400 uppercase mb-1">Select Milestone Action</label>
-                                <select
-                                  value={blockActionInput}
-                                  onChange={(e) => setBlockActionInput(e.target.value)}
-                                  className="w-full border border-gray-200 rounded-lg px-2.5 py-2 bg-white text-slate-800 font-semibold"
-                                  required
-                                >
-                                  <option value="">Choose milestone action...</option>
-                                  <option value="Sowing Verification">🌱 Sowing Verification Completed</option>
-                                  <option value="Fertilization Stage">🧪 Fertilization Dose Applied</option>
-                                  <option value="Irrigation Checked">💧 Scheduled Irrigation Audited</option>
-                                  <option value="Pest Control Applied">🐛 Pest Mitigation Completed</option>
-                                  <option value="Harvest Commenced">🌾 Harvest Phase Commenced</option>
-                                  <option value="Yield Audited">📦 Crop Yield Audited</option>
-                                  <option value="Settlement Finalized">💰 Financial Settlement Finalized</option>
-                                  <option value="Termination Trigger">🔴 Operational Cycle Terminated</option>
-                                </select>
-                              </div>
-
-                              <div>
-                                <label className="block font-bold text-gray-400 uppercase mb-1">Milestone Details & Ledger Remarks</label>
-                                <textarea
-                                  value={blockRemarksInput}
-                                  onChange={(e) => setBlockRemarksInput(e.target.value)}
-                                  placeholder="Provide verification notes, batch details, or audit metadata..."
-                                  rows={1}
-                                  className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-800 bg-white font-semibold"
-                                  required
-                                />
-                              </div>
-                            </div>
-
+                            <input
+                              type="text"
+                              placeholder="Target Date (e.g. Aug 25, 2026)"
+                              value={newBoardTaskDate}
+                              onChange={(e) => setNewBoardTaskDate(e.target.value)}
+                              className="border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 bg-white font-medium"
+                              required
+                            />
                             <button
                               type="submit"
-                              disabled={isPublishingBlock || !blockActionInput || !blockRemarksInput}
-                              className="w-full py-2 bg-[#166534] hover:bg-[#14532d] disabled:opacity-50 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                              className="bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 shadow-sm transition-all"
                             >
-                              {isPublishingBlock ? 'Mining Block & Sealing...' : '🔐 Seal Progressive Operation Block'}
+                              + Add Crop Task
                             </button>
                           </form>
                         </div>
                       )}
 
-                      {/* Dispute & Support Query Desk for FCO */}
-                      <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
-                        <div className="border-b border-gray-150 pb-3">
-                          <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
-                            <FiAlertCircle className="text-rose-600 w-5 h-5" /> Farmer Disputes & Support Tickets
-                          </h3>
-                          <p className="text-xs text-gray-500 mt-1">Review raised conflicts and input resolution details to seal them on the blockchain progression ledger.</p>
-                        </div>
+                      {/* TAB 4: EXPENSES LEDGER */}
+                      {managePoolTab === 'expenses' && (
+                        <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs animate-fadeIn">
+                          <div className="border-b border-gray-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                            <div>
+                              <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-2">
+                                <FiDollarSign className="text-[#166534] w-5 h-5" /> Shared Expense Ledger Manager
+                              </h4>
+                              <p className="text-[11px] text-gray-500 mt-1">
+                                Log operational expenditures against specific farmers. Values are dynamically divided in on-chain settlements.
+                              </p>
+                            </div>
+                            <span className="text-xs bg-amber-50 text-amber-800 font-bold px-3 py-1 rounded-xl border border-amber-100">
+                              Total Logged: ₹{(selectedPool.expensesList || []).reduce((sum: number, e: any) => sum + (Number(e.amount) || 0), 0).toLocaleString('en-IN')}
+                            </span>
+                          </div>
 
-                        <div className="space-y-4">
-                          {tickets.map((ticket: any) => (
-                            <div key={ticket._id} className="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl space-y-3">
-                              <div className="flex justify-between items-start flex-wrap gap-2 text-xs">
+                          {/* Expenses List */}
+                          <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+                            {(selectedPool.expensesList || []).map((exp: any) => (
+                              <div key={exp.id} className="flex justify-between items-center p-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl hover:bg-gray-50">
                                 <div>
-                                  <span className="font-extrabold text-gray-700">From: {ticket.farmerName}</span>
-                                  <span className="text-gray-400 font-normal"> · Pool: {ticket.poolName}</span>
+                                  <p className="font-bold text-gray-800 text-sm">{exp.category} &mdash; ₹{Number(exp.amount).toLocaleString('en-IN')}</p>
+                                  <p className="text-[10px] text-gray-400 mt-0.5">Paid by: <span className="font-semibold text-gray-600">{exp.farmerName}</span> · Date: {exp.date}</p>
+                                  <p className="text-[10px] text-[#166534] italic font-semibold mt-1">&quot;{exp.reason}&quot;</p>
                                 </div>
-                                <div className="flex gap-2">
-                                  <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase ${ticket.visibility === 'private' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                                    }`}>
-                                    {ticket.visibility === 'private' ? '🔒 Private' : '🌐 Shared'}
-                                  </span>
-                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${ticket.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                                    }`}>
-                                    {ticket.status}
-                                  </span>
+                                <button
+                                  onClick={() => handleDeleteBoardExpense(exp.id)}
+                                  className="text-rose-600 hover:text-rose-800 font-bold text-xs px-3 py-1.5 hover:bg-rose-50 rounded-xl transition-all"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            ))}
+                            {(!selectedPool.expensesList || selectedPool.expensesList.length === 0) && (
+                              <p className="text-center text-slate-400 py-8 italic">No expense entries logged for this pool.</p>
+                            )}
+                          </div>
+
+                          {/* Add Expense Form */}
+                          <form onSubmit={handleAddBoardExpense} className="space-y-3 pt-4 border-t border-gray-100">
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                              <select
+                                value={newExpCategory}
+                                onChange={(e) => setNewExpCategory(e.target.value)}
+                                className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white font-semibold"
+                              >
+                                <option value="Seeds">Seeds</option>
+                                <option value="Fertilizers">Fertilizers</option>
+                                <option value="Irrigation Repair">Irrigation Repair</option>
+                                <option value="Machinery Rent">Machinery Rent</option>
+                                <option value="Labour wages">Labour wages</option>
+                                <option value="Logistics">Logistics & Transport</option>
+                                <option value="Others">Others (Write Custom...)</option>
+                              </select>
+
+                              {newExpCategory === 'Others' && (
+                                <input
+                                  type="text"
+                                  placeholder="Custom Category Name"
+                                  value={newExpCustomCategory}
+                                  onChange={(e) => setNewExpCustomCategory(e.target.value)}
+                                  className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white"
+                                  required
+                                />
+                              )}
+
+                              <input
+                                type="number"
+                                placeholder="Amount (₹)"
+                                value={newExpAmount}
+                                onChange={(e) => setNewExpAmount(e.target.value)}
+                                className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white"
+                                required
+                              />
+                              <select
+                                value={newExpFarmerId}
+                                onChange={(e) => setNewExpFarmerId(e.target.value)}
+                                className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white font-semibold"
+                                required
+                              >
+                                <option value="">Select Farmer...</option>
+                                {selectedPool.participants.map(p => (
+                                  <option key={p.userId} value={p.userId}>{p.fullName}</option>
+                                ))}
+                              </select>
+                              <input
+                                type="text"
+                                placeholder="Reason/Notes"
+                                value={newExpReason}
+                                onChange={(e) => setNewExpReason(e.target.value)}
+                                className="border border-gray-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 bg-white"
+                                required
+                              />
+                            </div>
+
+                            <button
+                              type="submit"
+                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 shadow-sm transition-all"
+                            >
+                              + Log Expense
+                            </button>
+                          </form>
+                        </div>
+                      )}
+
+                      {/* TAB 5: BLOCKCHAIN MILESTONE BLOCKS */}
+                      {managePoolTab === 'blockchain' && (
+                        <div className="space-y-6 animate-fadeIn">
+                          <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs">
+                            <div className="border-b border-gray-100 pb-2.5">
+                              <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-1.5">
+                                ⛓️ Publish Operational Milestone to Blockchain Ledger
+                              </h4>
+                              <p className="text-[11px] text-gray-500 mt-0.5">
+                                Secure this crop cycle operational achievements by anchoring them onto the smart contract timeline blocks.
+                              </p>
+                            </div>
+
+                            <form onSubmit={handleAddProgressBlock} className="space-y-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                  <label className="block font-bold text-gray-400 uppercase mb-1">Select Milestone Action</label>
+                                  <select
+                                    value={blockActionInput}
+                                    onChange={(e) => setBlockActionInput(e.target.value)}
+                                    className="w-full border border-gray-200 rounded-lg px-2.5 py-2 bg-white text-slate-800 font-semibold"
+                                    required
+                                  >
+                                    <option value="">Choose milestone action...</option>
+                                    <option value="Sowing Verification">🌱 Sowing Verification Completed</option>
+                                    <option value="Fertilization Stage">🧪 Fertilization Dose Applied</option>
+                                    <option value="Irrigation Checked">💧 Scheduled Irrigation Audited</option>
+                                    <option value="Pest Control Applied">🐛 Pest Mitigation Completed</option>
+                                    <option value="Harvest Commenced">🌾 Harvest Phase Commenced</option>
+                                    <option value="Yield Audited">📦 Crop Yield Audited</option>
+                                    <option value="Settlement Finalized">💰 Financial Settlement Finalized</option>
+                                    <option value="Termination Trigger">🔴 Operational Cycle Terminated</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block font-bold text-gray-400 uppercase mb-1">Milestone Details & Ledger Remarks</label>
+                                  <textarea
+                                    value={blockRemarksInput}
+                                    onChange={(e) => setBlockRemarksInput(e.target.value)}
+                                    placeholder="Provide verification notes, batch details, or audit metadata..."
+                                    rows={1}
+                                    className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-800 bg-white font-semibold"
+                                    required
+                                  />
                                 </div>
                               </div>
 
-                              <div>
-                                <h4 className="font-bold text-sm text-gray-800">{ticket.title}</h4>
-                                <p className="text-xs text-gray-600 mt-1 leading-relaxed">{ticket.description}</p>
-                              </div>
+                              <button
+                                type="submit"
+                                disabled={isPublishingBlock || !blockActionInput || !blockRemarksInput}
+                                className="w-full py-2.5 bg-[#166534] hover:bg-[#14532d] disabled:opacity-50 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                              >
+                                {isPublishingBlock ? 'Mining Block & Sealing...' : '🔐 Seal Progressive Operation Block'}
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      )}
 
-                              {ticket.status === 'pending' ? (
-                                <div className="space-y-2 pt-2 border-t border-gray-100">
-                                  <label className="block text-[10px] font-bold text-gray-400 uppercase">Input Resolution Terms</label>
+                      {/* TAB 6: DISPUTES & QUERY DESK */}
+                      {managePoolTab === 'disputes' && (
+                        <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-4 animate-fadeIn">
+                          <div className="border-b border-gray-150 pb-3 flex justify-between items-center flex-wrap gap-2">
+                            <div>
+                              <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
+                                <FiAlertCircle className="text-rose-600 w-5 h-5" /> Farmer Disputes & Support Tickets
+                              </h3>
+                              <p className="text-xs text-gray-500 mt-1">Review raised conflicts and input resolution details to seal them on the blockchain progression ledger.</p>
+                            </div>
+                            <span className="text-xs bg-rose-50 text-rose-700 font-bold px-3 py-1 rounded-xl border border-rose-100">
+                              {tickets.filter(t => t.status === 'pending').length} Pending Resolution
+                            </span>
+                          </div>
+
+                          <div className="space-y-4">
+                            {tickets.map((ticket: any) => (
+                              <div key={ticket._id} className="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl space-y-3">
+                                <div className="flex justify-between items-start flex-wrap gap-2 text-xs">
+                                  <div>
+                                    <span className="font-extrabold text-gray-700">From: {ticket.farmerName}</span>
+                                    <span className="text-gray-400 font-normal"> · Pool: {ticket.poolName}</span>
+                                  </div>
                                   <div className="flex gap-2">
-                                    <input
-                                      type="text"
-                                      placeholder="e.g. Compensated for machinery loss / Rescheduled irrigation cycle..."
-                                      value={resolutionInput[ticket._id] || ''}
-                                      onChange={(e) => setResolutionInput(prev => ({ ...prev, [ticket._id]: e.target.value }))}
-                                      className="flex-1 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 bg-white"
-                                      required
-                                    />
-                                    <button
-                                      onClick={() => handleResolveConflictTicket(ticket._id)}
-                                      disabled={isResolvingTicket[ticket._id]}
-                                      className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition-all"
+                                    <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase ${ticket.visibility === 'private' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                                      }`}>
+                                      {ticket.visibility === 'private' ? '🔒 Private' : '🌐 Shared'}
+                                    </span>
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${ticket.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                                      }`}>
+                                      {ticket.status}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <h4 className="font-bold text-sm text-gray-800">{ticket.title}</h4>
+                                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">{ticket.description}</p>
+                                </div>
+
+                                {ticket.status === 'pending' ? (
+                                  <div className="space-y-2 pt-2 border-t border-gray-100">
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase">Input Resolution Terms</label>
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="text"
+                                        placeholder="e.g. Compensated for machinery loss / Rescheduled irrigation cycle..."
+                                        value={resolutionInput[ticket._id] || ''}
+                                        onChange={(e) => setResolutionInput(prev => ({ ...prev, [ticket._id]: e.target.value }))}
+                                        className="flex-1 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 bg-white"
+                                        required
+                                      />
+                                      <button
+                                        onClick={() => handleResolveConflictTicket(ticket._id)}
+                                        disabled={isResolvingTicket[ticket._id]}
+                                        className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition-all"
+                                      >
+                                        {isResolvingTicket[ticket._id] ? 'Resolving...' : 'Resolve'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-xs space-y-1">
+                                    <p className="font-bold text-emerald-800">Resolution Status:</p>
+                                    <p className="text-emerald-700 italic">&quot;{ticket.resolution}&quot;</p>
+                                    <p className="text-[10px] text-emerald-600 mt-1">Resolved on {new Date(ticket.resolvedAt).toLocaleDateString('en-IN')}</p>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            {tickets.length === 0 && (
+                              <p className="text-center text-xs text-gray-400 py-8 italic">No pending query disputes or tickets found for this pool.</p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* TAB 7: FILES & CONTRACT EXPLORER */}
+                      {managePoolTab === 'files' && (
+                        <div className="space-y-6 animate-fadeIn">
+                          {/* Shared Pool Files Repository for FCO */}
+                          <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
+                            <div className="border-b border-gray-150 pb-3 flex justify-between items-center flex-wrap gap-2">
+                              <div>
+                                <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
+                                  <FiFileText className="text-[#166534] w-5 h-5" /> Pool Files & Documents Repository
+                                </h3>
+                                <p className="text-xs text-gray-500 mt-1">Upload reference guides, quality test logs, or invoices. Accessible by all pool participants.</p>
+                              </div>
+
+                              <label className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer shadow-sm flex items-center gap-1.5 transition-all">
+                                <FiUpload /> {isUploadingFile ? 'Uploading...' : 'Upload File'}
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  onChange={handleUploadPoolFile}
+                                  disabled={isUploadingFile}
+                                />
+                              </label>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {((selectedPool as any).uploadedFiles || []).map((file: any) => (
+                                <div key={file.id} className="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl flex justify-between items-center">
+                                  <div className="truncate pr-2">
+                                    <p className="font-bold text-xs text-gray-800 truncate" title={file.name}>{file.name}</p>
+                                    <p className="text-[10px] text-gray-400 mt-0.5">Uploaded: {file.uploadedAt}</p>
+                                  </div>
+                                  <div className="flex gap-2 flex-shrink-0">
+                                    <a
+                                      href={file.url}
+                                      download={file.name}
+                                      className="p-2 bg-white hover:bg-gray-100 text-gray-600 rounded-xl border border-gray-150 transition-all flex items-center justify-center"
+                                      title="Download"
                                     >
-                                      {isResolvingTicket[ticket._id] ? 'Resolving...' : 'Resolve'}
+                                      <FiDownload className="w-3.5 h-3.5" />
+                                    </a>
+                                    <button
+                                      onClick={() => handleDeletePoolFile(file.id)}
+                                      className="p-2 bg-white hover:bg-rose-50 text-rose-600 rounded-xl border border-gray-150 hover:border-rose-200 transition-all flex items-center justify-center"
+                                      title="Delete"
+                                    >
+                                      <FiTrash2 className="w-3.5 h-3.5" />
                                     </button>
                                   </div>
                                 </div>
-                              ) : (
-                                <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-xs space-y-1">
-                                  <p className="font-bold text-emerald-800">Resolution Status:</p>
-                                  <p className="text-emerald-700 italic">&quot;{ticket.resolution}&quot;</p>
-                                  <p className="text-[10px] text-emerald-600 mt-1">Resolved on {new Date(ticket.resolvedAt).toLocaleDateString('en-IN')}</p>
-                                </div>
+                              ))}
+                              {(!((selectedPool as any).uploadedFiles) || (selectedPool as any).uploadedFiles.length === 0) && (
+                                <p className="col-span-1 sm:col-span-2 text-center text-xs text-gray-400 py-6 italic">No shared documents uploaded yet.</p>
                               )}
                             </div>
-                          ))}
-                          {tickets.length === 0 && (
-                            <p className="text-center text-xs text-gray-400 py-6">No pending query disputes or tickets found.</p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Shared Pool Files Repository for FCO */}
-                      <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
-                        <div className="border-b border-gray-150 pb-3 flex justify-between items-center flex-wrap gap-2">
-                          <div>
-                            <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
-                              <FiFileText className="text-[#166534] w-5 h-5" /> Pool Files & Documents Repository
-                            </h3>
-                            <p className="text-xs text-gray-500 mt-1">Upload reference guides, quality test logs, or invoices. Accessible by all pool participants.</p>
                           </div>
 
-                          <label className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer shadow-sm flex items-center gap-1.5 transition-all">
-                            <FiUpload /> {isUploadingFile ? 'Uploading...' : 'Upload File'}
-                            <input
-                              type="file"
-                              className="hidden"
-                              onChange={handleUploadPoolFile}
-                              disabled={isUploadingFile}
-                            />
-                          </label>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {((selectedPool as any).uploadedFiles || []).map((file: any) => (
-                            <div key={file.id} className="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl flex justify-between items-center">
-                              <div className="truncate pr-2">
-                                <p className="font-bold text-xs text-gray-800 truncate" title={file.name}>{file.name}</p>
-                                <p className="text-[10px] text-gray-400 mt-0.5">Uploaded: {file.uploadedAt}</p>
-                              </div>
-                              <div className="flex gap-2 flex-shrink-0">
-                                <a
-                                  href={file.url}
-                                  download={file.name}
-                                  className="p-2 bg-white hover:bg-gray-100 text-gray-600 rounded-xl border border-gray-150 transition-all flex items-center justify-center"
-                                  title="Download"
-                                >
-                                  <FiDownload className="w-3.5 h-3.5" />
-                                </a>
-                                <button
-                                  onClick={() => handleDeletePoolFile(file.id)}
-                                  className="p-2 bg-white hover:bg-rose-50 text-rose-600 rounded-xl border border-gray-150 hover:border-rose-200 transition-all flex items-center justify-center"
-                                  title="Delete"
-                                >
-                                  <FiTrash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
+                          {/* Smart Contract Explorer */}
+                          <div className="bg-white border border-gray-200/60 rounded-3xl shadow-sm overflow-hidden space-y-4 p-1">
+                            <div className="p-5 border-b border-gray-100">
+                              <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
+                                <FiFileText className="text-[#166534]" /> Smart Contract & Ledger Explorer
+                              </h3>
+                              <p className="text-xs text-gray-500 mt-1">Review the cryptographically sealed details and progression timeline blocks.</p>
                             </div>
-                          ))}
-                          {(!((selectedPool as any).uploadedFiles) || (selectedPool as any).uploadedFiles.length === 0) && (
-                            <p className="col-span-1 sm:col-span-2 text-center text-xs text-gray-400 py-6 italic">No shared documents uploaded yet.</p>
-                          )}
+                            <SmartContractDocument pool={selectedPool} />
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Smart Contract Explorer */}
-                      <div className="bg-white border border-gray-200/60 rounded-3xl shadow-sm overflow-hidden space-y-4 p-1">
-                        <div className="p-5 border-b border-gray-100">
-                          <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
-                            <FiFileText className="text-[#166534]" /> Smart Contract & Ledger Explorer
-                          </h3>
-                          <p className="text-xs text-gray-500 mt-1">Review the cryptographically sealed details and progression timeline blocks.</p>
-                        </div>
-                        <SmartContractDocument pool={selectedPool} />
-                      </div>
+                      )}
                     </>
                   ) : (
                     <div className="bg-white p-12 text-center text-gray-400 border border-gray-200/60 rounded-3xl shadow-sm flex flex-col items-center justify-center min-h-[400px]">
@@ -3285,37 +3460,37 @@ function DashboardContent() {
               </div>
             ) : activeSidebarTab === 'schemes' ? (
               /* FCO GOVERNMENT SCHEMES MANAGER VIEW (Step 7, 10 Refinements) */
-              <div className="space-y-8 animate-fadeIn text-xs">
-                <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-6 animate-fadeIn text-xs">
+                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1f3b2c] mb-1 flex items-center gap-2">
+                    <h1 className="text-2xl font-black text-slate-800 mb-1 flex items-center gap-2">
                       🛡️ Government Schemes Workspace
                     </h1>
-                    <p className="text-xs text-gray-500">Recommend active schemes to targeted farmer cohorts, track responses, and manage group approvals.</p>
+                    <p className="text-xs text-slate-500">Recommend active schemes to targeted farmer cohorts, track responses, and manage group approvals.</p>
                   </div>
                   <button
                     onClick={fetchFcoSchemesData}
-                    className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all flex items-center gap-1.5"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-1.5 shadow-sm"
                   >
                     Refresh Panel Data
                   </button>
                 </div>
 
                 {/* Sub-tab Navigation */}
-                <div className="flex border-b border-gray-200/80 bg-white rounded-t-3xl px-4 pt-2">
+                <div className="flex bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/80 overflow-x-auto gap-1.5">
                   {(['list', 'campaigns', 'consensus', 'applied'] as const).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setFcoSchemesSubTab(tab)}
-                      className={`px-5 py-3.5 text-xs font-bold transition-all border-b-2 capitalize ${fcoSchemesSubTab === tab
-                          ? 'border-[#166534] text-[#166534]'
-                          : 'border-transparent text-gray-400 hover:text-gray-600'
+                      className={`px-5 py-2.5 text-xs font-bold transition-all rounded-xl capitalize flex items-center gap-2 ${fcoSchemesSubTab === tab
+                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                         }`}
                     >
-                      {tab === 'list' && 'All Schemes 📜'}
-                      {tab === 'campaigns' && 'Recommended Campaigns 📢'}
-                      {tab === 'consensus' && 'Consensus Pool Proposals 🗳️'}
-                      {tab === 'applied' && 'Applied Schemes ✓'}
+                      {tab === 'list' && '📜 All Schemes'}
+                      {tab === 'campaigns' && '📢 Recommended Campaigns'}
+                      {tab === 'consensus' && '🗳️ Consensus Pool Proposals'}
+                      {tab === 'applied' && '✅ Applied Schemes'}
                     </button>
                   ))}
                 </div>
@@ -3677,16 +3852,16 @@ function DashboardContent() {
             ) : (
               /* FCO INSURANCE CLAIM INSPECTIONS VIEW */
               <div className="space-y-6 animate-fadeIn text-xs">
-                <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1f3b2c] mb-1 flex items-center gap-2">
-                      <FiShield className="text-[#166534]" /> Crop Insurance Claim Inspections & Damage Verification
+                    <h1 className="text-2xl font-black text-slate-800 mb-1 flex items-center gap-2">
+                      <FiShield className="text-emerald-600" /> Crop Insurance Claims & Loss Assessment Desk
                     </h1>
-                    <p className="text-xs text-gray-500">Conduct physical field assessments for submitted crop loss claims, certify damage percentage, and disburse payouts.</p>
+                    <p className="text-xs text-slate-500">Conduct physical field assessments for submitted crop loss claims, certify damage percentage, and record verified reports.</p>
                   </div>
                   <button
                     onClick={fetchFcoClaimsData}
-                    className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all flex items-center gap-1.5"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-1.5 shadow-sm"
                   >
                     Refresh Claims List
                   </button>

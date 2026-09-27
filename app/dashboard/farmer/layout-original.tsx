@@ -71,10 +71,10 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
       title: 'Management',
       items: [
         { label: 'Overview', href: '/dashboard/farmer', icon: LayoutDashboard },
-        { 
-          label: isVerified ? 'Land Details' : 'Land Verification', 
-          href: '/dashboard/farmer/land/details', 
-          icon: Layers 
+        {
+          label: isVerified ? 'Land Details' : 'Land Verification',
+          href: '/dashboard/farmer/land/details',
+          icon: Layers
         },
         { label: 'Digital Farm Pooling', href: '/dashboard/farmer/pooling', icon: Users },
         { label: 'Farm Management', href: '/dashboard/farmer/farm-management', icon: Calendar },
@@ -134,7 +134,7 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
                     ? pathname === item.href
                     : item.href !== '/dashboard/farmer/marketplace' && pathname?.startsWith(item.href);
                   const Icon = item.icon;
-                  
+
                   // Disable if checking verification OR if not verified and it is not overview or details
                   const isDisabled = !checkingVerification && !isVerified && item.href !== '/dashboard/farmer' && item.href !== '/dashboard/farmer/land/details';
 
@@ -153,17 +153,15 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
                       ) : (
                         <Link
                           href={item.href === '/dashboard/farmer/marketplace' ? getMarketplaceHref() : buildHref(item.href)}
-                          className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
-                            isActive
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${isActive
                               ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
                               : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
-                          }`}
+                            }`}
                         >
-                          <div className={`p-1.5 rounded-lg transition-all ${
-                            isActive
+                          <div className={`p-1.5 rounded-lg transition-all ${isActive
                               ? 'bg-white/20'
                               : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
-                          }`}>
+                            }`}>
                             <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#166534]'}`} />
                           </div>
                           <span className="font-medium text-sm">{item.label}</span>
