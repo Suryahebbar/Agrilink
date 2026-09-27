@@ -234,7 +234,7 @@ function ModalDemo() {
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800">Usage Instructions</h2>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-6">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Modal Context</h3>
               <pre className="bg-gray-100 p-4 rounded-md text-sm overflow-x-auto">

@@ -108,7 +108,7 @@ export default function BlockchainRecords() {
         </div>
         <button 
           onClick={fetchAllBlockchainData}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-semibold transition-colors bg-white shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-semibold transition-colors bg-white"
         >
           <FiRefreshCw className={loading ? 'animate-spin' : ''} /> Sync Ledger Nodes
         </button>
@@ -125,7 +125,7 @@ export default function BlockchainRecords() {
               onClick={() => setActiveTab(t.id as ScopeTab)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 active 
-                  ? 'bg-white text-[#1A9B9A] shadow-sm border border-gray-200' 
+                  ? 'bg-white text-[#1A9B9A]  border border-gray-200' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
               }`}
             >
@@ -140,7 +140,7 @@ export default function BlockchainRecords() {
       </div>
 
       {/* Search and Table Container */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="relative flex-1 max-w-md w-full">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">

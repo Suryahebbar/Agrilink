@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, ShoppingCart, Package, User, Phone, Mail, MapPin, Users } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Package, User, Phone, Mail, MapPin, Users } from '../../../../../../components/ui/icons';
 import PoolPurchaseModal from '@/components/marketplace/PoolPurchaseModal';
 
 interface Product {
@@ -289,7 +289,7 @@ export default function ProductDetailPage() {
                 </button>
                 <button
                   onClick={() => setShowPoolModal(true)}
-                  className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-[#166534] border border-emerald-400 py-3 px-6 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-xs"
+                  className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-[#166534] border border-emerald-400 py-3 px-6 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
                 >
                   <Users className="w-5 h-5 text-[#166534]" />
                   Buy as Farm Pool
@@ -397,7 +397,7 @@ export default function ProductDetailPage() {
 
       {toast && (
         <div className="fixed bottom-6 right-6 z-50">
-          <div className={`px-4 py-3 rounded-lg shadow-lg border ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
+          <div className={`px-4 py-3 rounded-lg  border ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
             <span className={`${toast.type === 'success' ? 'text-green-700' : 'text-red-700'} text-sm font-medium`}>
               {toast.message}
             </span>

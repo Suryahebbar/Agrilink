@@ -128,10 +128,10 @@ AdminAuditLogSchema.methods.generateMessage = function (this: IAdminAuditLog): s
   const what = this.action.replace(/_/g, ' ');
   const target = this.resourceName || this.resourceId?.toString().slice(0, 8) || '';
   if (this.remarks) return this.remarks;
-  return `${who} — ${what}${target ? ` (${target})` : ''}`;
+  return `${who}  -  ${what}${target ? ` (${target})` : ''}`;
 };
 
-// Static: log an activity (fire-and-forget style — never throws)
+// Static: log an activity (fire-and-forget style  -  never throws)
 AdminAuditLogSchema.static('logActivity', async function (
   activity: Partial<IAdminAuditLog>
 ): Promise<IAdminAuditLog> {

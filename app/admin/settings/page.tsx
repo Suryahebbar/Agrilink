@@ -10,7 +10,7 @@ export default function Settings() {
         <p className="text-sm text-gray-500 mt-1">Configure platform rules, system preferences, roles, and security parameters.</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6 max-w-2xl space-y-6">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden p-6 max-w-2xl space-y-6">
         <h3 className="text-lg font-bold text-[#232F3E] border-b border-gray-100 pb-3 flex items-center gap-2">
           <FiLock /> Admin Credentials
         </h3>

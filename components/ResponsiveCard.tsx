@@ -40,8 +40,8 @@ const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
   ].filter(Boolean).join(' ');
 
   const cardClasses = [
-    'bg-white rounded-lg border border-gray-200 shadow-sm',
-    hover && 'hover:shadow-md hover:border-gray-300 transition-shadow duration-200',
+    'bg-white rounded-lg border border-gray-200 ',
+    hover && ' hover:border-gray-300 transition-shadow duration-200',
     clickable && 'cursor-pointer',
     paddingClasses,
     className

@@ -24,7 +24,7 @@ import {
   Phone,
   Calendar,
   AlertCircle
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 import { adminFetch } from '@/lib/admin-client-auth';
 
 interface StatutoryDoc {
@@ -384,7 +384,7 @@ export default function SupplierDetailPage({ params }: Props) {
           <ArrowLeft className="h-4 w-4 mr-1" /> Back to Supplier Management
         </button>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex items-start gap-4">
             <div className="p-3.5 rounded-2xl bg-purple-100 text-purple-700 font-bold text-xl shrink-0">
               <Building className="h-7 w-7" />
@@ -436,7 +436,7 @@ export default function SupplierDetailPage({ params }: Props) {
               <button
                 onClick={handleVerifySupplier}
                 disabled={actionProcessing}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-emerald-600/20 transition-all disabled:opacity-50"
               >
                 <ShieldCheck className="h-4 w-4" /> Legally Verify & Activate
               </button>
@@ -480,7 +480,7 @@ export default function SupplierDetailPage({ params }: Props) {
       </div>
 
       {/* Tabs Bar */}
-      <div className="border-b border-gray-200 bg-white rounded-2xl p-1.5 shadow-sm flex flex-wrap gap-1">
+      <div className="border-b border-gray-200 bg-white rounded-2xl p-1.5 flex flex-wrap gap-1">
         {[
           { id: 'documents', label: 'Statutory & Legal Licenses', icon: ShieldCheck },
           { id: 'profile', label: 'Company & Compliance Profile', icon: Building },
@@ -495,7 +495,7 @@ export default function SupplierDetailPage({ params }: Props) {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 active
-                  ? 'bg-[#1A9B9A] text-white shadow-md shadow-[#1A9B9A]/30'
+                  ? 'bg-[#1A9B9A] text-white  shadow-[#1A9B9A]/30'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -542,7 +542,7 @@ export default function SupplierDetailPage({ params }: Props) {
               return (
                 <div 
                   key={spec.key}
-                  className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm flex flex-col justify-between hover:border-gray-300 transition-all"
+                  className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col justify-between hover:border-gray-300 transition-all"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
@@ -615,7 +615,7 @@ export default function SupplierDetailPage({ params }: Props) {
                       <button
                         onClick={() => handleDocumentAction(spec.key, 'verified')}
                         disabled={actionProcessing || docStatus === 'verified'}
-                        className="flex-1 inline-flex justify-center items-center gap-1 py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-colors disabled:opacity-40"
+                        className="flex-1 inline-flex justify-center items-center gap-1 py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors disabled:opacity-40"
                       >
                         <Check className="h-3.5 w-3.5" /> Approve
                       </button>
@@ -643,7 +643,7 @@ export default function SupplierDetailPage({ params }: Props) {
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Info */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
             <h3 className="font-extrabold text-base text-[#232F3E]">Statutory Business Credentials</h3>
 
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -685,7 +685,7 @@ export default function SupplierDetailPage({ params }: Props) {
           </div>
 
           {/* Legal Declarations & Warranty */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
             <h3 className="font-extrabold text-base text-[#232F3E]">Seller Legal Declarations</h3>
 
             <div className="space-y-3 text-xs">
@@ -720,7 +720,7 @@ export default function SupplierDetailPage({ params }: Props) {
 
       {/* TAB 3: Products & Catalog Compliance */}
       {activeTab === 'products' && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex items-center justify-between">
             <div>
               <h3 className="font-extrabold text-base text-[#232F3E]">Supplier Agricultural Products</h3>
@@ -808,25 +808,25 @@ export default function SupplierDetailPage({ params }: Props) {
         <div className="space-y-6">
           {/* Summary Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 rounded-2xl border border-gray-200">
               <div className="text-gray-400 font-semibold text-[10px] uppercase tracking-wider">Gross Orders Volume</div>
               <div className="text-xl font-black text-gray-900 mt-1">₹{(orderSummary?.totalGross || 0).toLocaleString()}</div>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 rounded-2xl border border-gray-200">
               <div className="text-gray-400 font-semibold text-[10px] uppercase tracking-wider">Platform Fee Commissions</div>
               <div className="text-xl font-black text-[#1A9B9A] mt-1">₹{(orderSummary?.totalPlatformFees || 0).toLocaleString()}</div>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 rounded-2xl border border-gray-200">
               <div className="text-gray-400 font-semibold text-[10px] uppercase tracking-wider">Net Payable to Seller</div>
               <div className="text-xl font-black text-purple-700 mt-1">₹{(orderSummary?.totalSellerEarnings || 0).toLocaleString()}</div>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 rounded-2xl border border-gray-200">
               <div className="text-gray-400 font-semibold text-[10px] uppercase tracking-wider">Completed Orders</div>
               <div className="text-xl font-black text-emerald-700 mt-1">{orderSummary?.paidOrdersCount || 0} / {orders.length}</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-extrabold text-base text-[#232F3E]">Fulfilled Orders & GST Invoices</h3>
               <span className="text-xs text-gray-400">Auditable for GST & Consumer Protection</span>
@@ -889,7 +889,7 @@ export default function SupplierDetailPage({ params }: Props) {
       {/* Statutory Reason Modal (for Rejection / Suspension) */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 border border-gray-200">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 border border-gray-200">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2 text-rose-600 font-extrabold text-sm">
                 <AlertCircle className="h-5 w-5" />

@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   DollarSign, TrendingUp, CheckCircle, ShieldCheck, 
-  Download, FileText, AlertCircle, Sparkles, Scale, 
+  Download, FileText, AlertCircle,  Scale, 
   ArrowDownRight, ArrowUpRight, Loader2, Coins, User,
   ExternalLink, Shield
-} from 'lucide-react';
+} from '../ui/icons';
 
 interface MemberSettlement {
   userId: string;
@@ -148,7 +148,7 @@ export default function PoolSettlementView({
   // If no settlement exists yet
   if (!settlement) {
     return (
-      <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-xs space-y-4">
+      <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
@@ -163,7 +163,7 @@ export default function PoolSettlementView({
         {isFco ? (
           <form onSubmit={handleCreateSettlement} className="mt-4 p-5 bg-[#f8fafc] border border-slate-200 rounded-2xl space-y-4">
             <div className="flex items-center gap-2 text-xs font-bold text-[#166534] uppercase">
-              <Sparkles className="w-4 h-4" />
+              
               <span>FCO Harvest Settlement Trigger (Model {collaborationModel})</span>
             </div>
 
@@ -241,7 +241,7 @@ export default function PoolSettlementView({
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-4 py-2 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5"
               >
                 {submitting ? (
                   <>
@@ -273,7 +273,7 @@ export default function PoolSettlementView({
 
   // If settlement IS finalized, display the complete verified financial statement
   return (
-    <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm overflow-hidden">
+    <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden">
       
       {/* Header Banner */}
       <div className="p-6 bg-emerald-50 text-[#1f3b2c] border-b border-emerald-200">
@@ -295,7 +295,7 @@ export default function PoolSettlementView({
             <button
               type="button"
               onClick={() => window.print()}
-              className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition flex items-center gap-1.5"
             >
               <Download className="w-4 h-4" />
               <span>Print Statement</span>
@@ -305,7 +305,7 @@ export default function PoolSettlementView({
 
         {/* Top Metric Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-emerald-200/60">
-          <div className="p-3 bg-white rounded-2xl border border-emerald-100 shadow-xs">
+          <div className="p-3 bg-white rounded-2xl border border-emerald-100">
             <span className="text-[11px] text-slate-500 font-medium uppercase block">Harvest Yield</span>
             <div className="text-base font-black text-[#1f3b2c]">
               {settlement.harvestYield} <span className="text-xs font-normal text-slate-500">{settlement.yieldUnit}</span>
@@ -313,7 +313,7 @@ export default function PoolSettlementView({
             <div className="text-[10px] text-slate-500">@ ₹{settlement.sellingPricePerUnit.toLocaleString()}/unit</div>
           </div>
 
-          <div className="p-3 bg-white rounded-2xl border border-emerald-100 shadow-xs">
+          <div className="p-3 bg-white rounded-2xl border border-emerald-100">
             <span className="text-[11px] text-slate-500 font-medium uppercase block">Gross Crop Revenue</span>
             <div className="text-base font-black text-[#166534]">
               ₹{settlement.grossHarvestRevenue.toLocaleString()}
@@ -321,7 +321,7 @@ export default function PoolSettlementView({
             <div className="text-[10px] text-slate-500">From {settlement.buyerName || 'Mandi Sale'}</div>
           </div>
 
-          <div className="p-3 bg-white rounded-2xl border border-emerald-100 shadow-xs">
+          <div className="p-3 bg-white rounded-2xl border border-emerald-100">
             <span className="text-[11px] text-slate-500 font-medium uppercase block">Total Inputs & Fees</span>
             <div className="text-base font-black text-rose-600">
               -₹{(settlement.totalInputExpenses + settlement.agriLinkCommissionOrFee).toLocaleString()}
@@ -329,7 +329,7 @@ export default function PoolSettlementView({
             <div className="text-[10px] text-slate-500">Inputs + AgriLink Platform Cut</div>
           </div>
 
-          <div className="p-3 bg-white rounded-2xl border border-emerald-100 shadow-xs">
+          <div className="p-3 bg-white rounded-2xl border border-emerald-100">
             <span className="text-[11px] text-slate-500 font-medium uppercase block">Net Distributed</span>
             <div className="text-base font-black text-[#166534]">
               ₹{settlement.netDistributableMargin.toLocaleString()}
@@ -389,7 +389,7 @@ export default function PoolSettlementView({
                     {m.labourReimbursement + m.machineryReimbursement > 0 ? (
                       `+₹${(m.labourReimbursement + m.machineryReimbursement).toLocaleString()}`
                     ) : (
-                      '—'
+                      ' - '
                     )}
                   </td>
 

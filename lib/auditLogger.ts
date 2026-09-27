@@ -2,7 +2,7 @@
  * auditLogger.ts
  *
  * Fire-and-forget audit logging utility for AgriLink.
- * Call `void auditLog({...})` from any API route — it never throws,
+ * Call `void auditLog({...})` from any API route  -  it never throws,
  * never blocks the response, and auto-parses browser/OS/device from the
  * userAgent string.
  *
@@ -124,7 +124,7 @@ export async function auditLog(entry: AuditEntry): Promise<void> {
       timestamp:    new Date(),
     });
   } catch (err) {
-    // Never propagate — logging must never break the main request
+    // Never propagate  -  logging must never break the main request
     console.warn('[auditLog] Failed to write log entry:', err);
   }
 }

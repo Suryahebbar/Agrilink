@@ -20,7 +20,7 @@ export const BasicDropdownExample = () => {
   return (
     <Dropdown
       trigger={
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md hover:bg-gray-50">
           Options
           <span>▾</span>
         </button>
@@ -35,19 +35,19 @@ export const IconDropdownExample = () => {
     { 
       id: '1', 
       label: 'Reports', 
-      icon: <span>📄</span>,
+      icon: <span></span>,
       onClick: () => console.log('Reports clicked')
     },
     { 
       id: '2', 
       label: 'Orders', 
-      icon: <span>📦</span>,
+      icon: <span></span>,
       onClick: () => console.log('Orders clicked')
     },
     { 
       id: '3', 
       label: 'Analytics', 
-      icon: <span>📊</span>,
+      icon: <span></span>,
       onClick: () => console.log('Analytics clicked')
     }
   ];
@@ -55,7 +55,7 @@ export const IconDropdownExample = () => {
   return (
     <IconDropdown
       trigger={
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md hover:bg-gray-50">
           Menu
           <span>▾</span>
         </button>
@@ -78,7 +78,7 @@ export const FilterDropdownExample = () => {
   return (
     <FilterDropdown
       trigger={
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md hover:bg-gray-50">
           Date Range
           <span>▾</span>
         </button>
@@ -94,7 +94,7 @@ export const FilterDropdownPanelExample = () => {
   return (
     <FilterDropdownPanel
       trigger={
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md hover:bg-gray-50">
           Advanced Filter
           <span>▾</span>
         </button>
@@ -122,7 +122,7 @@ export const ProfileDropdownExample = () => {
   return (
     <ProfileDropdown
       trigger={
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md hover:bg-gray-50">
           Profile
           <span>▾</span>
         </button>

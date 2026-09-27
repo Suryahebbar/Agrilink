@@ -1358,13 +1358,13 @@ function DashboardContent() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7] font-sans animate-fade-in">
+    <div className="min-h-screen flex bg-[#166534] font-sans animate-fade-in">
       {/* Left Navigation Sidebar */}
-      <aside className="w-64 bg-white/95 backdrop-blur-md border-r border-[#e5e7eb] shadow-lg flex flex-col fixed left-0 top-0 bottom-0 overflow-y-auto pt-4 z-20">
+      <aside className="w-64 bg-white/95 backdrop-blur-md border-r border-[#e5e7eb] flex flex-col fixed left-0 top-0 bottom-0 overflow-y-auto pt-4 z-20">
         {/* Sidebar Header */}
         <div className="px-5 py-5 border-b border-[#e5e7eb]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#166534] to-[#15803d] flex items-center justify-center shadow-lg">
+            <div className="w-9 h-9 rounded-xl bg-[#166534] flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
@@ -1386,14 +1386,14 @@ function DashboardContent() {
           <button
             onClick={() => setActiveSidebarTab('assigned-farmers')}
             className={`group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'assigned-farmers'
-                ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
+                ? 'bg-[#166534] text-white  font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
             <div className="flex items-center gap-3">
               <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'assigned-farmers'
                   ? 'bg-white/20'
-                  : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                  : 'bg-[#f0fdf4] group-hover:bg-white group-'
                 }`}>
                 <FiUsers className={`h-4 w-4 ${activeSidebarTab === 'assigned-farmers' ? 'text-white' : 'text-[#166534]'}`} />
               </div>
@@ -1407,13 +1407,13 @@ function DashboardContent() {
           <button
             onClick={() => setActiveSidebarTab('manage-pools')}
             className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'manage-pools'
-                ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
+                ? 'bg-[#166534] text-white  font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
             <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'manage-pools'
                 ? 'bg-white/20'
-                : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                : 'bg-[#f0fdf4] group-hover:bg-white group-'
               }`}>
               <FiSliders className={`h-4 w-4 ${activeSidebarTab === 'manage-pools' ? 'text-white' : 'text-[#166534]'}`} />
             </div>
@@ -1423,14 +1423,14 @@ function DashboardContent() {
           <button
             onClick={() => setActiveSidebarTab('calendar')}
             className={`group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'calendar'
-                ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
+                ? 'bg-[#166534] text-white  font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
             <div className="flex items-center gap-3">
               <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'calendar'
                   ? 'bg-white/20'
-                  : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                  : 'bg-[#f0fdf4] group-hover:bg-white group-'
                 }`}>
                 <FiCalendar className={`h-4 w-4 ${activeSidebarTab === 'calendar' ? 'text-white' : 'text-[#166534]'}`} />
               </div>
@@ -1448,13 +1448,13 @@ function DashboardContent() {
           <button
             onClick={() => setActiveSidebarTab('schemes')}
             className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'schemes'
-                ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
+                ? 'bg-[#166534] text-white  font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
             <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'schemes'
                 ? 'bg-white/20'
-                : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                : 'bg-[#f0fdf4] group-hover:bg-white group-'
               }`}>
               <FiFileText className={`h-4 w-4 ${activeSidebarTab === 'schemes' ? 'text-white' : 'text-[#166534]'}`} />
             </div>
@@ -1464,21 +1464,21 @@ function DashboardContent() {
           <button
             onClick={() => setActiveSidebarTab('claims')}
             className={`group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'claims'
-                ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
+                ? 'bg-[#166534] text-white  font-bold'
                 : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
               }`}
           >
             <div className="flex items-center gap-3">
               <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'claims'
                   ? 'bg-white/20'
-                  : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+                  : 'bg-[#f0fdf4] group-hover:bg-white group-'
                 }`}>
                 <FiShield className={`h-4 w-4 ${activeSidebarTab === 'claims' ? 'text-white' : 'text-[#166534]'}`} />
               </div>
               <span className="font-medium text-sm">Claim Inspections</span>
             </div>
             {fcoClaims.filter(c => c.status === 'submitted').length > 0 && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-700 animate-pulse">
+              <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-700">
                 {fcoClaims.filter(c => c.status === 'submitted').length}
               </span>
             )}
@@ -1487,7 +1487,7 @@ function DashboardContent() {
 
         {/* Sidebar Footer with Quick Tip & Logout */}
         <div className="px-3 py-4 border-t border-[#e5e7eb] bg-white/50 space-y-3">
-          <div className="bg-gradient-to-br from-[#fef3c7] to-[#fde68a] rounded-lg p-3 shadow-sm">
+          <div className="bg-[#166534] rounded-lg p-3">
             <div className="flex items-center gap-1.5 mb-1.5">
               <svg className="w-3.5 h-3.5 text-[#d97706] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -1500,7 +1500,7 @@ function DashboardContent() {
           </div>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center justify-center gap-2 bg-gradient-to-r from-[#dc2626] to-[#b91c1c] text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all"
+            className="flex w-full items-center justify-center gap-2 bg-[#166534] text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
           >
             <FiLogOut className="h-4 w-4" />
             Logout
@@ -1527,7 +1527,7 @@ function DashboardContent() {
 
                 {/* Pool Selector & Farmer Details Sidebar */}
                 <div className="w-full lg:w-80 flex-shrink-0 space-y-6">
-                  <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+                  <div className="bg-white p-5 rounded-3xl border border-slate-200/80 space-y-4">
                     <div className="flex justify-between items-center">
                       <h2 className="text-base font-black text-slate-800 flex items-center gap-2"><FiGrid className="text-emerald-600" /> Assigned Pools</h2>
                       <span className="text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">{pools.length} Total</span>
@@ -1538,7 +1538,7 @@ function DashboardContent() {
                           key={pool._id}
                           onClick={() => setSelectedPoolAndUrl(pool)}
                           className={`w-full text-left p-3.5 rounded-2xl border text-sm transition-all ${selectedPool?._id === pool._id
-                              ? 'bg-gradient-to-br from-emerald-50 to-teal-50/60 border-emerald-600 font-bold shadow-sm ring-2 ring-emerald-500/20'
+                              ? 'bg-[#166534]/60 border-emerald-600 font-bold  ring-2 ring-emerald-500/20'
                               : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
                             }`}
                         >
@@ -1554,7 +1554,7 @@ function DashboardContent() {
 
                   {/* Farmer Details Sidebar */}
                   {selectedPool && (
-                    <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+                    <div className="bg-white p-5 rounded-3xl border border-slate-200/80 space-y-4">
                       <div className="border-b border-slate-100 pb-2 flex justify-between items-center">
                         <div>
                           <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
@@ -1592,7 +1592,7 @@ function DashboardContent() {
                     (() => {
                       const statusLower = selectedPool.status?.toLowerCase() || '';
                       return (
-                        <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-6">
+                        <div className="bg-white p-6 rounded-3xl border border-gray-200/60 space-y-6">
 
                           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-gray-100">
                             <div>
@@ -1609,9 +1609,9 @@ function DashboardContent() {
 
                             {selectedPool.meetingDetails?.scheduledAt && (
                               <div className="p-4 bg-white rounded-xl border border-[#e5e7eb] mb-2 text-xs space-y-2">
-                                <p className="text-emerald-700 font-bold">✓ Scheduled Meeting Session</p>
+                                <p className="text-emerald-700 font-bold"> Scheduled Meeting Session</p>
                                 <p><strong>Scheduled Time:</strong> {new Date(selectedPool.meetingDetails.scheduledAt).toLocaleString('en-IN')}</p>
-                                <p><strong>Mode:</strong> {selectedPool.meetingDetails.meetingType === 'online' ? '💻 Online Call' : '🤝 Offline Gathering'}</p>
+                                <p><strong>Mode:</strong> {selectedPool.meetingDetails.meetingType === 'online' ? ' Online Call' : ' Offline Gathering'}</p>
                                 {selectedPool.meetingDetails.meetingType === 'online' ? (
                                   <p><strong>Google Meet Link:</strong> <a href={selectedPool.meetingDetails.meetingLink} target="_blank" rel="noreferrer" className="text-blue-600 underline truncate block">{selectedPool.meetingDetails.meetingLink}</a></p>
                                 ) : (
@@ -1701,7 +1701,7 @@ function DashboardContent() {
                               {statusLower === 'counseling_scheduled' && (
                                 <button
                                   onClick={handleSaveChecklist}
-                                  className="w-full py-2.5 bg-gradient-to-r from-[#166534] to-[#15803d] text-white font-bold rounded-xl text-xs mt-4"
+                                  className="w-full py-2.5 bg-[#166534] text-white font-bold rounded-xl text-xs mt-4"
                                 >
                                   Save & Move to Farm Planning
                                 </button>
@@ -1717,7 +1717,7 @@ function DashboardContent() {
                                 <button
                                   onClick={() => setActiveTab('model')}
                                   className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'model'
-                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      ? 'bg-emerald-600 text-white  shadow-emerald-700/30'
                                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
@@ -1727,7 +1727,7 @@ function DashboardContent() {
                                 <button
                                   onClick={() => setActiveTab('info')}
                                   className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'info'
-                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      ? 'bg-emerald-600 text-white  shadow-emerald-700/30'
                                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
@@ -1737,7 +1737,7 @@ function DashboardContent() {
                                 <button
                                   onClick={() => setActiveTab('financials')}
                                   className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'financials'
-                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      ? 'bg-emerald-600 text-white  shadow-emerald-700/30'
                                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
@@ -1747,7 +1747,7 @@ function DashboardContent() {
                                 <button
                                   onClick={() => setActiveTab('contributions')}
                                   className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'contributions'
-                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      ? 'bg-emerald-600 text-white  shadow-emerald-700/30'
                                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
@@ -1757,7 +1757,7 @@ function DashboardContent() {
                                 <button
                                   onClick={() => setActiveTab('insurance')}
                                   className={`py-2.5 px-4 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${activeTab === 'insurance'
-                                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                                      ? 'bg-emerald-600 text-white  shadow-emerald-700/30'
                                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                                     }`}
                                 >
@@ -1808,7 +1808,7 @@ function DashboardContent() {
                                                     });
                                                   }}
                                                   className={`p-2.5 rounded-xl border text-center font-bold text-xs transition-all ${farmerModel === modelNum
-                                                      ? 'bg-[#166534] text-white border-[#166534] shadow-sm'
+                                                      ? 'bg-[#166534] text-white border-[#166534] '
                                                       : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
                                                     }`}
                                                 >
@@ -2599,7 +2599,7 @@ function DashboardContent() {
                                                 }}
                                                 className={`p-3 rounded-xl border text-left transition-all ${
                                                   isSelected
-                                                    ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold shadow-sm'
+                                                    ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold '
                                                     : 'bg-white border-gray-200 hover:border-emerald-400 text-gray-700'
                                                 }`}
                                               >
@@ -2652,7 +2652,7 @@ function DashboardContent() {
                                               />
                                             </div>
                                             <div className="p-3 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100/50 text-[10px] leading-relaxed flex items-center md:col-span-2">
-                                              <span>✓ Private insurance premium cost is automatically shared by farmers proportionate to their profit sharing percentages in Agreement Clause 5.</span>
+                                              <span> Private insurance premium cost is automatically shared by farmers proportionate to their profit sharing percentages in Agreement Clause 5.</span>
                                             </div>
                                           </>
                                         ) : farmPlan.insuranceType === 'government' ? (
@@ -2661,7 +2661,7 @@ function DashboardContent() {
                                           </div>
                                         ) : (
                                           <div className="col-span-1 md:col-span-2 p-3 bg-red-50 text-red-800 rounded-xl border border-red-200 text-[11px] leading-relaxed">
-                                            <strong>⚠️ CRITICAL WARNING:</strong> No insurance is active. In case of crop loss, damages, or natural calamities, AgriLink shall NOT provide any compensation or financial aid. Farmers are solely and individually responsible for all losses.
+                                            <strong>️ CRITICAL WARNING:</strong> No insurance is active. In case of crop loss, damages, or natural calamities, AgriLink shall NOT provide any compensation or financial aid. Farmers are solely and individually responsible for all losses.
                                           </div>
                                         )}
 
@@ -2713,7 +2713,7 @@ function DashboardContent() {
                                       await handleSavePlanning();
                                       setShowPreviewModal(true);
                                     }}
-                                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md hover:shadow-lg transition-all"
+                                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all"
                                   >
                                     Final Draft
                                   </button>
@@ -2728,7 +2728,7 @@ function DashboardContent() {
                                         await handleGenerateContract();
                                       }
                                     }}
-                                    className="px-6 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs shadow-md hover:shadow-lg transition-all"
+                                    className="px-6 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs transition-all"
                                   >
                                     {statusLower === 'planning' ? 'Generate & Dispatch Contract' : 'Regenerate & Re-Dispatch Contract (Testing)'}
                                   </button>
@@ -2765,7 +2765,7 @@ function DashboardContent() {
                       );
                     })()
                   ) : (
-                    <div className="bg-white p-12 text-center text-gray-400 border border-gray-200/60 rounded-3xl shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+                    <div className="bg-white p-12 text-center text-gray-400 border border-gray-200/60 rounded-3xl flex flex-col items-center justify-center min-h-[400px]">
                       <FiList className="w-12 h-12 text-gray-200 mb-4" />
                       <h3 className="font-bold text-[#1f3b2c] text-base">Select a Farm Pool</h3>
                       <p className="text-xs text-gray-400 mt-1 max-w-xs leading-relaxed">Choose an assigned pool from the left panel to begin counseling and agricultural operational planning.</p>
@@ -2780,7 +2780,7 @@ function DashboardContent() {
 
                 {/* Pool Selector Sidebar */}
                 <div className="w-full lg:w-80 flex-shrink-0 space-y-6">
-                  <div className="bg-white p-5 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
+                  <div className="bg-white p-5 rounded-3xl border border-gray-200/60 space-y-4">
                     <h2 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2"><FiGrid /> Select Pool to Manage</h2>
                     <p className="text-[10px] text-gray-500 mt-1">Select an active pool below to log expenditures and manage cultivation milestones.</p>
 
@@ -2790,7 +2790,7 @@ function DashboardContent() {
                           key={pool._id}
                           onClick={() => setSelectedPoolAndUrl(pool)}
                           className={`w-full text-left p-3.5 rounded-2xl border text-sm transition-all ${selectedPool?._id === pool._id
-                              ? 'bg-gradient-to-br from-[#166534]/10 to-[#15803d]/5 border-[#166534] font-bold shadow-sm'
+                              ? ' from-[#166534]/10 to-[#15803d]/5 border-[#166534] font-bold '
                               : 'bg-white border-gray-200 hover:border-gray-300'
                             }`}
                         >
@@ -2809,14 +2809,14 @@ function DashboardContent() {
                 <div className="flex-1 space-y-6">
                   {selectedPool ? (
                     <>
-                      <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm">
+                      <div className="bg-white p-6 rounded-3xl border border-gray-200/60">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                           <div>
                             <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
                               Active Management Desk
                             </span>
                             <h1 className="text-2xl font-black text-[#1f3b2c] mt-1 flex items-center gap-2">
-                              🎛️ {selectedPool.name}
+                              ️ {selectedPool.name}
                             </h1>
                             <p className="text-xs text-gray-500 mt-0.5">Switch between operational tabs below to audit contributions, manage tasks, log expenses, and execute harvest settlement.</p>
                           </div>
@@ -2827,11 +2827,11 @@ function DashboardContent() {
                       </div>
 
                       {/* Feature Tabs Bar */}
-                      <div className="flex bg-white p-1.5 rounded-2xl border border-gray-200/80 shadow-sm overflow-x-auto gap-1.5 scrollbar-none">
+                      <div className="flex bg-white p-1.5 rounded-2xl border border-gray-200/80 overflow-x-auto gap-1.5 scrollbar-none">
                         <button
                           onClick={() => setManagePoolTab('contributions')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'contributions'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2841,7 +2841,7 @@ function DashboardContent() {
                         <button
                           onClick={() => setManagePoolTab('settlement')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'settlement'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2851,7 +2851,7 @@ function DashboardContent() {
                         <button
                           onClick={() => setManagePoolTab('tasks')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'tasks'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2861,7 +2861,7 @@ function DashboardContent() {
                         <button
                           onClick={() => setManagePoolTab('expenses')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'expenses'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2871,7 +2871,7 @@ function DashboardContent() {
                         <button
                           onClick={() => setManagePoolTab('blockchain')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'blockchain'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2881,7 +2881,7 @@ function DashboardContent() {
                         <button
                           onClick={() => setManagePoolTab('disputes')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'disputes'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2891,7 +2891,7 @@ function DashboardContent() {
                         <button
                           onClick={() => setManagePoolTab('files')}
                           className={`py-2.5 px-3.5 text-xs font-bold whitespace-nowrap rounded-xl transition-all flex items-center gap-2 ${managePoolTab === 'files'
-                              ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md'
+                              ? 'bg-[#166534] text-white '
                               : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50/50'
                             }`}
                         >
@@ -2930,7 +2930,7 @@ function DashboardContent() {
 
                       {/* TAB 3: CROP TASKS MANAGEMENT */}
                       {managePoolTab === 'tasks' && (
-                        <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs animate-fadeIn">
+                        <div className="p-6 rounded-3xl bg-white border border-gray-200/60 space-y-4 text-xs animate-fadeIn">
                           <div className="border-b border-gray-100 pb-3 flex justify-between items-center flex-wrap gap-2">
                             <div>
                               <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-2">
@@ -2999,7 +2999,7 @@ function DashboardContent() {
                             />
                             <button
                               type="submit"
-                              className="bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 shadow-sm transition-all"
+                              className="bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 transition-all"
                             >
                               + Add Crop Task
                             </button>
@@ -3009,7 +3009,7 @@ function DashboardContent() {
 
                       {/* TAB 4: EXPENSES LEDGER */}
                       {managePoolTab === 'expenses' && (
-                        <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs animate-fadeIn">
+                        <div className="p-6 rounded-3xl bg-white border border-gray-200/60 space-y-4 text-xs animate-fadeIn">
                           <div className="border-b border-gray-100 pb-3 flex justify-between items-center flex-wrap gap-2">
                             <div>
                               <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-2">
@@ -3029,7 +3029,7 @@ function DashboardContent() {
                             {(selectedPool.expensesList || []).map((exp: any) => (
                               <div key={exp.id} className="flex justify-between items-center p-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl hover:bg-gray-50">
                                 <div>
-                                  <p className="font-bold text-gray-800 text-sm">{exp.category} &mdash; ₹{Number(exp.amount).toLocaleString('en-IN')}</p>
+                                  <p className="font-bold text-gray-800 text-sm">{exp.category}  -  ₹{Number(exp.amount).toLocaleString('en-IN')}</p>
                                   <p className="text-[10px] text-gray-400 mt-0.5">Paid by: <span className="font-semibold text-gray-600">{exp.farmerName}</span> · Date: {exp.date}</p>
                                   <p className="text-[10px] text-[#166534] italic font-semibold mt-1">&quot;{exp.reason}&quot;</p>
                                 </div>
@@ -3105,7 +3105,7 @@ function DashboardContent() {
 
                             <button
                               type="submit"
-                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 shadow-sm transition-all"
+                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs py-2 transition-all"
                             >
                               + Log Expense
                             </button>
@@ -3116,10 +3116,10 @@ function DashboardContent() {
                       {/* TAB 5: BLOCKCHAIN MILESTONE BLOCKS */}
                       {managePoolTab === 'blockchain' && (
                         <div className="space-y-6 animate-fadeIn">
-                          <div className="p-6 rounded-3xl bg-white border border-gray-200/60 shadow-sm space-y-4 text-xs">
+                          <div className="p-6 rounded-3xl bg-white border border-gray-200/60 space-y-4 text-xs">
                             <div className="border-b border-gray-100 pb-2.5">
                               <h4 className="font-extrabold text-[#1f3b2c] text-sm flex items-center gap-1.5">
-                                ⛓️ Publish Operational Milestone to Blockchain Ledger
+                                ️ Publish Operational Milestone to Blockchain Ledger
                               </h4>
                               <p className="text-[11px] text-gray-500 mt-0.5">
                                 Secure this crop cycle operational achievements by anchoring them onto the smart contract timeline blocks.
@@ -3137,14 +3137,14 @@ function DashboardContent() {
                                     required
                                   >
                                     <option value="">Choose milestone action...</option>
-                                    <option value="Sowing Verification">🌱 Sowing Verification Completed</option>
-                                    <option value="Fertilization Stage">🧪 Fertilization Dose Applied</option>
-                                    <option value="Irrigation Checked">💧 Scheduled Irrigation Audited</option>
-                                    <option value="Pest Control Applied">🐛 Pest Mitigation Completed</option>
-                                    <option value="Harvest Commenced">🌾 Harvest Phase Commenced</option>
-                                    <option value="Yield Audited">📦 Crop Yield Audited</option>
-                                    <option value="Settlement Finalized">💰 Financial Settlement Finalized</option>
-                                    <option value="Termination Trigger">🔴 Operational Cycle Terminated</option>
+                                    <option value="Sowing Verification"> Sowing Verification Completed</option>
+                                    <option value="Fertilization Stage"> Fertilization Dose Applied</option>
+                                    <option value="Irrigation Checked"> Scheduled Irrigation Audited</option>
+                                    <option value="Pest Control Applied"> Pest Mitigation Completed</option>
+                                    <option value="Harvest Commenced"> Harvest Phase Commenced</option>
+                                    <option value="Yield Audited"> Crop Yield Audited</option>
+                                    <option value="Settlement Finalized"> Financial Settlement Finalized</option>
+                                    <option value="Termination Trigger"> Operational Cycle Terminated</option>
                                   </select>
                                 </div>
 
@@ -3164,9 +3164,9 @@ function DashboardContent() {
                               <button
                                 type="submit"
                                 disabled={isPublishingBlock || !blockActionInput || !blockRemarksInput}
-                                className="w-full py-2.5 bg-[#166534] hover:bg-[#14532d] disabled:opacity-50 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                className="w-full py-2.5 bg-[#166534] hover:bg-[#14532d] disabled:opacity-50 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"
                               >
-                                {isPublishingBlock ? 'Mining Block & Sealing...' : '🔐 Seal Progressive Operation Block'}
+                                {isPublishingBlock ? 'Mining Block & Sealing...' : ' Seal Progressive Operation Block'}
                               </button>
                             </form>
                           </div>
@@ -3175,7 +3175,7 @@ function DashboardContent() {
 
                       {/* TAB 6: DISPUTES & QUERY DESK */}
                       {managePoolTab === 'disputes' && (
-                        <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-4 animate-fadeIn">
+                        <div className="bg-white p-6 rounded-3xl border border-gray-200/60 space-y-4 animate-fadeIn">
                           <div className="border-b border-gray-150 pb-3 flex justify-between items-center flex-wrap gap-2">
                             <div>
                               <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
@@ -3199,7 +3199,7 @@ function DashboardContent() {
                                   <div className="flex gap-2">
                                     <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase ${ticket.visibility === 'private' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                                       }`}>
-                                      {ticket.visibility === 'private' ? '🔒 Private' : '🌐 Shared'}
+                                      {ticket.visibility === 'private' ? ' Private' : ' Shared'}
                                     </span>
                                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${ticket.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                                       }`}>
@@ -3228,7 +3228,7 @@ function DashboardContent() {
                                       <button
                                         onClick={() => handleResolveConflictTicket(ticket._id)}
                                         disabled={isResolvingTicket[ticket._id]}
-                                        className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition-all"
+                                        className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all"
                                       >
                                         {isResolvingTicket[ticket._id] ? 'Resolving...' : 'Resolve'}
                                       </button>
@@ -3254,7 +3254,7 @@ function DashboardContent() {
                       {managePoolTab === 'files' && (
                         <div className="space-y-6 animate-fadeIn">
                           {/* Shared Pool Files Repository for FCO */}
-                          <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
+                          <div className="bg-white p-6 rounded-3xl border border-gray-200/60 space-y-4">
                             <div className="border-b border-gray-150 pb-3 flex justify-between items-center flex-wrap gap-2">
                               <div>
                                 <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
@@ -3263,7 +3263,7 @@ function DashboardContent() {
                                 <p className="text-xs text-gray-500 mt-1">Upload reference guides, quality test logs, or invoices. Accessible by all pool participants.</p>
                               </div>
 
-                              <label className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer shadow-sm flex items-center gap-1.5 transition-all">
+                              <label className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer flex items-center gap-1.5 transition-all">
                                 <FiUpload /> {isUploadingFile ? 'Uploading...' : 'Upload File'}
                                 <input
                                   type="file"
@@ -3307,7 +3307,7 @@ function DashboardContent() {
                           </div>
 
                           {/* Smart Contract Explorer */}
-                          <div className="bg-white border border-gray-200/60 rounded-3xl shadow-sm overflow-hidden space-y-4 p-1">
+                          <div className="bg-white border border-gray-200/60 rounded-3xl overflow-hidden space-y-4 p-1">
                             <div className="p-5 border-b border-gray-100">
                               <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
                                 <FiFileText className="text-[#166534]" /> Smart Contract & Ledger Explorer
@@ -3320,7 +3320,7 @@ function DashboardContent() {
                       )}
                     </>
                   ) : (
-                    <div className="bg-white p-12 text-center text-gray-400 border border-gray-200/60 rounded-3xl shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+                    <div className="bg-white p-12 text-center text-gray-400 border border-gray-200/60 rounded-3xl flex flex-col items-center justify-center min-h-[400px]">
                       <FiList className="w-12 h-12 text-gray-200 mb-4" />
                       <h3 className="font-bold text-[#1f3b2c] text-base">Select a Farm Pool</h3>
                       <p className="text-xs text-gray-400 mt-1 max-w-xs leading-relaxed">Choose an active pool from the left panel to begin managing crop milestones and expense ledger entries.</p>
@@ -3332,7 +3332,7 @@ function DashboardContent() {
             ) : activeSidebarTab === 'calendar' ? (
               /* CALENDAR TAB VIEW */
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm">
+                <div className="bg-white p-6 rounded-3xl border border-gray-200/60">
                   <h1 className="text-2xl font-black text-[#1f3b2c] mb-2 flex items-center gap-2">
                     <FiCalendar className="text-[#166534]" /> Counselor Schedule & Calendar
                   </h1>
@@ -3342,7 +3342,7 @@ function DashboardContent() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                   {/* Reminders List & Form */}
-                  <div className="lg:col-span-1 bg-white p-5 rounded-3xl border border-gray-200/60 shadow-sm space-y-4 h-fit">
+                  <div className="lg:col-span-1 bg-white p-5 rounded-3xl border border-gray-200/60 space-y-4 h-fit">
                     <div className="border-b border-gray-100 pb-2 flex justify-between items-center">
                       <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
                         <FiCheckSquare className="text-amber-600" /> Tasks & Reminders
@@ -3408,7 +3408,7 @@ function DashboardContent() {
                   </div>
 
                   {/* Scheduled counseling meetings across all pools */}
-                  <div className="lg:col-span-2 bg-white p-5 rounded-3xl border border-gray-200/60 shadow-sm space-y-4">
+                  <div className="lg:col-span-2 bg-white p-5 rounded-3xl border border-gray-200/60 space-y-4">
                     <div className="border-b border-gray-100 pb-2">
                       <h3 className="text-base font-extrabold text-[#1f3b2c] flex items-center gap-2">
                         <FiClock className="text-emerald-600" /> Upcoming Counseling Meetings
@@ -3420,7 +3420,7 @@ function DashboardContent() {
                         <p className="text-center text-xs text-gray-400 py-12">No upcoming counseling sessions scheduled. Select a pool in "Assigned Farmers" to schedule meetings.</p>
                       ) : (
                         pools.filter(p => p.meetingDetails?.scheduledAt).map(pool => (
-                          <div key={pool._id} className="p-4 bg-gradient-to-br from-[#f0fdf4]/40 to-white border border-emerald-100/50 rounded-2xl space-y-2 hover:shadow-md transition-all">
+                          <div key={pool._id} className="p-4 from-[#f0fdf4]/40 to-white border border-emerald-100/50 rounded-2xl space-y-2 transition-all">
                             <div className="flex justify-between items-start flex-wrap gap-2">
                               <span className="text-xs uppercase font-extrabold px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg">
                                 {pool.name}
@@ -3434,7 +3434,7 @@ function DashboardContent() {
                               </span>
                             </div>
                             <div className="text-xs text-gray-600 space-y-1">
-                              <p><strong>Meeting Mode:</strong> {pool.meetingDetails!.meetingType === 'online' ? '💻 Google Meet Call' : '📍 Physical Meeting'}</p>
+                              <p><strong>Meeting Mode:</strong> {pool.meetingDetails!.meetingType === 'online' ? ' Google Meet Call' : ' Physical Meeting'}</p>
                               {pool.meetingDetails!.meetingType === 'online' && pool.meetingDetails!.meetingLink && (
                                 <p><strong>Link:</strong> <a href={pool.meetingDetails!.meetingLink} target="_blank" rel="noreferrer" className="text-blue-600 underline truncate block">{pool.meetingDetails!.meetingLink}</a></p>
                               )}
@@ -3461,16 +3461,16 @@ function DashboardContent() {
             ) : activeSidebarTab === 'schemes' ? (
               /* FCO GOVERNMENT SCHEMES MANAGER VIEW (Step 7, 10 Refinements) */
               <div className="space-y-6 animate-fadeIn text-xs">
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <h1 className="text-2xl font-black text-slate-800 mb-1 flex items-center gap-2">
-                      🛡️ Government Schemes Workspace
+                      ️ Government Schemes Workspace
                     </h1>
                     <p className="text-xs text-slate-500">Recommend active schemes to targeted farmer cohorts, track responses, and manage group approvals.</p>
                   </div>
                   <button
                     onClick={fetchFcoSchemesData}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-1.5 shadow-sm"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-1.5"
                   >
                     Refresh Panel Data
                   </button>
@@ -3483,20 +3483,20 @@ function DashboardContent() {
                       key={tab}
                       onClick={() => setFcoSchemesSubTab(tab)}
                       className={`px-5 py-2.5 text-xs font-bold transition-all rounded-xl capitalize flex items-center gap-2 ${fcoSchemesSubTab === tab
-                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/30'
+                          ? 'bg-emerald-600 text-white  shadow-emerald-700/30'
                           : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                         }`}
                     >
-                      {tab === 'list' && '📜 All Schemes'}
-                      {tab === 'campaigns' && '📢 Recommended Campaigns'}
-                      {tab === 'consensus' && '🗳️ Consensus Pool Proposals'}
-                      {tab === 'applied' && '✅ Applied Schemes'}
+                      {tab === 'list' && ' All Schemes'}
+                      {tab === 'campaigns' && ' Recommended Campaigns'}
+                      {tab === 'consensus' && '️ Consensus Pool Proposals'}
+                      {tab === 'applied' && ' Applied Schemes'}
                     </button>
                   ))}
                 </div>
 
                 {/* Sub-tab Content Renders */}
-                <div className="bg-white p-6 rounded-b-3xl border-x border-b border-gray-200/60 shadow-sm">
+                <div className="bg-white p-6 rounded-b-3xl border-x border-b border-gray-200/60">
 
                   {/* TAB 1: ALL SCHEMES LIST */}
                   {fcoSchemesSubTab === 'list' && (
@@ -3586,7 +3586,7 @@ function DashboardContent() {
 
                           return matchesSearch && matchesCat && matchesState && matchesCrop;
                         }).map((scheme) => (
-                          <div key={scheme._id} className="border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-all space-y-4 flex flex-col justify-between">
+                          <div key={scheme._id} className="border border-gray-100 rounded-2xl p-5 transition-all space-y-4 flex flex-col justify-between">
                             <div className="space-y-2">
                               <div className="flex justify-between items-start gap-2">
                                 <span className="bg-slate-100 text-slate-700 text-[9px] font-extrabold px-2 py-0.5 rounded border border-slate-200">
@@ -3611,9 +3611,9 @@ function DashboardContent() {
                                 setRecommendSchemeData(scheme);
                                 setRecommendTargetSchemeId(scheme._id);
                               }}
-                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl py-2 text-xs transition-colors shadow-sm mt-3"
+                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl py-2 text-xs transition-colors mt-3"
                             >
-                              Recommend to Cohort 🚀
+                              Recommend to Cohort 
                             </button>
                           </div>
                         ))}
@@ -3642,13 +3642,13 @@ function DashboardContent() {
                             <div key={rec._id} className="border border-gray-100 rounded-2xl p-5 flex flex-col md:flex-row justify-between gap-4 hover:bg-gray-50/20 transition-all">
                               <div className="flex-1 space-y-2">
                                 <span className="bg-gray-100 text-gray-700 text-[10px] px-2.5 py-0.5 rounded font-extrabold uppercase border border-gray-200">
-                                  Filter: Crop &mdash; {rec.targetFilters?.crop || 'All'} | State &mdash; {rec.targetFilters?.state || 'All'}
+                                  Filter: Crop  -  {rec.targetFilters?.crop || 'All'} | State  -  {rec.targetFilters?.state || 'All'}
                                 </span>
                                 <h4 className="font-extrabold text-sm text-[#1f3b2c]">{rec.schemeId?.name || 'Government Scheme'}</h4>
 
                                 <div className="flex flex-wrap gap-3 pt-1">
-                                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg">Interested: {interested.length} 👍</span>
-                                  <span className="text-red-700 font-bold bg-red-50 px-2 py-0.5 rounded-lg">Declined: {declined.length} 👎</span>
+                                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg">Interested: {interested.length} </span>
+                                  <span className="text-red-700 font-bold bg-red-50 px-2 py-0.5 rounded-lg">Declined: {declined.length} </span>
                                   <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-lg">Pending: {pending.length} ⌛</span>
                                 </div>
                               </div>
@@ -3657,9 +3657,9 @@ function DashboardContent() {
                                 <button
                                   onClick={() => handleBulkApplyCampaign(rec._id)}
                                   disabled={interested.length === 0}
-                                  className="w-full bg-[#166534] hover:bg-[#14532d] disabled:opacity-50 text-white text-xs font-bold py-2 rounded-lg transition-all shadow-sm"
+                                  className="w-full bg-[#166534] hover:bg-[#14532d] disabled:opacity-50 text-white text-xs font-bold py-2 rounded-lg transition-all"
                                 >
-                                  Bulk Apply ({interested.length}) 🛡️
+                                  Bulk Apply ({interested.length}) ️
                                 </button>
                                 {interested.length === 0 && (
                                   <span className="text-[10px] text-gray-400 block text-center">Waiting for farmer interest...</span>
@@ -3685,10 +3685,10 @@ function DashboardContent() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {fcoPoolProposals.filter(p => p.status === 'approved').map((prop) => (
-                          <div key={prop._id} className="p-5 border border-emerald-100 bg-[#f0fdf4]/20 rounded-2xl space-y-4 hover:shadow-sm transition-all flex flex-col justify-between">
+                          <div key={prop._id} className="p-5 border border-emerald-100 bg-[#f0fdf4]/20 rounded-2xl space-y-4 transition-all flex flex-col justify-between">
                             <div className="space-y-2">
                               <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded border border-emerald-200">
-                                Unanimous Agreement Met 🤝
+                                Unanimous Agreement Met 
                               </span>
                               <h4 className="font-extrabold text-sm text-[#1f3b2c] leading-snug">{prop.schemeName}</h4>
                               <p className="text-xs text-gray-500 font-semibold">Cooperative Land Pool: <span className="text-[#166534]">{prop.poolName}</span></p>
@@ -3712,9 +3712,9 @@ function DashboardContent() {
 
                             <button
                               onClick={() => handleApplyGroupProposal(prop.poolId, prop._id)}
-                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold py-2 rounded-xl transition-all shadow-md mt-2"
+                              className="w-full bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold py-2 rounded-xl transition-all mt-2"
                             >
-                              Apply for Pool Group 🚜
+                              Apply for Pool Group 
                             </button>
                           </div>
                         ))}
@@ -3744,7 +3744,7 @@ function DashboardContent() {
                                 <h5 className="font-bold text-sm text-gray-800 mt-1">{prop.schemeName}</h5>
                                 <p className="text-[10px] text-gray-400">Pool: <strong>{prop.poolName}</strong> · Action Status: Complete</p>
                               </div>
-                              <span className="text-xs font-bold text-green-700 bg-white border border-green-200 px-3 py-1.5 rounded-xl">Applied ✓</span>
+                              <span className="text-xs font-bold text-green-700 bg-white border border-green-200 px-3 py-1.5 rounded-xl">Applied </span>
                             </div>
                           ))}
                           {fcoPoolProposals.filter(p => p.status === 'applied').length === 0 && (
@@ -3760,10 +3760,10 @@ function DashboardContent() {
                               <div>
                                 <span className="bg-slate-100 text-gray-600 text-[9px] font-bold px-2 py-0.5 rounded border border-gray-200">Campaign Broadcast</span>
                                 <h5 className="font-bold text-sm text-[#1f3b2c] mt-1">{rec.schemeId?.name || 'Government Scheme'}</h5>
-                                <p className="text-[10px] text-gray-400">Filters: Crop &mdash; {rec.targetFilters?.crop || 'All'} | State &mdash; {rec.targetFilters?.state || 'All'}</p>
+                                <p className="text-[10px] text-gray-400">Filters: Crop  -  {rec.targetFilters?.crop || 'All'} | State  -  {rec.targetFilters?.state || 'All'}</p>
                               </div>
                               <div className="text-right">
-                                <span className="text-xs font-bold text-green-700 bg-white border border-green-200 px-3 py-1.5 rounded-xl inline-block">Bulk Applied ✓</span>
+                                <span className="text-xs font-bold text-green-700 bg-white border border-green-200 px-3 py-1.5 rounded-xl inline-block">Bulk Applied </span>
                                 <p className="text-[9px] text-gray-400 mt-1">Cohort size: {rec.farmerResponses.filter((r: any) => r.status === 'interested').length} Farmers</p>
                               </div>
                             </div>
@@ -3781,7 +3781,7 @@ function DashboardContent() {
                 {/* MODAL FORM: BROADCAST RECOMMENDATION CRITERIA */}
                 {recommendSchemeData && (
                   <div className="fixed inset-0 bg-[#1f3b2c]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl border border-gray-200/60 shadow-2xl w-full max-w-md overflow-hidden animate-fadeIn">
+                    <div className="bg-white rounded-3xl border border-gray-200/60 w-full max-w-md overflow-hidden animate-fadeIn">
                       <div className="bg-[#1f3b2c] p-5 text-white flex justify-between items-center">
                         <div>
                           <h3 className="font-black text-sm uppercase tracking-wide">Configure Cohort filters</h3>
@@ -3839,9 +3839,9 @@ function DashboardContent() {
                           <button
                             type="submit"
                             disabled={isSendingRecommendation}
-                            className="px-5 py-2 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                            className="px-5 py-2 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl transition-all flex items-center gap-1.5"
                           >
-                            {isSendingRecommendation ? 'Broadcasting...' : 'Broadcast Recommendation 🚀'}
+                            {isSendingRecommendation ? 'Broadcasting...' : 'Broadcast Recommendation '}
                           </button>
                         </div>
                       </form>
@@ -3852,7 +3852,7 @@ function DashboardContent() {
             ) : (
               /* FCO INSURANCE CLAIM INSPECTIONS VIEW */
               <div className="space-y-6 animate-fadeIn text-xs">
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <h1 className="text-2xl font-black text-slate-800 mb-1 flex items-center gap-2">
                       <FiShield className="text-emerald-600" /> Crop Insurance Claims & Loss Assessment Desk
@@ -3861,14 +3861,14 @@ function DashboardContent() {
                   </div>
                   <button
                     onClick={fetchFcoClaimsData}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-1.5 shadow-sm"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-1.5"
                   >
                     Refresh Claims List
                   </button>
                 </div>
 
                 {/* Claims List Table */}
-                <div className="bg-white rounded-3xl border border-gray-200/60 shadow-sm p-6 space-y-4">
+                <div className="bg-white rounded-3xl border border-gray-200/60 p-6 space-y-4">
                   <div className="flex justify-between items-center border-b border-gray-100 pb-3">
                     <h3 className="text-sm font-bold text-gray-800">Submitted Farmer Claims ({fcoClaims.length})</h3>
                     <span className="text-xs text-gray-400">Total Claims Pending or Inspected</span>
@@ -3892,7 +3892,7 @@ function DashboardContent() {
                                 {claim.claimNumber}
                               </span>
                               <h4 className="font-bold text-sm text-gray-900 mt-1">
-                                {claim.farmerName} &mdash; {claim.cropName} ({claim.calamityType.replace('_', ' ').toUpperCase()})
+                                {claim.farmerName}  -  {claim.cropName} ({claim.calamityType.replace('_', ' ').toUpperCase()})
                               </h4>
                               <p className="text-[11px] text-gray-400">
                                 Policy: <strong className="text-gray-700">{claim.policyName}</strong> ({claim.providerName}) • Incident Date: {new Date(claim.incidentDate).toLocaleDateString()}
@@ -3920,7 +3920,7 @@ function DashboardContent() {
                                     setInspectionAssessedLoss(claim.estimatedLossAmount || 50000);
                                     setInspectionNotes(`Inspected farm parcel of ${claim.farmerName}. Verified crop loss caused by ${claim.calamityType.replace('_', ' ')}.`);
                                   }}
-                                  className="px-3.5 py-1.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs shadow-sm transition-all flex items-center gap-1"
+                                  className="px-3.5 py-1.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1"
                                 >
                                   Conduct Field Inspection
                                 </button>
@@ -3972,11 +3972,11 @@ function DashboardContent() {
                 {/* MODAL: FCO ON-SITE INSPECTION FORM */}
                 {inspectingClaim && (
                   <div className="fixed inset-0 bg-[#1f3b2c]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl border border-gray-200/60 shadow-2xl w-full max-w-lg overflow-hidden animate-fadeIn">
+                    <div className="bg-white rounded-3xl border border-gray-200/60 w-full max-w-lg overflow-hidden animate-fadeIn">
                       <div className="bg-[#1f3b2c] p-5 text-white flex justify-between items-center">
                         <div>
                           <h3 className="font-black text-sm uppercase tracking-wide">FCO On-Site Field Assessment</h3>
-                          <p className="text-[10px] text-emerald-200 mt-0.5">Claim #{inspectingClaim.claimNumber} &mdash; {inspectingClaim.farmerName}</p>
+                          <p className="text-[10px] text-emerald-200 mt-0.5">Claim #{inspectingClaim.claimNumber}  -  {inspectingClaim.farmerName}</p>
                         </div>
                         <button
                           onClick={() => setInspectingClaim(null)}
@@ -4048,9 +4048,9 @@ function DashboardContent() {
                           <button
                             type="submit"
                             disabled={isSubmittingInspection}
-                            className="px-5 py-2 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                            className="px-5 py-2 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl transition-all flex items-center gap-1.5"
                           >
-                            {isSubmittingInspection ? 'Certifying...' : 'Sign & Certify Inspection Report ✓'}
+                            {isSubmittingInspection ? 'Certifying...' : 'Sign & Certify Inspection Report '}
                           </button>
                         </div>
                       </form>
@@ -4068,7 +4068,7 @@ function DashboardContent() {
         const statusLower = selectedPool.status?.toLowerCase() || '';
         return (
           <div className="fixed inset-0 bg-[#1f3b2c]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-white rounded-3xl border border-gray-150 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div className="bg-white rounded-3xl border border-gray-150 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
 
               {/* Header */}
               <div className="bg-[#1f3b2c] p-6 text-white flex justify-between items-center">
@@ -4248,7 +4248,7 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal(false)}
-                  className="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold rounded-xl text-xs transition-all shadow-sm"
+                  className="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold rounded-xl text-xs transition-all"
                 >
                   ← Back to Edit Form
                 </button>
@@ -4258,7 +4258,7 @@ function DashboardContent() {
                     setShowPreviewModal(false);
                     await handleGenerateContract();
                   }}
-                  className="px-6 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs transition-all shadow-md hover:shadow-lg"
+                  className="px-6 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs transition-all"
                 >
                   {statusLower === 'planning' ? 'Confirm & Dispatch Smart Contract' : 'Confirm & Re-Dispatch Smart Contract'}
                 </button>

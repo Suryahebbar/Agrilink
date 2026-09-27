@@ -15,7 +15,7 @@ import {
   Filter,
   Search,
   ArrowUpRight
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 
 interface EarningsSummary {
   totalGrossSales: number;
@@ -93,13 +93,13 @@ export default function SellerEarningsPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-7xl mx-auto space-y-6">
-        <div className="h-8 w-64 bg-gray-200 rounded animate-pulse" />
+        <div className="h-8 w-64 bg-gray-200 rounded" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-pulse" />
+            <div key={i} className="h-32 bg-white rounded-xl border border-gray-100 p-6" />
           ))}
         </div>
-        <div className="h-96 bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-pulse" />
+        <div className="h-96 bg-white rounded-xl border border-gray-100 p-6" />
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function SellerEarningsPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
           >
             <Download className="w-4 h-4 text-gray-500" />
             Export Statement
@@ -135,7 +135,7 @@ export default function SellerEarningsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Gross Sales */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200/80 shadow-xs hover:shadow-sm transition">
+        <div className="bg-white rounded-xl p-6 border border-gray-200/80 transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Gross Sales</span>
             <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -151,7 +151,7 @@ export default function SellerEarningsPage() {
         </div>
 
         {/* Platform Fee (5%) */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200/80 shadow-xs hover:shadow-sm transition">
+        <div className="bg-white rounded-xl p-6 border border-gray-200/80 transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">AgriLink Cut (5%)</span>
             <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
@@ -167,7 +167,7 @@ export default function SellerEarningsPage() {
         </div>
 
         {/* Net Seller Earnings */}
-        <div className="bg-gradient-to-br from-emerald-900 to-green-800 text-white rounded-xl p-6 shadow-md">
+        <div className="bg-[#166534] text-white rounded-xl p-6">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-emerald-200">Net Take-Home</span>
             <div className="w-9 h-9 rounded-lg bg-white/10 text-white flex items-center justify-center backdrop-blur-xs">
@@ -183,7 +183,7 @@ export default function SellerEarningsPage() {
         </div>
 
         {/* Payout Status */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200/80 shadow-xs hover:shadow-sm transition">
+        <div className="bg-white rounded-xl p-6 border border-gray-200/80 transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Payout Status</span>
             <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -205,7 +205,7 @@ export default function SellerEarningsPage() {
       </div>
 
       {/* Monetization Info Banner */}
-      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-4 flex items-start gap-3">
+      <div className="bg-[#166534] border border-emerald-100 rounded-xl p-4 flex items-start gap-3">
         <HelpCircle className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
         <div className="text-xs text-emerald-900 space-y-1">
           <p className="font-semibold">Transparent Revenue Model</p>
@@ -216,7 +216,7 @@ export default function SellerEarningsPage() {
       </div>
 
       {/* Transactions Section */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         {/* Table Filters & Search */}
         <div className="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
           <div className="relative w-full sm:w-80">

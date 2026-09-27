@@ -186,18 +186,18 @@ function LiveHashCheck({ pool, storedHash, sealedAt }: { pool: any; storedHash: 
             <p className="text-xs text-slate-500">Run the check to verify this document.</p>
           )}
           {verified && (
-            <p className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">🟢 Verified — Document is intact since blockchain sealing</p>
+            <p className="text-xs font-bold text-emerald-700 flex items-center gap-1.5"> Verified  -  Document is intact since blockchain sealing</p>
           )}
           {tampered && (
-            <p className="text-xs font-bold text-rose-700 flex items-center gap-1.5">🔴 Tamper Alert — Document data has changed since sealing!</p>
+            <p className="text-xs font-bold text-rose-700 flex items-center gap-1.5"> Tamper Alert  -  Document data has changed since sealing!</p>
           )}
         </div>
         <button
           onClick={runCheck}
           disabled={checking}
-          className="px-4 py-2 text-xs font-bold rounded-xl bg-[#1A9B9A] hover:bg-[#147878] text-white transition-all shadow-sm disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap"
+          className="px-4 py-2 text-xs font-bold rounded-xl bg-[#1A9B9A] hover:bg-[#147878] text-white transition-all disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap"
         >
-          {checking ? <><span className="animate-spin inline-block">⟳</span> Computing…</> : '🔍 Run Integrity Check'}
+          {checking ? <><span className="animate-spin inline-block">⟳</span> Computing…</> : ' Run Integrity Check'}
         </button>
       </div>
     </div>
@@ -250,7 +250,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
         userId: storedUser.id,
         userName: storedUser.name,
         userEmail: storedUser.email,
-        remarks: `Agreement document opened — Pool: ${pool.name}`,
+        remarks: `Agreement document opened  -  Pool: ${pool.name}`,
       }),
     }).catch(() => {/* fire-and-forget */});
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -838,9 +838,9 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
     startChapter("CHAPTER 4: COLLABORATION MODELS & GOVERNING RULES");
     
     addSectionHeader("4.1 Collaboration Model");
-    addText("Selected Collaboration Model: Model " + modelValue + " — " + collabModelName + ".");
+    addText("Selected Collaboration Model: Model " + modelValue + "  -  " + collabModelName + ".");
 
-    addSubsectionHeader("4.1.1 Model 0 — Land Lease: Governing Conditions");
+    addSubsectionHeader("4.1.1 Model 0  -  Land Lease: Governing Conditions");
     addText("5.1.1 The Farmer retains ownership of the land at all times; no title or ownership interest passes to AgriLink under this Agreement.");
     addText("5.1.2 The land is leased to AgriLink solely for the period stated in Section 2 (Effective Date to Expiry Date), and possession reverts to the Farmer automatically upon expiry unless renewed by mutual written consent.");
     addText("5.1.3 AgriLink shall have exclusive operational control over cultivation decisions during the lease period, subject to applicable law and any agreed land-use restrictions.");
@@ -848,14 +848,14 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
     addText("5.1.5 AgriLink shall return the land at the end of the lease term in the condition agreed at commencement, ordinary wear and tear excepted.");
     addText("5.1.6 No sub-leasing, assignment, or transfer of the leasehold interest by AgriLink to any third party is permitted without the Farmer's prior written and digitally recorded consent.");
 
-    addSubsectionHeader("4.1.2 Model 1 — Managed Farming: Governing Conditions");
+    addSubsectionHeader("4.1.2 Model 1  -  Managed Farming: Governing Conditions");
     addText("5.2.1 The Farmer shall fund cultivation costs in accordance with the Financial Plan recorded in Section 8.");
     addText("5.2.2 AgriLink shall manage day-to-day farm operations in accordance with the Crop Plan under Section 7.");
     addText("5.2.3 AgriLink shall be entitled to the management fee recorded in Section 8, payable as agreed regardless of the ultimate yield outcome, unless otherwise stated.");
     addText("5.2.4 AgriLink shall maintain complete operational records and make them available to the Farmer.");
     addText("5.2.5 Ownership of the produce shall remain with the Farmer at all times unless expressly reassigned in writing.");
 
-    addSubsectionHeader("4.1.3 Model 2 — Partnership Farming: Governing Conditions");
+    addSubsectionHeader("4.1.3 Model 2  -  Partnership Farming: Governing Conditions");
     addText("5.3.1 Land contribution by each Participant shall be verified against survey records and ULPIN data prior to activation of this Agreement.");
     addText("5.3.2 Capital contribution by each Participant shall be verified against the payment or escrow records maintained by AgriLink.");
     addText("5.3.3 Labour contribution shall be recorded in person-days and shall be periodically reconciled against attendance.");
@@ -863,14 +863,14 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
     addText("5.3.5 Loss shall be shared among the Participants strictly in accordance with the percentages recorded in Section 10.");
     addText("5.3.6 No distribution of profit or loss shall be executed until the underlying Contribution Ledger entries have been verified and reconciled.");
 
-    addSubsectionHeader("4.1.4 Model 3 — Marketing Partner: Governing Conditions");
+    addSubsectionHeader("4.1.4 Model 3  -  Marketing Partner: Governing Conditions");
     addText("5.4.1 Each Farmer shall independently manage cultivation on their own parcel(s) and shall bear the associated operational risk.");
     addText("5.4.2 AgriLink shall provide market linkage services, including buyer discovery, price discovery, and logistics coordination for the harvested produce.");
     addText("5.4.3 AgriLink's commission shall be deducted from sale proceeds at the rate recorded in Section 8 prior to disbursement to the Farmer.");
     addText("5.4.4 AgriLink shall maintain complete sales records, including buyer identity, quantity sold, and price realised, accessible to the concerned Farmer.");
     addText("5.4.5 Settlement of proceeds to the Farmer shall be made transparently and within the timeframe recorded in Section 9.");
 
-    addSubsectionHeader("4.1.5 Model 4 — Collaborative Farm Pool: Governing Conditions");
+    addSubsectionHeader("4.1.5 Model 4  -  Collaborative Farm Pool: Governing Conditions");
     addText("5.5.1 Every parcel proposed for inclusion in the Farm Pool shall be independently verified for ownership, boundary accuracy, and encumbrance status before inclusion.");
     addText("5.5.2 The Farm Pool shall be activated only upon unanimous digital approval of all proposed Participants, as recorded under Section 13.");
     addText("5.5.3 Every Contribution shall be individually recorded in the Contribution Ledger under Section 6.");
@@ -1198,7 +1198,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
         doc.text("Farmer Signature", stampX + 4, yPos + 8);
         
         doc.setTextColor(6, 95, 70);
-        doc.text("✔ Digitally Signed", stampX + 4, yPos + 12);
+        doc.text(" Digitally Signed", stampX + 4, yPos + 12);
         
         doc.setFont('Helvetica', 'normal');
         doc.setFontSize(7);
@@ -1362,27 +1362,27 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             onClick={() => setActiveTab('preview')}
             className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
               activeTab === 'preview'
-                ? 'bg-slate-800 text-white shadow-sm'
+                ? 'bg-slate-800 text-white '
                 : 'text-slate-600 hover:bg-slate-200/50'
             }`}
           >
-            📄 Agreement Document Preview
+             Agreement Document Preview
           </button>
           <button
             onClick={() => setActiveTab('blockchain')}
             className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
               activeTab === 'blockchain'
-                ? 'bg-[#1A9B9A] text-white shadow-sm'
+                ? 'bg-[#1A9B9A] text-white '
                 : 'text-slate-600 hover:bg-slate-200/50'
             }`}
           >
-            ⛓️ Blockchain Verification Hub
+            ️ Blockchain Verification Hub
           </button>
         </div>
         {showDownloadButton && (
           <button
             onClick={handleDownloadPDF}
-            className="inline-flex items-center gap-2 bg-[#1A9B9A] hover:bg-[#147878] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition-all duration-200 w-full sm:w-auto justify-center"
+            className="inline-flex items-center gap-2 bg-[#1A9B9A] hover:bg-[#147878] text-white text-xs font-bold px-4 py-2 rounded-xl transition-all duration-200 w-full sm:w-auto justify-center"
           >
             <FiDownload className="w-4 h-4" /> Download PDF
           </button>
@@ -1391,7 +1391,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
 
       {activeTab === 'preview' ? (
         <div 
-          className="bg-white border border-[#EAEDED] shadow-xl rounded-3xl p-8 md:p-12 text-slate-800 leading-relaxed font-sans"
+          className="bg-white border border-[#EAEDED] rounded-3xl p-8 md:p-12 text-slate-800 leading-relaxed font-sans"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
         {/* Header Section */}
@@ -1626,13 +1626,13 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
           {/* Merged Digital Sketch Canvas */}
           <div className="border border-slate-200 rounded-3xl bg-slate-50/50 p-6 md:p-8 my-6 text-center space-y-4">
             <h3 className="text-xs font-black tracking-widest text-[#1A9B9A] uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              🗺️ Annexure A: GIS Definitive Merged Boundary Sketch
+              ️ Annexure A: GIS Definitive Merged Boundary Sketch
             </h3>
             <canvas 
               id="smartContractSketchCanvas" 
               width="600" 
               height="350" 
-              className="border border-slate-200 rounded-2xl bg-white max-w-full mx-auto shadow-inner"
+              className="border border-slate-200 rounded-2xl bg-white max-w-full mx-auto"
             />
             <p className="text-[11px] text-slate-500 italic max-w-lg mx-auto">
               Digital boundary outline showing merged plots (Survey Nos: {pool.participants.map(p => p.surveyNumber).join(', ')}) in {village} Village. Centered at {avgLat.toFixed(4)}&deg; N, {avgLng.toFixed(4)}&deg; E.
@@ -1641,7 +1641,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             {/* Original Coordinates & Dimensions Details in UI */}
             <div className="text-left mt-6 pt-6 border-t border-slate-200 space-y-4">
               <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                📋 Original GIS Boundary & Dimension Records (from Registry Database)
+                 Original GIS Boundary & Dimension Records (from Registry Database)
               </h4>
               <div className="grid grid-cols-1 gap-4">
                 {matchedPlots.map((p, idx) => {
@@ -1662,7 +1662,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
                   }
 
                   return (
-                    <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2">
+                    <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-4 space-y-2">
                       <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                         <span className="font-bold text-slate-800 text-sm">
                           Parcel {idx + 1} (Survey No: {p.survey})
@@ -1704,11 +1704,11 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             5. Collaboration Model
           </h2>
           <p className="text-xs text-slate-600">
-            Selected Collaboration Model for this Agreement: <strong>Model {modelValue} &mdash; {collabModelName}</strong>.
+            Selected Collaboration Model for this Agreement: <strong>Model {modelValue}  -  {collabModelName}</strong>.
           </p>
           <div className="space-y-6 text-xs text-slate-600 leading-relaxed pl-3 border-l-2 border-[#1A9B9A]">
             <div>
-              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.1 Model 0 &mdash; Land Lease: Governing Conditions</h4>
+              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.1 Model 0  -  Land Lease: Governing Conditions</h4>
               <p>5.1.1 The Farmer retains ownership of the land at all times; no title or ownership interest passes to AgriLink under this Agreement.</p>
               <p>5.1.2 The land is leased to AgriLink solely for the period stated in Section 2 (Effective Date to Expiry Date), and possession reverts to the Farmer automatically upon expiry unless renewed by mutual written consent.</p>
               <p>5.1.3 AgriLink shall have exclusive operational control over cultivation decisions during the lease period, subject to applicable law and any agreed land-use restrictions.</p>
@@ -1718,7 +1718,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             </div>
 
             <div>
-              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.2 Model 1 &mdash; Managed Farming: Governing Conditions</h4>
+              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.2 Model 1  -  Managed Farming: Governing Conditions</h4>
               <p>5.2.1 The Farmer shall fund cultivation costs in accordance with the Financial Plan recorded in Section 8.</p>
               <p>5.2.2 AgriLink shall manage day-to-day farm operations in accordance with the Crop Plan under Section 7.</p>
               <p>5.2.3 AgriLink shall be entitled to the management fee recorded in Section 8, payable as agreed regardless of the ultimate yield outcome, unless otherwise stated.</p>
@@ -1727,7 +1727,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             </div>
 
             <div>
-              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.3 Model 2 &mdash; Partnership Farming: Governing Conditions</h4>
+              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.3 Model 2  -  Partnership Farming: Governing Conditions</h4>
               <p>5.3.1 Land contribution by each Participant shall be verified against survey records and ULPIN data prior to activation of this Agreement.</p>
               <p>5.3.2 Capital contribution by each Participant shall be verified against the payment or escrow records maintained by AgriLink.</p>
               <p>5.3.3 Labour contribution shall be recorded in person-days and shall be periodically reconciled against attendance.</p>
@@ -1737,7 +1737,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             </div>
 
             <div>
-              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.4 Model 3 &mdash; Marketing Partner: Governing Conditions</h4>
+              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.4 Model 3  -  Marketing Partner: Governing Conditions</h4>
               <p>5.4.1 Each Farmer shall independently manage cultivation on their own parcel(s) and shall bear the associated operational risk.</p>
               <p>5.4.2 AgriLink shall provide market linkage services, including buyer discovery, price discovery, and logistics coordination for the harvested produce.</p>
               <p>5.4.3 AgriLink&apos;s commission shall be deducted from sale proceeds at the rate recorded in Section 8 prior to disbursement to the Farmer.</p>
@@ -1746,7 +1746,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             </div>
 
             <div>
-              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.5 Model 4 &mdash; Collaborative Farm Pool: Governing Conditions</h4>
+              <h4 className="font-bold text-slate-800 uppercase tracking-wide mb-1">5.5 Model 4  -  Collaborative Farm Pool: Governing Conditions</h4>
               <p>5.5.1 Every parcel proposed for inclusion in the Farm Pool shall be independently verified for ownership, boundary accuracy, and encumbrance status before inclusion.</p>
               <p>5.5.2 The Farm Pool shall be activated only upon unanimous digital approval of all proposed Participants, as recorded under Section 13.</p>
               <p>5.5.3 Every Contribution shall be individually recorded in the Contribution Ledger under Section 6.</p>
@@ -2360,12 +2360,12 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
               return (
                 <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs border-b border-slate-200/60 pb-3 last:border-b-0 last:pb-0">
                   <div className="w-full">
-                    <span className="font-extrabold text-slate-900 block">Farmer {idx + 1} &mdash; {p.fullName}</span>
+                    <span className="font-extrabold text-slate-900 block">Farmer {idx + 1}  -  {p.fullName}</span>
                     <span className="text-[10px] text-slate-400 font-mono">{p.signatureHash ? `Wallet: ${p.signatureHash.slice(0, 32)}...` : 'Pending Signature'}</span>
                     {isSigned && (
-                      <div className="mt-2 bg-slate-50 border border-slate-200 p-3 rounded-2xl w-full max-w-[320px] text-[10px] space-y-1 text-slate-500 font-sans shadow-sm">
+                      <div className="mt-2 bg-slate-50 border border-slate-200 p-3 rounded-2xl w-full max-w-[320px] text-[10px] space-y-1 text-slate-500 font-sans">
                         <div className="font-extrabold text-[#1f3b2c] text-xs">Farmer Signature</div>
-                        <div className="font-bold text-emerald-700 text-xs flex items-center gap-1">✔ Digitally Signed</div>
+                        <div className="font-bold text-emerald-700 text-xs flex items-center gap-1"> Digitally Signed</div>
                         <div>Method: {p.signatureMethod === 'upload' ? 'Uploaded Signature' : 'Drawn Signature'}</div>
                         <div>Date: {p.signedAt ? new Date(p.signedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                         <div>Time: {p.signedAt ? new Date(p.signedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</div>
@@ -2376,7 +2376,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
                   <div className="mt-1 sm:mt-0 flex-shrink-0">
                     {isSigned ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg uppercase text-[10px]">
-                        ✓ SIGNED
+                         SIGNED
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 font-bold rounded-lg uppercase text-[10px]">
@@ -2395,7 +2395,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
               </div>
               <div className="mt-1 sm:mt-0">
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg uppercase text-[10px]">
-                  ✓ SIGNED (AgriLink Node)
+                   SIGNED (AgriLink Node)
                 </span>
               </div>
             </div>
@@ -2403,12 +2403,12 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
             {pool.counselorName && (
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs border-t border-slate-200/60 pt-3">
                 <div>
-                  <span className="font-extrabold text-slate-900 block">Witness &mdash; {pool.counselorName}</span>
+                  <span className="font-extrabold text-slate-900 block">Witness  -  {pool.counselorName}</span>
                   <span className="text-[10px] text-slate-400 font-mono">Farm Counselling Officer (FCO)</span>
                 </div>
                 <div className="mt-1 sm:mt-0">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg uppercase text-[10px]">
-                    ✓ WITNESSED & APPROVED
+                     WITNESSED & APPROVED
                   </span>
                 </div>
               </div>
@@ -2421,11 +2421,11 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
         </div>
       </div>
       ) : (
-        <div className="bg-white border border-[#EAEDED] shadow-xl rounded-3xl p-8 md:p-12 text-slate-800 leading-relaxed font-sans space-y-8 animate-fadeIn">
+        <div className="bg-white border border-[#EAEDED] rounded-3xl p-8 md:p-12 text-slate-800 leading-relaxed font-sans space-y-8 animate-fadeIn">
           {/* Header */}
           <div className="border-b border-slate-100 pb-5">
             <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              ⛓️ Immutable Blockchain Registry Verification
+              ️ Immutable Blockchain Registry Verification
             </h3>
             <p className="text-xs text-slate-500 mt-1">Audit multi-party smart contract validation logs, stamps, consensus records, and verify agreement integrity.</p>
           </div>
@@ -2440,7 +2440,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
               <div className="flex justify-between border-b border-slate-200 pb-1.5">
                 <span className="font-bold text-slate-400">LEDGER STATUS:</span>
                 <span className={`font-bold ${pool.isTerminated ? 'text-red-700' : (pool.status === 'active' ? 'text-emerald-700' : 'text-amber-700')}`}>
-                  {pool.isTerminated ? '🔴 TERMINATED (EXPIRED)' : (pool.status === 'active' ? '🟢 SEALED & ACTIVE' : '⏳ AWAITING SIGNATURES')}
+                  {pool.isTerminated ? ' TERMINATED (EXPIRED)' : (pool.status === 'active' ? ' SEALED & ACTIVE' : '⏳ AWAITING SIGNATURES')}
                 </span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-1.5">
@@ -2474,7 +2474,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
           <div className="border border-slate-100 rounded-3xl p-6 space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
               <h4 className="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
-                🛡️ Cryptographic Document Integrity Check
+                ️ Cryptographic Document Integrity Check
               </h4>
               {pool._id && (
                 <a
@@ -2483,7 +2483,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
                   rel="noreferrer"
                   className="text-[10px] font-bold text-[#1A9B9A] hover:underline flex items-center gap-1"
                 >
-                  🔗 Open Public Verification Page ↗
+                   Open Public Verification Page ↗
                 </a>
               )}
             </div>
@@ -2491,7 +2491,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
               <div className="space-y-1">
                 <p className="text-[10px] font-bold text-slate-400 uppercase">On-Chain Registered Hash (Immutable, stored at sealing):</p>
                 <div className="bg-slate-100 border border-slate-200 p-2.5 rounded-xl font-mono text-[10px] text-slate-600 break-all select-all">
-                  {pool.blockchain?.contractHash || '⏳ Not yet sealed — hash will be generated after all participants sign'}
+                  {pool.blockchain?.contractHash || '⏳ Not yet sealed  -  hash will be generated after all participants sign'}
                 </div>
               </div>
 
@@ -2508,7 +2508,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
           {/* Blockchain Record Scopes Accordion */}
           <div className="space-y-3">
             <h4 className="font-extrabold text-slate-900 text-xs uppercase tracking-wider">
-              📜 Auditable Blockchain Scope Ledger
+               Auditable Blockchain Scope Ledger
             </h4>
             
             <div className="divide-y divide-slate-100 border border-slate-200/60 rounded-3xl overflow-hidden text-xs">
@@ -2639,7 +2639,7 @@ export default function SmartContractDocument({ pool, showDownloadButton = true 
                 <div className="space-y-3 pt-2">
                   {pool.blockchain?.blocksProgress && pool.blockchain.blocksProgress.length > 0 ? (
                     pool.blockchain.blocksProgress.map((block: any, bIdx: number) => (
-                      <div key={bIdx} className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2 shadow-sm font-mono text-[10px]">
+                      <div key={bIdx} className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2 font-mono text-[10px]">
                         <div className="flex justify-between items-center border-b border-slate-100 pb-1.5">
                           <span className="font-extrabold text-[#1A9B9A]">BLOCK #{block.blockNumber}</span>
                           <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-sans font-bold">{block.action}</span>

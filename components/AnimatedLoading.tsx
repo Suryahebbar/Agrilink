@@ -54,9 +54,9 @@ const AnimatedLoading: React.FC<AnimatedLoadingProps> = ({
 
     return (
       <div className={`flex space-x-1 ${className}`}>
-        <div className={`${dotSize[size]} bg-[#1A9B9A] rounded-full animate-bounce-gentle`}></div>
-        <div className={`${dotSize[size]} bg-[#1A9B9A] rounded-full animate-bounce-gentle animation-delay-100`}></div>
-        <div className={`${dotSize[size]} bg-[#1A9B9A] rounded-full animate-bounce-gentle animation-delay-200`}></div>
+        <div className={`${dotSize[size]} bg-[#1A9B9A] rounded-full -gentle`}></div>
+        <div className={`${dotSize[size]} bg-[#1A9B9A] rounded-full -gentle animation-delay-100`}></div>
+        <div className={`${dotSize[size]} bg-[#1A9B9A] rounded-full -gentle animation-delay-200`}></div>
       </div>
     );
   };

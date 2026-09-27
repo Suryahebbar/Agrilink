@@ -13,9 +13,9 @@ const TabsDemo: React.FC = () => {
   ];
 
   const iconTabs = [
-    { id: 'products', label: 'Products', icon: '📦' },
-    { id: 'reports', label: 'Reports', icon: '📊' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
+    { id: 'products', label: 'Products', icon: '' },
+    { id: 'reports', label: 'Reports', icon: '' },
+    { id: 'settings', label: 'Settings', icon: '️' },
   ];
 
   const tabsWithContent = [

@@ -23,7 +23,7 @@ export default function RegisterPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {/* Farmer card */}
-            <div className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg shadow-sm p-6 flex flex-col justify-between">
+            <div className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 flex flex-col justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-[#1f3b2c] mb-2">Register as a Farmer</h2>
                 <p className="text-sm text-[#4b5563] mb-4">
@@ -56,7 +56,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Supplier card */}
-            <div className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg shadow-sm p-6 flex flex-col justify-between">
+            <div className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-6 flex flex-col justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-[#1f3b2c] mb-2">Register as a Supplier</h2>
                 <p className="text-sm text-[#4b5563] mb-4">

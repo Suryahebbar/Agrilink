@@ -182,7 +182,7 @@ export function exportSeasonalFinancialReportPDF(
       doc.text(inv.title || 'Capital Asset', 16, y + 5);
       doc.text(String(inv.investmentType || 'Self').replace('_', ' '), 85, y + 5);
       doc.text(`INR ${Number(inv.capitalAmount || 0).toLocaleString('en-IN')}`, 130, y + 5);
-      doc.text(inv.investmentDate ? new Date(inv.investmentDate).toLocaleDateString('en-IN') : '—', 170, y + 5);
+      doc.text(inv.investmentDate ? new Date(inv.investmentDate).toLocaleDateString('en-IN') : ' - ', 170, y + 5);
       y += 6;
     });
   } else {

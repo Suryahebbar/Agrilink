@@ -207,7 +207,7 @@ export async function POST() {
 
     await InventoryLog.insertMany(inventoryLogs);
 
-    console.log('✅ Test seller created:', seller._id);
+    console.log(' Test seller created:', seller._id);
 
     return NextResponse.json({
       success: true,
@@ -220,7 +220,7 @@ export async function POST() {
     });
 
   } catch (error) {
-    console.error('❌ Error creating test seller:', error);
+    console.error(' Error creating test seller:', error);
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Failed to create test seller'

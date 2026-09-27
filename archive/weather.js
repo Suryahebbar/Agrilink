@@ -48,8 +48,8 @@ const weatherMeaning = {
   const place = await getLocation(lat, lon);
   const weather = await getWeather(lat, lon);
 
-  console.log("\n📍 Location:", place);
-  console.log("📅 7-Day Weather Forecast:\n");
+  console.log("\n Location:", place);
+  console.log(" 7-Day Weather Forecast:\n");
 
   const days = weather.daily.time;
 
@@ -61,9 +61,9 @@ const weatherMeaning = {
     const code = weather.daily.weathercode[i];
     const desc = weatherMeaning[code] || "Unknown Weather";
 
-    console.log(`🗓 ${date}`);
-    console.log(`   🌡 Max: ${max}°C | Min: ${min}°C`);
-    console.log(`   🌧 Rain: ${rain} mm`);
-    console.log(`   ☁️ Condition: ${desc}\n`);
+    console.log(` ${date}`);
+    console.log(`    Max: ${max}°C | Min: ${min}°C`);
+    console.log(`    Rain: ${rain} mm`);
+    console.log(`   ️ Condition: ${desc}\n`);
   }
 })();

@@ -41,10 +41,10 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f7f0de] via-[#f3e8cb] to-[#e6f7f7] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/20">
+    <div className="min-h-screen flex items-center justify-center bg-[#166534] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-md p-8 rounded-2xl border border-white/20">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 rounded-xl bg-gradient-to-tr from-[#1A9B9A] to-[#147878] flex items-center justify-center shadow-md">
+          <div className="mx-auto h-12 w-12 rounded-xl bg-[#166534] flex items-center justify-center">
             <FiShield className="h-6 w-6 text-white" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-[#232F3E]">
@@ -130,7 +130,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-[#1A9B9A] hover:bg-[#147878] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1A9B9A] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-[#1A9B9A] hover:bg-[#147878] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1A9B9A] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 'Signing in...'

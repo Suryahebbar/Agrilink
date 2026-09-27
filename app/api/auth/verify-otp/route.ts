@@ -67,7 +67,7 @@ export async function POST(request: Request) {
         { user: user._id },
         { nameVerificationStatus: 'verified', ownershipVerified: true }
       );
-      console.log('✅ Verified FarmerProfile identity for user:', user._id);
+      console.log(' Verified FarmerProfile identity for user:', user._id);
     }
 
     // If this is a supplier user, ensure a Seller profile exists so login works
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
           isActive: true,
         });
 
-        console.log('✅ Auto-created Seller profile for supplier user after OTP verification:', {
+        console.log(' Auto-created Seller profile for supplier user after OTP verification:', {
           userId: user._id,
           sellerId: seller._id,
           email: seller.email,

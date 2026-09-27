@@ -114,7 +114,7 @@ export default function SupplierLayout({
     return (
       <SupplierIdContext.Provider value={{ supplierId, loading }}>
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-4">
+          <div className="max-w-md w-full bg-white rounded-2xl border border-gray-200 p-8 space-y-4">
             <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-xl font-bold">
               !
             </div>

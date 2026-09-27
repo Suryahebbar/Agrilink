@@ -77,7 +77,7 @@ export async function POST(request: Request) {
         userEmail: email,
         userRole: raw?.role || 'unknown',
         status: ActivityStatus.FAILED,
-        remarks: `Failed login attempt for ${email} — incorrect password`,
+        remarks: `Failed login attempt for ${email}  -  incorrect password`,
         request,
       });
       return NextResponse.json(
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
           isActive: true,
         });
 
-        console.log('✅ Auto-created Seller profile during supplier login:', {
+        console.log(' Auto-created Seller profile during supplier login:', {
           userId: user._id,
           sellerId: seller._id,
           email: seller.email,
@@ -197,7 +197,7 @@ export async function POST(request: Request) {
       if (isFirstLogin && userEmailForWelcome && !userEmailForWelcome.endsWith('@agrilink.com')) {
         const { sendWelcomeEmail } = await import('@/lib/otpEmail');
         void sendWelcomeEmail(userEmailForWelcome, userNameForWelcome, tokenRole || 'farmer');
-        console.log('🎉 First sign-in detected! Welcome email dispatched to:', userEmailForWelcome);
+        console.log(' First sign-in detected! Welcome email dispatched to:', userEmailForWelcome);
       }
 
       // Update login counters on user document

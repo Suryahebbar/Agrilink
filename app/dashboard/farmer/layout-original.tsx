@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import HeaderWrapper from '../../components/Header/HeaderWrapper';
-import { LayoutDashboard, Layers, ScrollText, CloudSun, Store, TrendingUp, Lock, Users, Calendar, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Layers, ScrollText, CloudSun, Store, TrendingUp, Lock, Users, Calendar, ShieldCheck } from '../../../components/ui/icons';
 
 type NavItem = {
   label: string;

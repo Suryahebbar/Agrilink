@@ -7,7 +7,7 @@ function isHttpUrl(value: string): boolean {
   return /^https?:\/\//i.test(value);
 }
 
-// STEP 1 — Extract raw text from PDF using pdfjs-dist
+// STEP 1  -  Extract raw text from PDF using pdfjs-dist
 async function extractRaw(pdfPath: string): Promise<string> {
   if (!pdfPath || typeof pdfPath !== 'string') {
     throw new Error('Invalid PDF path provided');
@@ -67,12 +67,12 @@ async function extractRaw(pdfPath: string): Promise<string> {
   }
 }
 
-// STEP 2 — Clean into usable lines
+// STEP 2  -  Clean into usable lines
 function cleanLines(text: string): string[] {
   return text.split("\n").map(l => l.trim()).filter(Boolean);
 }
 
-// STEP 3 — Parse based strictly on positions
+// STEP 3  -  Parse based strictly on positions
 function parseRTC(lines: string[]) {
   console.log('RTC lines for debugging:', lines);
   

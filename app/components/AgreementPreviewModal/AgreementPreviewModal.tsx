@@ -73,7 +73,7 @@ export default function AgreementPreviewModal({ isOpen, onClose, agreementId }: 
                 onClick={onClose}
                 className="text-gray-400 hover:text-gray-600"
               >
-                ✕
+                
               </button>
             </div>
           </div>

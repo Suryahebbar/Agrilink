@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Shield, Users, TrendingUp, Globe, Database, Cpu } from 'lucide-react';
+import { Shield, Users, TrendingUp, Globe, Database, Cpu } from '../../components/ui/icons';
 
 export const metadata: Metadata = {
   title: 'Platform Architecture & Technology',
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Platform() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f0de] to-white">
+    <div className="min-h-screen from-[#f7f0de] to-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -23,7 +23,7 @@ export default function Platform() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/register"
-                className="bg-gradient-to-r from-[#166534] to-[#15803d] text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition-all"
+                className="bg-[#166534] text-white px-8 py-3 rounded-lg font-medium transition-all"
               >
                 Get Started
               </Link>
@@ -50,7 +50,7 @@ export default function Platform() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white p-6 rounded-xl transition-shadow">
             <div className="w-12 h-12 bg-[#166534] rounded-lg flex items-center justify-center mb-4">
               <Shield className="w-6 h-6 text-white" />
             </div>
@@ -60,7 +60,7 @@ export default function Platform() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white p-6 rounded-xl transition-shadow">
             <div className="w-12 h-12 bg-[#166534] rounded-lg flex items-center justify-center mb-4">
               <Cpu className="w-6 h-6 text-white" />
             </div>
@@ -70,7 +70,7 @@ export default function Platform() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white p-6 rounded-xl transition-shadow">
             <div className="w-12 h-12 bg-[#166534] rounded-lg flex items-center justify-center mb-4">
               <Users className="w-6 h-6 text-white" />
             </div>
@@ -80,7 +80,7 @@ export default function Platform() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white p-6 rounded-xl transition-shadow">
             <div className="w-12 h-12 bg-[#166534] rounded-lg flex items-center justify-center mb-4">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
@@ -90,7 +90,7 @@ export default function Platform() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white p-6 rounded-xl transition-shadow">
             <div className="w-12 h-12 bg-[#166534] rounded-lg flex items-center justify-center mb-4">
               <Database className="w-6 h-6 text-white" />
             </div>
@@ -100,7 +100,7 @@ export default function Platform() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white p-6 rounded-xl transition-shadow">
             <div className="w-12 h-12 bg-[#166534] rounded-lg flex items-center justify-center mb-4">
               <Globe className="w-6 h-6 text-white" />
             </div>

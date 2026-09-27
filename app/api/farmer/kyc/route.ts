@@ -308,12 +308,12 @@ export async function POST(request: Request) {
         nameVerificationStatus = 'verified';
         shouldStoreRTCData = true;
         extractedData.land.ownershipVerified = true;
-        console.log('✅ Verification successful (Names matched or loose name match + location match) - storing RTC data');
+        console.log(' Verification successful (Names matched or loose name match + location match) - storing RTC data');
       } else {
         nameVerificationStatus = 'not_verified';
         shouldStoreRTCData = false;
         extractedData.land.ownershipVerified = false;
-        console.log('❌ Verification failed (Names do not match and location does not reinforce)');
+        console.log(' Verification failed (Names do not match and location does not reinforce)');
       }
     } else if (!extractedData.farmer.kannadaName && !extractedData.farmer.aadhaarKannadaName) {
       nameVerificationStatus = 'pending';

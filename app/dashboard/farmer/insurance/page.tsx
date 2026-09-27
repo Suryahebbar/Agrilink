@@ -5,10 +5,10 @@ import { useSearchParams } from 'next/navigation';
 import { 
   ShieldCheck, ShieldAlert, FileText, Calculator, 
   Layers, UploadCloud, AlertTriangle, CheckCircle2, 
-  Clock, ArrowRight, DollarSign, Building2, Sparkles,
+  Clock, ArrowRight, DollarSign, Building2, 
   ExternalLink, Eye, ChevronRight, X, RefreshCw,
   Umbrella, Award, FileCheck2, Search, SlidersHorizontal
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 import { INSURANCE_CATALOG, InsurancePolicy } from '@/lib/data/insurance-catalog';
 
 export default function FarmerInsurancePage() {
@@ -200,7 +200,7 @@ export default function FarmerInsurancePage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Top Header Card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#14532d] via-[#166534] to-[#15803d] text-white p-7 md:p-9 shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-[#166534] text-white p-7 md:p-9">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wide text-emerald-200 uppercase">
@@ -217,7 +217,7 @@ export default function FarmerInsurancePage() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => handleOpenClaimModal()}
-              className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm transition-all shadow-lg flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm transition-all flex items-center gap-2"
             >
               <AlertTriangle className="w-4 h-4 text-amber-900" />
               File Damage Claim
@@ -254,7 +254,7 @@ export default function FarmerInsurancePage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-[#166534] text-white shadow-md'
+                  ? 'bg-[#166534] text-white '
                   : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200/80'
               }`}
             >
@@ -271,7 +271,7 @@ export default function FarmerInsurancePage() {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Active Pool Coverage Card */}
-          <div className="bg-white rounded-3xl border border-gray-200/90 p-6 md:p-8 shadow-sm">
+          <div className="bg-white rounded-3xl border border-gray-200/90 p-6 md:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-gray-100 gap-4">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/60">
@@ -372,7 +372,7 @@ export default function FarmerInsurancePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={() => handleOpenClaimModal()}
-                className="px-5 py-2.5 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold text-xs transition-all flex items-center gap-2"
               >
                 <AlertTriangle className="w-4 h-4 text-amber-300" />
                 File Damage Assessment Claim
@@ -389,7 +389,7 @@ export default function FarmerInsurancePage() {
 
           {/* Quick FAQ / Guidelines */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm space-y-2">
+            <div className="bg-white rounded-2xl p-5 border border-gray-200 space-y-2">
               <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">1</div>
               <h4 className="font-bold text-gray-900 text-sm">72-Hour Intimation Window</h4>
               <p className="text-xs text-gray-500 leading-relaxed">
@@ -397,7 +397,7 @@ export default function FarmerInsurancePage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm space-y-2">
+            <div className="bg-white rounded-2xl p-5 border border-gray-200 space-y-2">
               <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">2</div>
               <h4 className="font-bold text-gray-900 text-sm">Geotagged Photo Verification</h4>
               <p className="text-xs text-gray-500 leading-relaxed">
@@ -405,7 +405,7 @@ export default function FarmerInsurancePage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm space-y-2">
+            <div className="bg-white rounded-2xl p-5 border border-gray-200 space-y-2">
               <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">3</div>
               <h4 className="font-bold text-gray-900 text-sm">Escrow / Direct DBT Payouts</h4>
               <p className="text-xs text-gray-500 leading-relaxed">
@@ -422,7 +422,7 @@ export default function FarmerInsurancePage() {
       {activeTab === 'catalog' && (
         <div className="space-y-6">
           {/* Filters Bar */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="bg-white rounded-2xl p-4 border border-gray-200 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-gray-500 uppercase">Filter:</span>
               {(['all', 'government', 'private'] as const).map((type) => (
@@ -463,13 +463,13 @@ export default function FarmerInsurancePage() {
                   key={policy.id} 
                   className={`bg-white rounded-3xl border ${
                     policy.fcoRecommendationTier === 'Highly Recommended' 
-                      ? 'border-emerald-500 shadow-md ring-1 ring-emerald-500/20' 
-                      : 'border-gray-200 shadow-sm'
-                  } p-6 flex flex-col justify-between hover:shadow-lg transition-all duration-300 relative overflow-hidden`}
+                      ? 'border-emerald-500  ring-1 ring-emerald-500/20' 
+                      : 'border-gray-200 '
+                  } p-6 flex flex-col justify-between  transition-all duration-300 relative overflow-hidden`}
                 >
                   {policy.fcoRecommendationTier === 'Highly Recommended' && (
-                    <div className="absolute top-0 right-0 bg-gradient-to-l from-emerald-600 to-emerald-700 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-sm flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-amber-300" /> FCO Choice
+                    <div className="absolute top-0 right-0 bg-[#166534] text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl flex items-center gap-1">
+                       FCO Choice
                     </div>
                   )}
 
@@ -547,7 +547,7 @@ export default function FarmerInsurancePage() {
                           : 'bg-white text-gray-700 hover:bg-gray-100 border-gray-200'
                       }`}
                     >
-                      {isSelectedForCompare ? '✓ In Compare' : '+ Compare'}
+                      {isSelectedForCompare ? ' In Compare' : '+ Compare'}
                     </button>
 
                     <button
@@ -574,7 +574,7 @@ export default function FarmerInsurancePage() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Input Configurator Card */}
-            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5">
+            <div className="bg-white rounded-3xl p-6 border border-gray-200 space-y-5">
               <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
                 <SlidersHorizontal className="w-5 h-5 text-emerald-700" />
                 <h3 className="font-bold text-gray-900 text-base">Farm & Crop Actuarial Inputs</h3>
@@ -663,8 +663,8 @@ export default function FarmerInsurancePage() {
                     key={quote.policy.id}
                     className={`bg-white rounded-2xl p-5 border ${
                       quote.isRecommended 
-                        ? 'border-emerald-500 ring-1 ring-emerald-500/20 shadow-md' 
-                        : 'border-gray-200 shadow-sm'
+                        ? 'border-emerald-500 ring-1 ring-emerald-500/20 ' 
+                        : 'border-gray-200 '
                     } flex flex-col md:flex-row md:items-center justify-between gap-4`}
                   >
                     <div className="space-y-1.5 flex-1">
@@ -676,7 +676,7 @@ export default function FarmerInsurancePage() {
                         </span>
                         {quote.isRecommended && (
                           <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-[10px] font-bold">
-                            ★ Recommended for {calcCrop}
+                             Recommended for {calcCrop}
                           </span>
                         )}
                         <span className="text-xs text-gray-400 font-medium">{quote.policy.provider}</span>
@@ -731,7 +731,7 @@ export default function FarmerInsurancePage() {
       {/* ========================================================================= */}
       {activeTab === 'compare' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm overflow-x-auto">
+          <div className="bg-white rounded-3xl p-6 border border-gray-200 overflow-x-auto">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div>
                 <h3 className="font-bold text-gray-900 text-base">Side-by-Side Crop Insurance Comparison</h3>
@@ -830,9 +830,9 @@ export default function FarmerInsurancePage() {
                   {comparePolicyIds.map(id => (
                     <td key={id} className="p-3">
                       {INSURANCE_CATALOG.find(p => p.id === id)?.inspectionRequired ? (
-                        <span className="text-amber-700 font-bold">✓ Yes (FCO Field Surveyor)</span>
+                        <span className="text-amber-700 font-bold"> Yes (FCO Field Surveyor)</span>
                       ) : (
-                        <span className="text-blue-700 font-bold">⚡ Automated Weather Index (No inspection needed)</span>
+                        <span className="text-blue-700 font-bold"> Automated Weather Index (No inspection needed)</span>
                       )}
                     </td>
                   ))}
@@ -866,7 +866,7 @@ export default function FarmerInsurancePage() {
 
             <button
               onClick={() => handleOpenClaimModal()}
-              className="px-4 py-2 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+              className="px-4 py-2 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold text-xs transition-all flex items-center gap-2"
             >
               <AlertTriangle className="w-4 h-4 text-amber-300" />
               File New Claim
@@ -874,7 +874,7 @@ export default function FarmerInsurancePage() {
           </div>
 
           {claims.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-gray-200 shadow-sm space-y-3">
+            <div className="bg-white rounded-3xl p-12 text-center border border-gray-200 space-y-3">
               <div className="w-14 h-14 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
@@ -886,7 +886,7 @@ export default function FarmerInsurancePage() {
           ) : (
             <div className="space-y-4">
               {claims.map((claim) => (
-                <div key={claim._id} className="bg-white rounded-3xl border border-gray-200/90 p-6 shadow-sm space-y-4">
+                <div key={claim._id} className="bg-white rounded-3xl border border-gray-200/90 p-6 space-y-4">
                   <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-gray-100 gap-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-800 flex items-center justify-center font-bold">
@@ -1003,7 +1003,7 @@ export default function FarmerInsurancePage() {
       {/* ========================================================================= */}
       {showClaimModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative space-y-5 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 relative space-y-5 animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setShowClaimModal(false)}
               className="absolute right-5 top-5 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
@@ -1143,7 +1143,7 @@ export default function FarmerInsurancePage() {
                 <button
                   type="submit"
                   disabled={submittingClaim}
-                  className="px-5 py-2 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold shadow-md transition-all flex items-center gap-2"
+                  className="px-5 py-2 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold transition-all flex items-center gap-2"
                 >
                   {submittingClaim ? <RefreshCw className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4 text-amber-300" />}
                   Submit Claim for FCO Inspection

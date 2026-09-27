@@ -16,7 +16,7 @@ const PaginationExamples: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Pagination Components</h1>
 
         {/* Basic Pagination */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">1. Basic Pagination (Amazon-style)</h2>
           <p className="text-gray-600 mb-6">Compact, soft borders with teal active state</p>
           
@@ -29,7 +29,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Pagination with Ellipsis */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">2. Pagination with … Ellipsis</h2>
           <p className="text-gray-600 mb-6">Ideal for large datasets - shows beginning + current + end pages</p>
           
@@ -42,7 +42,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Compact Pagination */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">3. Compact Pagination (For Mobile)</h2>
           <p className="text-gray-600 mb-6">Summarized format - ideal for mobile dashboards</p>
           
@@ -55,7 +55,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Table Footer Pagination */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">4. Pagination with &ldquo;Rows per page&rdquo; (Table Footers)</h2>
           <p className="text-gray-600 mb-6">Matches Amazon &ldquo;Manage Orders&rdquo; and &ldquo;Inventory&rdquo; tables</p>
           
@@ -73,7 +73,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Arrow Only Pagination */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">5. Arrow Icon Pagination (Minimal)</h2>
           <p className="text-gray-600 mb-6">Clean SVG icons with disabled state clearly marked</p>
           
@@ -101,7 +101,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Size Variants */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">6. Size Variants</h2>
           <p className="text-gray-600 mb-6">Different sizes for different contexts</p>
           
@@ -139,7 +139,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Alignment Options */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">7. Alignment Options</h2>
           <p className="text-gray-600 mb-6">Start, center, and end alignment</p>
           
@@ -176,7 +176,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* States */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">8. Button States</h2>
           <p className="text-gray-600 mb-6">Default, hover, active, and disabled states</p>
           
@@ -203,7 +203,7 @@ const PaginationExamples: React.FC = () => {
         </section>
 
         {/* Responsive Demo */}
-        <section className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">9. Responsive Behavior</h2>
           <p className="text-gray-600 mb-6">Switches to compact format on mobile</p>
           <p className="text-sm text-gray-500 mb-4">Resize your browser to see the responsive behavior</p>

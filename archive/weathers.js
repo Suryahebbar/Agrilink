@@ -55,13 +55,13 @@ const meaning = {
   const loc = await getLocation(lat, lon);
   const weather = await getWeather(lat, lon);
 
-  console.log("\n📍 EXACT LOCATION:");
+  console.log("\n EXACT LOCATION:");
   console.log(`   ${loc.display}`);
   console.log(`   City: ${loc.city}`);
   console.log(`   State: ${loc.state}`);
   console.log(`   Country: ${loc.country}`);
 
-  console.log("\n📅 7-DAY WEATHER FORECAST:\n");
+  console.log("\n 7-DAY WEATHER FORECAST:\n");
 
   const dates = weather.daily.time;
 
@@ -73,9 +73,9 @@ const meaning = {
     const code = weather.daily.weathercode[i];
     const desc = meaning[code] || "Unknown";
 
-    console.log(`🗓 ${date}`);
-    console.log(`   🌡 Max: ${max}°C | Min: ${min}°C`);
-    console.log(`   🌧 Rain Probability: ${rainProb}%`);
-    console.log(`   ☁️ Condition: ${desc}\n`);
+    console.log(` ${date}`);
+    console.log(`    Max: ${max}°C | Min: ${min}°C`);
+    console.log(`    Rain Probability: ${rainProb}%`);
+    console.log(`   ️ Condition: ${desc}\n`);
   }
 })();

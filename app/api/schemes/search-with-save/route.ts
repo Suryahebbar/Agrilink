@@ -59,7 +59,7 @@ function matchCellAgainstInput(cellRaw: any, inputRaw: any, fieldKey: string): b
   if (cellLower === inputLower) return true;
 
   // 2. Range match (e.g. cell is "10-50" or "2-5 acres")
-  const rangeRegex = /^\s*([0-9.]+)\s*([-–—]|to)\s*([0-9.]+)/i;
+  const rangeRegex = /^\s*([0-9.]+)\s*([-– - ]|to)\s*([0-9.]+)/i;
   const cellRange = cell.replace(/acres|acre/gi, "").match(rangeRegex);
   const inputRange = input.replace(/acres|acre/gi, "").match(rangeRegex);
 

@@ -432,7 +432,7 @@ export default function CropPricePrediction() {
             : 'bg-blue-50 border-blue-200 text-blue-800'
         }`}>
           <div className="text-2xl mt-0.5">
-            {predictionData.analysis.recommendation === 'HOLD' ? '🟢' : predictionData.analysis.recommendation === 'SELL' ? '🟠' : '🔵'}
+            {predictionData.analysis.recommendation === 'HOLD' ? '' : predictionData.analysis.recommendation === 'SELL' ? '' : ''}
           </div>
           <div>
             <div className="flex items-center space-x-2 mb-1">
@@ -555,7 +555,7 @@ export default function CropPricePrediction() {
       {!loading && !selectedCrop && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl text-[#6b7280]">📊</span>
+            <span className="text-2xl text-[#6b7280]"></span>
           </div>
           <h3 className="text-lg font-semibold text-[#1f3b2c] mb-2">Select a Crop to Begin</h3>
           <p className="text-[#6b7280]">Choose a crop from the dropdown to see price predictions</p>

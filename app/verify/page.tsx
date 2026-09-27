@@ -6,7 +6,7 @@ import {
   Shield, CheckCircle, AlertTriangle, Clock, 
   FileText, Activity, DollarSign, ShoppingCart, 
   TrendingUp, Search, RefreshCw, ExternalLink, ArrowRight 
-} from 'lucide-react';
+} from '../../components/ui/icons';
 
 type ScopeType = 'agreement' | 'contribution' | 'settlement' | 'crop_sale' | 'investment';
 
@@ -64,7 +64,7 @@ function VerifyContent() {
         success: false,
         verified: null,
         status: null,
-        error: 'Network error — could not reach the decentralized verification node.'
+        error: 'Network error  -  could not reach the decentralized verification node.'
       });
     } finally {
       setLoading(false);
@@ -90,9 +90,9 @@ function VerifyContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50 flex flex-col">
+    <div className="min-h-screen bg-[#166534] flex flex-col">
       {/* Header */}
-      <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-30 shadow-xs">
+      <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-xl font-black tracking-wider text-[#1A9B9A] font-mono">AGRILINK</span>
@@ -111,7 +111,7 @@ function VerifyContent() {
       <main className="max-w-4xl mx-auto px-6 py-10 flex-1 space-y-8 w-full">
         {/* Title */}
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-50 text-[#1A9B9A] rounded-3xl border border-teal-100 shadow-xs">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-50 text-[#1A9B9A] rounded-3xl border border-teal-100">
             <Shield className="w-8 h-8" />
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">
@@ -137,7 +137,7 @@ function VerifyContent() {
                 }}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl text-xs font-bold transition-all ${
                   active
-                    ? 'bg-white text-[#1A9B9A] shadow-xs border border-slate-200/60'
+                    ? 'bg-white text-[#1A9B9A]  border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
@@ -149,7 +149,7 @@ function VerifyContent() {
         </div>
 
         {/* Input Bar */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
@@ -165,7 +165,7 @@ function VerifyContent() {
             <button
               onClick={() => handleVerify()}
               disabled={!recordId.trim() || loading}
-              className="px-6 py-3 bg-[#1A9B9A] hover:bg-[#147878] text-white font-bold text-xs rounded-2xl shadow-xs hover:shadow-md disabled:opacity-50 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+              className="px-6 py-3 bg-[#1A9B9A] hover:bg-[#147878] text-white font-bold text-xs rounded-2xl disabled:opacity-50 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
             >
               {loading ? (
                 <><RefreshCw className="w-4 h-4 animate-spin" /> Verifying On-Chain…</>
@@ -183,7 +183,7 @@ function VerifyContent() {
 
         {/* Loading */}
         {loading && (
-          <div className="bg-white border border-slate-100 rounded-3xl p-8 space-y-4 animate-pulse">
+          <div className="bg-white border border-slate-100 rounded-3xl p-8 space-y-4">
             <div className="h-4 bg-slate-100 rounded-full w-2/3"></div>
             <div className="h-10 bg-slate-100 rounded-xl w-full"></div>
             <div className="h-10 bg-slate-100 rounded-xl w-full"></div>
@@ -192,12 +192,12 @@ function VerifyContent() {
 
         {/* Verification Result Card */}
         {result && !loading && (
-          <div className={`border-2 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm transition-all ${statusColor()}`}>
+          <div className={`border-2 rounded-3xl p-6 sm:p-8 space-y-6  transition-all ${statusColor()}`}>
             
             {/* Header / Status Alert */}
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5">
-                <div className="p-2 rounded-2xl bg-white shadow-xs">
+                <div className="p-2 rounded-2xl bg-white">
                   {result.status === 'intact' && <CheckCircle className="w-7 h-7 text-emerald-600" />}
                   {result.status === 'tampered' && <AlertTriangle className="w-7 h-7 text-rose-600" />}
                   {(result.status === 'not_sealed' || result.status === 'not_anchored') && <Clock className="w-7 h-7 text-amber-600" />}
@@ -210,8 +210,8 @@ function VerifyContent() {
                     result.status === 'not_sealed' || result.status === 'not_anchored' ? 'text-amber-900' :
                     'text-slate-800'
                   }`}>
-                    {result.status === 'intact' && '✓ Ledger Proof Verified — 100% Cryptographic Integrity'}
-                    {result.status === 'tampered' && '⚠ Tamper Warning — Data Differs from Anchored Proof!'}
+                    {result.status === 'intact' && ' Ledger Proof Verified  -  100% Cryptographic Integrity'}
+                    {result.status === 'tampered' && ' Tamper Warning  -  Data Differs from Anchored Proof!'}
                     {(result.status === 'not_sealed' || result.status === 'not_anchored') && '⏳ Pending Blockchain Anchoring'}
                     {!result.success && 'Verification Query Error'}
                   </h3>
@@ -231,7 +231,7 @@ function VerifyContent() {
 
             {/* Hash Inspector Block */}
             {result.storedHash && (
-              <div className="space-y-4 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+              <div className="space-y-4 bg-white border border-slate-200/80 rounded-2xl p-5">
                 <div className="space-y-1">
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                     Immutable On-Chain Anchor Hash:
@@ -276,7 +276,7 @@ function VerifyContent() {
             {result.details && (
               <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-5 space-y-3 text-xs">
                 <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
-                  📋 Record Payload Snapshot
+                   Record Payload Snapshot
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-[11px]">
                   {Object.entries(result.details).map(([key, val]) => (

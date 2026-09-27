@@ -6,7 +6,7 @@ import {
   AlertCircle, Plus, RefreshCw, Filter, ShieldCheck, 
   Calendar, User, ChevronRight, Check, X, Loader2,
   ExternalLink, Shield
-} from 'lucide-react';
+} from '../ui/icons';
 import ContributionLoggerModal from './ContributionLoggerModal';
 
 interface ContributionLog {
@@ -140,7 +140,7 @@ export default function ContributionHistoryTable({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         
         {/* Labour Metric */}
-        <div className="p-4.5 rounded-2xl bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/80 shadow-xs flex items-center gap-4">
+        <div className="p-4.5 rounded-2xl from-blue-50/80 to-white border border-blue-100/80 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
             <Clock className="w-6 h-6" />
           </div>
@@ -156,7 +156,7 @@ export default function ContributionHistoryTable({
         </div>
 
         {/* Machinery Metric */}
-        <div className="p-4.5 rounded-2xl bg-gradient-to-br from-amber-50/80 to-white border border-amber-100/80 shadow-xs flex items-center gap-4">
+        <div className="p-4.5 rounded-2xl from-amber-50/80 to-white border border-amber-100/80 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
             <Tractor className="w-6 h-6" />
           </div>
@@ -172,7 +172,7 @@ export default function ContributionHistoryTable({
         </div>
 
         {/* Capital Metric */}
-        <div className="p-4.5 rounded-2xl bg-gradient-to-br from-emerald-50/80 to-white border border-emerald-100/80 shadow-xs flex items-center gap-4">
+        <div className="p-4.5 rounded-2xl from-emerald-50/80 to-white border border-emerald-100/80 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-[#166534] flex items-center justify-center shrink-0">
             <Coins className="w-6 h-6" />
           </div>
@@ -190,7 +190,7 @@ export default function ContributionHistoryTable({
       </div>
 
       {/* Member Contribution Breakdown (Accordion / Grid) */}
-      <div className="bg-white border border-[#e2d4b7] rounded-3xl p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#e2d4b7] rounded-3xl p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h4 className="font-bold text-[#1f3b2c] text-sm flex items-center gap-2">
@@ -211,7 +211,7 @@ export default function ContributionHistoryTable({
               key={summary.userId}
               className={`p-4 rounded-2xl border transition-all ${
                 summary.userId === userId 
-                  ? 'bg-emerald-50/30 border-[#166534]/40 shadow-xs ring-1 ring-[#166534]/20' 
+                  ? 'bg-emerald-50/30 border-[#166534]/40  ring-1 ring-[#166534]/20' 
                   : 'bg-[#f8fafc] border-slate-200/70 hover:border-slate-300'
               }`}
             >
@@ -250,7 +250,7 @@ export default function ContributionHistoryTable({
       </div>
 
       {/* Main Contribution Activity Log Table */}
-      <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden shadow-xs">
+      <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden">
         
         {/* Table Controls */}
         <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -268,25 +268,25 @@ export default function ContributionHistoryTable({
             <div className="flex items-center bg-[#f8fafc] border border-slate-200 p-1 rounded-xl text-xs font-semibold">
               <button
                 onClick={() => setFilterType('all')}
-                className={`px-3 py-1 rounded-lg transition ${filterType === 'all' ? 'bg-[#166534] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1 rounded-lg transition ${filterType === 'all' ? 'bg-[#166534] text-white ' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 All
               </button>
               <button
                 onClick={() => setFilterType('labour')}
-                className={`px-3 py-1 rounded-lg transition ${filterType === 'labour' ? 'bg-[#166534] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1 rounded-lg transition ${filterType === 'labour' ? 'bg-[#166534] text-white ' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 Labour
               </button>
               <button
                 onClick={() => setFilterType('machinery')}
-                className={`px-3 py-1 rounded-lg transition ${filterType === 'machinery' ? 'bg-[#166534] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1 rounded-lg transition ${filterType === 'machinery' ? 'bg-[#166534] text-white ' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 Machinery
               </button>
               <button
                 onClick={() => setFilterType('capital')}
-                className={`px-3 py-1 rounded-lg transition ${filterType === 'capital' ? 'bg-[#166534] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1 rounded-lg transition ${filterType === 'capital' ? 'bg-[#166534] text-white ' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 Capital
               </button>
@@ -303,7 +303,7 @@ export default function ContributionHistoryTable({
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-3.5 py-2 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-2 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Log Entry</span>
@@ -431,7 +431,7 @@ export default function ContributionHistoryTable({
                             <button
                               onClick={() => handleVerifyOrReject(log._id, 'verified')}
                               disabled={actionLoadingId === log._id}
-                              className="px-2.5 py-1 bg-[#166534] hover:bg-[#14532d] text-white rounded-lg text-xs font-bold flex items-center gap-1 transition shadow-xs disabled:opacity-50"
+                              className="px-2.5 py-1 bg-[#166534] hover:bg-[#14532d] text-white rounded-lg text-xs font-bold flex items-center gap-1 transition disabled:opacity-50"
                               title="Verify & Anchor On Blockchain"
                             >
                               <Check className="w-3.5 h-3.5" />

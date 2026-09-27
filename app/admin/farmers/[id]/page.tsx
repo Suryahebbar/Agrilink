@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, User, MapPin, Phone, Mail, Calendar, CheckCircle, XCircle, AlertCircle, FileText, LandPlot, Users, Building2, ExternalLink, Package, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, User, MapPin, Phone, Mail, Calendar, CheckCircle, XCircle, AlertCircle, FileText, LandPlot, Users, Building2, ExternalLink, Package, ShoppingBag } from '../../../../components/ui/icons';
 import Link from 'next/link';
 import { adminFetch } from '@/lib/admin-client-auth';
 
@@ -325,7 +325,7 @@ const StatusBadge = ({ status, variant = 'default' }: { status: string; variant?
 };
 
 const InfoCard = ({ title, children, icon: Icon, className = '' }: { title: string; children: React.ReactNode; icon?: any; className?: string }) => (
-  <div className={`bg-white rounded-lg border border-gray-200 shadow-sm ${className}`}>
+  <div className={`bg-white rounded-lg border border-gray-200  ${className}`}>
     <div className="px-6 py-4 border-b border-gray-200">
       <div className="flex items-center space-x-2">
         {Icon && <Icon className="h-5 w-5 text-gray-500" />}
@@ -378,7 +378,7 @@ const IntegrationCard = ({ integration, type }: { integration: any; type: 'sent'
   const userRole = type === 'sent' ? 'Partner' : 'Requester';
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-lg p-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -452,7 +452,7 @@ const IntegrationCard = ({ integration, type }: { integration: any; type: 'sent'
             href={getAgreementUrl(integration)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <ExternalLink className="h-3 w-3 mr-1" />
             {integration.blockchain?.documentCid ? 'View on IPFS' : 'View Agreement'}
@@ -531,7 +531,7 @@ export default function FarmerDetailPage({ params }: { params: Promise<{ id: str
     return (
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse space-y-4">
+          <div className="space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/4"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2"></div>
             <div className="mt-8 space-y-4">
@@ -555,7 +555,7 @@ export default function FarmerDetailPage({ params }: { params: Promise<{ id: str
             <div className="mt-4">
               <button
                 onClick={() => router.back()}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Go back
@@ -577,7 +577,7 @@ export default function FarmerDetailPage({ params }: { params: Promise<{ id: str
             <div className="mt-6">
               <button
                 onClick={() => router.push('/admin/farmers')}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Farmers
@@ -604,11 +604,11 @@ export default function FarmerDetailPage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Farmer Overview Card */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+        <div className="bg-white rounded-lg border border-gray-200 mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="h-16 w-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                <div className="h-16 w-16 bg-[#166534] rounded-full flex items-center justify-center">
                   <User className="h-8 w-8 text-white" />
                 </div>
                 <div>
@@ -621,7 +621,7 @@ export default function FarmerDetailPage({ params }: { params: Promise<{ id: str
                   <button
                     onClick={handleVerify}
                     disabled={verifying}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {verifying ? 'Verifying...' : 'Verify Farmer'}
                   </button>

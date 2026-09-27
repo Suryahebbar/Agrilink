@@ -1,4 +1,4 @@
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle } from '../../../components/ui/icons';
 
 const steps = [
   {
@@ -48,7 +48,7 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Center circle */}
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#166534] text-white mx-auto mb-4 md:mb-0 relative z-10 shadow-lg">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#166534] text-white mx-auto mb-4 md:mb-0 relative z-10">
                   <span className="font-semibold">{step.id}</span>
                 </div>
 

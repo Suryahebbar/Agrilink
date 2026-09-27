@@ -87,8 +87,8 @@ export const ANIMATION_VARIANTS = {
   SCALE_IN: 'animate-scale-in',
   SCALE_OUT: 'animate-scale-out',
   SPIN: 'animate-spin',
-  PULSE: 'animate-pulse-gentle',
-  BOUNCE: 'animate-bounce-gentle',
+  PULSE: '-gentle',
+  BOUNCE: '-gentle',
   SHAKE: 'animate-shake-gentle'
 };
 

@@ -8,14 +8,13 @@ import {
   Plus,
   Eye,
   MousePointerClick,
-  TrendingUp,
-  Sparkles,
+  TrendingUp, 
   CheckCircle2,
   AlertCircle,
   ExternalLink,
   Layers,
   ShoppingBag
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 import Image from 'next/image';
 
 interface Product {
@@ -162,7 +161,7 @@ export default function SellerAdsPage() {
               Promotions & Sponsored Ads
             </h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-              <Sparkles className="w-3 h-3" /> Boost Sales
+               Boost Sales
             </span>
           </div>
           <p className="text-sm text-gray-500 mt-1">
@@ -176,7 +175,7 @@ export default function SellerAdsPage() {
             setError('');
             setSuccess('');
           }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 transition shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 transition"
         >
           <Plus className="w-4 h-4" />
           Create Sponsored Ad
@@ -198,7 +197,7 @@ export default function SellerAdsPage() {
       )}
 
       {/* Campaigns Grid */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-semibold text-gray-900 text-base flex items-center gap-2">
             <Megaphone className="w-4 h-4 text-emerald-700" />
@@ -322,11 +321,11 @@ export default function SellerAdsPage() {
       {/* Create Ad Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 relative border border-gray-100 my-8">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 relative border border-gray-100 my-8">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4" />
+                  
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">New Sponsored Campaign</h3>
               </div>
@@ -334,7 +333,7 @@ export default function SellerAdsPage() {
                 onClick={() => setShowModal(false)}
                 className="text-gray-400 hover:text-gray-600 text-lg font-bold p-1"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -359,7 +358,7 @@ export default function SellerAdsPage() {
                   <option value="">-- Choose an active product --</option>
                   {products.map((p) => (
                     <option key={p._id} value={p._id}>
-                      {p.name} — ₹{p.price} ({p.category})
+                      {p.name}  -  ₹{p.price} ({p.category})
                     </option>
                   ))}
                 </select>
@@ -424,7 +423,7 @@ export default function SellerAdsPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g., Premium Hybrid Cotton Seeds — 20% Off"
+                  placeholder="e.g., Premium Hybrid Cotton Seeds  -  20% Off"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
@@ -486,7 +485,7 @@ export default function SellerAdsPage() {
                   <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                     Live Farmer Preview
                   </span>
-                  <div className="bg-gradient-to-r from-emerald-800 to-green-900 text-white p-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
+                  <div className="bg-[#166534] text-white p-4 rounded-xl flex items-center justify-between gap-4">
                     <div>
                       <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full mb-1">
                         Sponsored
@@ -516,7 +515,7 @@ export default function SellerAdsPage() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-5 py-2 text-sm font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition shadow-sm"
+                  className="px-5 py-2 text-sm font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition"
                 >
                   {creating ? 'Publishing...' : 'Launch Campaign'}
                 </button>

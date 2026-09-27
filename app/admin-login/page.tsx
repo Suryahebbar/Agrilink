@@ -76,7 +76,7 @@ export default function AdminLogin() {
               </div>
             </div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email address

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Star } from 'lucide-react';
+import { Star } from '../ui/icons';
 
 interface ProductFiltersProps {
   categories: string[];

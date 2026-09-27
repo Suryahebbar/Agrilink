@@ -370,7 +370,7 @@ export default function OrderDetailPage() {
                             : 'bg-gray-200 text-gray-400'
                         }`}
                       >
-                        ★
+                        
                       </button>
                     ))}
                   </div>
@@ -525,7 +525,7 @@ export default function OrderDetailPage() {
               <h3 className="font-medium text-[#1f3b2c] mb-2">Payment Method</h3>
               <div className="text-[#6b7280] space-y-1">
                 <p>
-                  {order.paymentDetails?.method || (order.paymentStatus === 'paid' ? 'Card' : '—')}
+                  {order.paymentDetails?.method || (order.paymentStatus === 'paid' ? 'Card' : ' - ')}
                 </p>
                 {order.paymentStatus === 'paid' && order.paymentDetails?.transactionId && (
                   <p className="text-xs font-mono">

@@ -7,7 +7,7 @@ import {
   BarChart2, FileText, Download, Plus, Filter, 
   Calendar, Layers, ShieldCheck, Tractor, Droplet, 
   Zap, AlertCircle, CheckCircle, RefreshCw, X, ArrowUpRight, ArrowDownRight
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 import { exportSeasonalFinancialReportPDF } from '@/lib/utils/seasonal-financial-pdf';
 
 type FinanceTab = 'pnl' | 'expenses' | 'investments' | 'roi' | 'reports';
@@ -180,15 +180,15 @@ export default function FarmerFinanceDashboard() {
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'seed': return '🌱';
-      case 'fertilizer': return '🧪';
-      case 'diesel_fuel': return '⛽';
-      case 'labour': return '👥';
-      case 'irrigation_electricity': return '💧';
-      case 'machinery_rent': return '🚜';
-      case 'pesticides': return '🛡️';
-      case 'transportation': return '🚚';
-      default: return '📦';
+      case 'seed': return '';
+      case 'fertilizer': return '';
+      case 'diesel_fuel': return '';
+      case 'labour': return '';
+      case 'irrigation_electricity': return '';
+      case 'machinery_rent': return '';
+      case 'pesticides': return '️';
+      case 'transportation': return '';
+      default: return '';
     }
   };
 
@@ -214,7 +214,7 @@ export default function FarmerFinanceDashboard() {
           <select
             value={season}
             onChange={(e) => setSeason(e.target.value)}
-            className="text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-xs focus:ring-2 focus:ring-[#166534] focus:outline-none"
+            className="text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#166534] focus:outline-none"
           >
             <option value="All Seasons">All Seasons (Consolidated)</option>
             <option value="Kharif 2026">Kharif 2026</option>
@@ -231,7 +231,7 @@ export default function FarmerFinanceDashboard() {
               }
             }}
             disabled={!summary || loading}
-            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-50"
           >
             <Download className="w-3.5 h-3.5 text-[#166534]" />
             <span>Export Balance Sheet (PDF)</span>
@@ -240,7 +240,7 @@ export default function FarmerFinanceDashboard() {
           {/* Add Action Buttons */}
           <button
             onClick={() => setShowExpenseModal(true)}
-            className="px-3.5 py-2 bg-[#166534] hover:bg-[#14532d] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+            className="px-3.5 py-2 bg-[#166534] hover:bg-[#14532d] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Log Expense</span>
@@ -248,7 +248,7 @@ export default function FarmerFinanceDashboard() {
 
           <button
             onClick={() => setShowInvestmentModal(true)}
-            className="px-3.5 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+            className="px-3.5 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Record Capital</span>
@@ -273,7 +273,7 @@ export default function FarmerFinanceDashboard() {
               onClick={() => setActiveTab(tab.id as FinanceTab)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 active 
-                  ? 'bg-white text-[#166534] shadow-xs border border-slate-200/60' 
+                  ? 'bg-white text-[#166534]  border border-slate-200/60' 
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
@@ -293,7 +293,7 @@ export default function FarmerFinanceDashboard() {
       {summary && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           {/* Revenue Card */}
-          <div className="p-4.5 bg-gradient-to-br from-emerald-50/70 to-white border border-emerald-100 rounded-2xl shadow-xs space-y-1">
+          <div className="p-4.5 from-emerald-50/70 to-white border border-emerald-100 rounded-2xl space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
               <span>Gross Farm Revenue</span>
               <ArrowUpRight className="w-4 h-4 text-[#166534]" />
@@ -307,7 +307,7 @@ export default function FarmerFinanceDashboard() {
           </div>
 
           {/* Operating Costs Card */}
-          <div className="p-4.5 bg-gradient-to-br from-rose-50/70 to-white border border-rose-100 rounded-2xl shadow-xs space-y-1">
+          <div className="p-4.5 from-rose-50/70 to-white border border-rose-100 rounded-2xl space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
               <span>Operating Expenses</span>
               <ArrowDownRight className="w-4 h-4 text-rose-600" />
@@ -321,7 +321,7 @@ export default function FarmerFinanceDashboard() {
           </div>
 
           {/* Net Profit Card */}
-          <div className="p-4.5 bg-gradient-to-br from-teal-50/70 to-white border border-teal-100 rounded-2xl shadow-xs space-y-1">
+          <div className="p-4.5 from-teal-50/70 to-white border border-teal-100 rounded-2xl space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
               <span>Net Profit (P&L)</span>
               <span className={`text-xs font-bold px-2 py-0.2 rounded-full ${summary.netProfit >= 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
@@ -337,7 +337,7 @@ export default function FarmerFinanceDashboard() {
           </div>
 
           {/* Capital & ROI Card */}
-          <div className="p-4.5 bg-gradient-to-br from-indigo-50/70 to-white border border-indigo-100 rounded-2xl shadow-xs space-y-1">
+          <div className="p-4.5 from-indigo-50/70 to-white border border-indigo-100 rounded-2xl space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
               <span>Return on Investment</span>
               <TrendingUp className="w-4 h-4 text-indigo-600" />
@@ -357,7 +357,7 @@ export default function FarmerFinanceDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Left Area: Complete P&L Statement */}
-          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-5">
+          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 space-y-5">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold text-[#1f3b2c]">
@@ -425,7 +425,7 @@ export default function FarmerFinanceDashboard() {
           </div>
 
           {/* Right Area: Categorical Expense Doughnut / Distribution */}
-          <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
+          <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 space-y-4">
             <div className="border-b border-slate-100 pb-3">
               <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
                 <PieChart className="w-4 h-4 text-[#166534]" /> Expense Composition
@@ -465,7 +465,7 @@ export default function FarmerFinanceDashboard() {
 
       {/* ─────────────────── TAB 2: EXPENSES ─────────────────── */}
       {activeTab === 'expenses' && (
-        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs space-y-4">
+        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden space-y-4">
           <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
               <h3 className="text-base font-bold text-[#1f3b2c]">
@@ -475,7 +475,7 @@ export default function FarmerFinanceDashboard() {
             </div>
             <button
               onClick={() => setShowExpenseModal(true)}
-              className="px-3.5 py-2 bg-[#166534] hover:bg-[#14532d] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-2 bg-[#166534] hover:bg-[#14532d] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add New Expense</span>
@@ -547,7 +547,7 @@ export default function FarmerFinanceDashboard() {
 
       {/* ─────────────────── TAB 3: INVESTMENTS ─────────────────── */}
       {activeTab === 'investments' && (
-        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs space-y-4">
+        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden space-y-4">
           <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
               <h3 className="text-base font-bold text-[#1f3b2c]">
@@ -557,7 +557,7 @@ export default function FarmerFinanceDashboard() {
             </div>
             <button
               onClick={() => setShowInvestmentModal(true)}
-              className="px-3.5 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Record Capital Asset</span>
@@ -626,7 +626,7 @@ export default function FarmerFinanceDashboard() {
       {/* ─────────────────── TAB 4: ROI PER ACRE & CROP ─────────────────── */}
       {activeTab === 'roi' && summary && (
         <div className="space-y-6">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4">
             <div className="border-b border-slate-100 pb-3">
               <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
                 <BarChart2 className="w-5 h-5 text-[#166534]" /> Crop-Wise Financial Performance & Return on Investment (ROI)
@@ -678,7 +678,7 @@ export default function FarmerFinanceDashboard() {
 
       {/* ─────────────────── TAB 5: BALANCE SHEETS & PDF EXPORT ─────────────────── */}
       {activeTab === 'reports' && summary && (
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6 text-center">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 text-center">
           <div className="max-w-md mx-auto space-y-2">
             <div className="w-16 h-16 bg-emerald-50 text-[#166534] rounded-3xl flex items-center justify-center mx-auto border border-emerald-100">
               <FileText className="w-8 h-8" />
@@ -712,7 +712,7 @@ export default function FarmerFinanceDashboard() {
 
           <button
             onClick={() => exportSeasonalFinancialReportPDF(summary, 'Farmer Owner', expenses, investments)}
-            className="px-6 py-3 bg-[#166534] hover:bg-[#14532d] text-white font-bold text-xs rounded-2xl transition shadow-xs inline-flex items-center gap-2"
+            className="px-6 py-3 bg-[#166534] hover:bg-[#14532d] text-white font-bold text-xs rounded-2xl transition inline-flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             <span>Generate & Download Statement PDF</span>
@@ -723,10 +723,10 @@ export default function FarmerFinanceDashboard() {
       {/* ─────────────────── EXPENSE MODAL ─────────────────── */}
       {showExpenseModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-lg w-full border border-slate-200 shadow-2xl space-y-4 animate-scaleUp">
+          <div className="bg-white rounded-3xl p-6 max-w-lg w-full border border-slate-200 space-y-4 animate-scaleUp">
             <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
               <h3 className="font-bold text-sm text-[#1f3b2c] flex items-center gap-1.5">
-                🌱 Log New Farm Operational Expense
+                 Log New Farm Operational Expense
               </h3>
               <button onClick={() => setShowExpenseModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
             </div>
@@ -848,7 +848,7 @@ export default function FarmerFinanceDashboard() {
                 <button
                   type="submit"
                   disabled={submittingExpense}
-                  className="px-4 py-2 bg-[#166534] hover:bg-[#14532d] text-white rounded-xl font-bold shadow-xs"
+                  className="px-4 py-2 bg-[#166534] hover:bg-[#14532d] text-white rounded-xl font-bold"
                 >
                   {submittingExpense ? 'Recording...' : 'Save Expense'}
                 </button>
@@ -861,10 +861,10 @@ export default function FarmerFinanceDashboard() {
       {/* ─────────────────── INVESTMENT MODAL ─────────────────── */}
       {showInvestmentModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-lg w-full border border-slate-200 shadow-2xl space-y-4 animate-scaleUp">
+          <div className="bg-white rounded-3xl p-6 max-w-lg w-full border border-slate-200 space-y-4 animate-scaleUp">
             <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
               <h3 className="font-bold text-sm text-[#1f3b2c] flex items-center gap-1.5">
-                🚜 Record Capital Investment / Infrastructure
+                 Record Capital Investment / Infrastructure
               </h3>
               <button onClick={() => setShowInvestmentModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
             </div>
@@ -969,7 +969,7 @@ export default function FarmerFinanceDashboard() {
                 <button
                   type="submit"
                   disabled={submittingInvestment}
-                  className="px-4 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl font-bold shadow-xs"
+                  className="px-4 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl font-bold"
                 >
                   {submittingInvestment ? 'Recording...' : 'Save Capital Asset'}
                 </button>

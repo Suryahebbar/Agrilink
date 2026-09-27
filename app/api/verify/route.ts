@@ -8,7 +8,7 @@ import { ActivityAction, LogModule, ResourceType } from '@/lib/auditTypes';
 /**
  * GET /api/verify?poolId=...
  *
- * Public endpoint — no auth required.
+ * Public endpoint  -  no auth required.
  * Recomputes the SHA-256 contract hash from live DB data
  * and compares it against the immutably stored blockchain hash.
  *
@@ -64,8 +64,8 @@ export async function GET(request: Request) {
       userRole: 'system',
       userName: 'Public Verifier',
       remarks: verified
-        ? `Contract integrity verified — hashes match (${poolId})`
-        : `Tamper detected — hashes do NOT match for pool ${poolId}`,
+        ? `Contract integrity verified  -  hashes match (${poolId})`
+        : `Tamper detected  -  hashes do NOT match for pool ${poolId}`,
       metadata: { verified, storedHash, recomputedHash },
       request,
     });

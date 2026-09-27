@@ -138,12 +138,12 @@ export async function POST(request: Request) {
           integrationRequest.blockchainTransactionHash = blockchainResult.transactionHash;
           integrationRequest.blockchainDocumentCid = blockchainResult.documentCid;
           integrationRequest.blockchainUploadedAt = new Date();
-          console.log(`✅ Agreement ${integrationRequest._id} uploaded to blockchain: ${blockchainResult.transactionHash}`);
+          console.log(` Agreement ${integrationRequest._id} uploaded to blockchain: ${blockchainResult.transactionHash}`);
         } else {
-          console.error(`❌ Failed to upload agreement ${integrationRequest._id} to blockchain:`, blockchainResult.error);
+          console.error(` Failed to upload agreement ${integrationRequest._id} to blockchain:`, blockchainResult.error);
         }
       } catch (blockchainError) {
-        console.error(`❌ Error uploading agreement ${integrationRequest._id} to blockchain:`, blockchainError);
+        console.error(` Error uploading agreement ${integrationRequest._id} to blockchain:`, blockchainError);
         // Don't fail the signing process, just log the error
       }
     }

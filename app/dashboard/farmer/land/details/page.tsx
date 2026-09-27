@@ -281,7 +281,7 @@ export default function LandDetailsPage() {
           const pinIcon = L.divIcon({
             html: `<div class="relative flex items-center justify-center">
                      <span class="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-emerald-400 opacity-75"></span>
-                     <div class="h-4 w-4 rounded-full bg-emerald-600 border-2 border-white shadow-md"></div>
+                     <div class="h-4 w-4 rounded-full bg-emerald-600 border-2 border-white "></div>
                    </div>`,
             className: 'custom-pin-icon',
             iconSize: [16, 16]
@@ -315,15 +315,15 @@ export default function LandDetailsPage() {
     new Set(
       allPlots
         .filter(p => p.administrative.survey === surveyNumber)
-        .map(p => p.administrative.surnoc || '—')
+        .map(p => p.administrative.surnoc || ' - ')
     )
   ).sort();
 
   const availableHissas = Array.from(
     new Set(
       allPlots
-        .filter(p => p.administrative.survey === surveyNumber && (p.administrative.surnoc || '—') === surnoc)
-        .map(p => p.administrative.hissa || '—')
+        .filter(p => p.administrative.survey === surveyNumber && (p.administrative.surnoc || ' - ') === surnoc)
+        .map(p => p.administrative.hissa || ' - ')
     )
   ).sort();
 
@@ -548,7 +548,7 @@ export default function LandDetailsPage() {
             </tr>
             <tr>
               <th>Survey / Surnoc / Hissa</th>
-              <td colspan="3"><strong>${verifiedPlot.administrative.survey} / ${verifiedPlot.administrative.surnoc || '—'} / ${verifiedPlot.administrative.hissa || '—'}</strong></td>
+              <td colspan="3"><strong>${verifiedPlot.administrative.survey} / ${verifiedPlot.administrative.surnoc || ' - '} / ${verifiedPlot.administrative.hissa || ' - '}</strong></td>
             </tr>
           </table>
 
@@ -556,13 +556,13 @@ export default function LandDetailsPage() {
           <table>
             <tr>
               <th>Land Owner Name</th>
-              <td><strong>${verifiedPlot.owner.name || '—'}</strong></td>
+              <td><strong>${verifiedPlot.owner.name || ' - '}</strong></td>
               <th>Father's / Husband's Name</th>
-              <td>${verifiedPlot.owner.father || '—'}</td>
+              <td>${verifiedPlot.owner.father || ' - '}</td>
             </tr>
             <tr>
               <th>Khata Number</th>
-              <td>${verifiedPlot.owner.khata || '—'}</td>
+              <td>${verifiedPlot.owner.khata || ' - '}</td>
               <th>Ownership Type</th>
               <td>${verifiedPlot.owner.ownership_type || 'Joint / Single'}</td>
             </tr>
@@ -576,9 +576,9 @@ export default function LandDetailsPage() {
           <table>
             <tr>
               <th>Total Extent Area</th>
-              <td>${verifiedPlot.land.total_area || '—'} Acres</td>
+              <td>${verifiedPlot.land.total_area || ' - '} Acres</td>
               <th>Cultivable Extent</th>
-              <td>${verifiedPlot.land.cultivable_area || '—'} Acres</td>
+              <td>${verifiedPlot.land.cultivable_area || ' - '} Acres</td>
             </tr>
             <tr>
               <th>Pot Kharab Class A</th>
@@ -631,7 +631,7 @@ export default function LandDetailsPage() {
             </div>
             <div class="sig-box">
               <strong>Verified Farmer Signatory</strong><br>
-              ${verifiedPlot.owner.name || '—'}
+              ${verifiedPlot.owner.name || ' - '}
             </div>
           </div>
 
@@ -728,7 +728,7 @@ export default function LandDetailsPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleDownloadPDF}
-              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-sm transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition-all active:scale-[0.98]"
             >
               <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -759,7 +759,7 @@ export default function LandDetailsPage() {
 
       {/* Loading States */}
       {isLoadingUser && (
-        <div className="bg-white border border-[#e2d4b7] rounded-xl p-8 text-center shadow-sm">
+        <div className="bg-white border border-[#e2d4b7] rounded-xl p-8 text-center">
           <p className="text-gray-500">Loading user credentials...</p>
         </div>
       )}
@@ -767,7 +767,7 @@ export default function LandDetailsPage() {
       {!isLoadingUser && !isVerified && (
         <div className="space-y-6">
           {/* Dropdown Selector Panel */}
-          <div className="bg-white border border-[#e2d4b7] rounded-2xl shadow-sm p-6 space-y-4">
+          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-sm font-bold text-[#1f3b2c]">Select Land Coordinates</h2>
               <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
@@ -890,7 +890,7 @@ export default function LandDetailsPage() {
                 type="button"
                 onClick={handleFetchAndVerify}
                 disabled={!hissa || fetching}
-                className="rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                className="rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
               >
                 {fetching ? 'Matching Owners...' : 'Verify Ownership Details'}
               </button>
@@ -905,7 +905,7 @@ export default function LandDetailsPage() {
                 <div className="border-b border-[#e2d4b7] pb-4 flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-[#1f3b2c]">RTC Land Record Information</h3>
-                    <p className="text-xs text-gray-500">Survey No. {verifiedPlot.administrative.survey} / Surnoc {verifiedPlot.administrative.surnoc || '—'} / Hissa {verifiedPlot.administrative.hissa || '—'}</p>
+                    <p className="text-xs text-gray-500">Survey No. {verifiedPlot.administrative.survey} / Surnoc {verifiedPlot.administrative.surnoc || ' - '} / Hissa {verifiedPlot.administrative.hissa || ' - '}</p>
                   </div>
                   <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
                     Digitized & Matched
@@ -918,19 +918,19 @@ export default function LandDetailsPage() {
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
                       <span className="text-gray-500 block">Registered Owner</span>
-                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.name || '—'}</strong>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.name || ' - '}</strong>
                     </div>
                     <div>
                       <span className="text-gray-500 block">Father's Name</span>
-                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.father || '—'}</strong>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.father || ' - '}</strong>
                     </div>
                     <div>
                       <span className="text-gray-500 block">Khata Number</span>
-                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.khata || '—'}</strong>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.khata || ' - '}</strong>
                     </div>
                     <div>
                       <span className="text-gray-500 block">Ownership Class</span>
-                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.ownership_type || '—'}</strong>
+                      <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.ownership_type || ' - '}</strong>
                     </div>
                   </div>
                 </div>
@@ -939,11 +939,11 @@ export default function LandDetailsPage() {
                 <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
                   <div>
                     <span className="text-xs text-gray-500 block">Total Area</span>
-                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.total_area || '—'} Acres</strong>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.total_area || ' - '} Acres</strong>
                   </div>
                   <div>
                     <span className="text-xs text-gray-500 block">Cultivable Area</span>
-                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.cultivable_area || '—'} Acres</strong>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.cultivable_area || ' - '} Acres</strong>
                   </div>
                   <div>
                     <span className="text-xs text-gray-500 block">Pot Kharab Class A</span>
@@ -959,15 +959,15 @@ export default function LandDetailsPage() {
                   </div>
                   <div>
                     <span className="text-xs text-gray-500 block">Soil Properties</span>
-                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.soil || '—'}</strong>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.soil || ' - '}</strong>
                   </div>
                   <div>
                     <span className="text-xs text-gray-500 block">Latitude Reference</span>
-                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.latitude || '—'}</strong>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.latitude || ' - '}</strong>
                   </div>
                   <div>
                     <span className="text-xs text-gray-500 block">Longitude Reference</span>
-                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.longitude || '—'}</strong>
+                    <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.longitude || ' - '}</strong>
                   </div>
                 </div>
 
@@ -990,7 +990,7 @@ export default function LandDetailsPage() {
                   <button
                     onClick={handleLinkLand}
                     disabled={linking}
-                    className="w-full rounded-xl bg-[#166534] py-3 text-sm font-bold text-white shadow-md hover:bg-[#14532d] active:scale-98 transition-all disabled:opacity-70 disabled:pointer-events-none"
+                    className="w-full rounded-xl bg-[#166534] py-3 text-sm font-bold text-white hover:bg-[#14532d] active:scale-98 transition-all disabled:opacity-70 disabled:pointer-events-none"
                   >
                     {linking ? 'Linking Land...' : 'Confirm Verification & Integrate Land'}
                   </button>
@@ -1025,13 +1025,13 @@ export default function LandDetailsPage() {
       {!isLoadingUser && isVerified && verifiedPlot && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
           {/* Info Card */}
-          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 space-y-5 shadow-sm">
+          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 space-y-5">
             <div className="border-b border-[#e2d4b7] pb-4 flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-bold text-[#1f3b2c]">Verified Land Record Information</h3>
-                <p className="text-xs text-gray-500">Survey No. {verifiedPlot.administrative.survey} / Surnoc {verifiedPlot.administrative.surnoc || '—'} / Hissa {verifiedPlot.administrative.hissa || '—'}</p>
+                <p className="text-xs text-gray-500">Survey No. {verifiedPlot.administrative.survey} / Surnoc {verifiedPlot.administrative.surnoc || ' - '} / Hissa {verifiedPlot.administrative.hissa || ' - '}</p>
               </div>
-              <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800 animate-pulse">
+              <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
                 Verified
               </span>
             </div>
@@ -1042,19 +1042,19 @@ export default function LandDetailsPage() {
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="text-gray-500 block">Registered Owner</span>
-                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.name || '—'}</strong>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.name || ' - '}</strong>
                 </div>
                 <div>
                   <span className="text-gray-500 block">Father's Name</span>
-                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.father || '—'}</strong>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.father || ' - '}</strong>
                 </div>
                 <div>
                   <span className="text-gray-500 block">Khata Number</span>
-                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.khata || '—'}</strong>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.khata || ' - '}</strong>
                 </div>
                 <div>
                   <span className="text-gray-500 block">Ownership Class</span>
-                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.ownership_type || '—'}</strong>
+                  <strong className="text-[#1f3b2c] text-sm">{verifiedPlot.owner.ownership_type || ' - '}</strong>
                 </div>
               </div>
             </div>
@@ -1063,11 +1063,11 @@ export default function LandDetailsPage() {
             <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
               <div>
                 <span className="text-xs text-gray-500 block">Total Area</span>
-                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.total_area || '—'} Acres</strong>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.total_area || ' - '} Acres</strong>
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">Cultivable Area</span>
-                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.cultivable_area || '—'} Acres</strong>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.cultivable_area || ' - '} Acres</strong>
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">Pot Kharab Class A</span>
@@ -1091,7 +1091,7 @@ export default function LandDetailsPage() {
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">Soil Properties</span>
-                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.soil || '—'}</strong>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.land.soil || ' - '}</strong>
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">Irrigation Source</span>
@@ -1103,11 +1103,11 @@ export default function LandDetailsPage() {
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">Latitude Reference</span>
-                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.latitude || '—'}</strong>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.latitude || ' - '}</strong>
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">Longitude Reference</span>
-                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.longitude || '—'}</strong>
+                <strong className="text-[#1f3b2c] font-semibold">{verifiedPlot.gis.longitude || ' - '}</strong>
               </div>
             </div>
 
@@ -1129,7 +1129,7 @@ export default function LandDetailsPage() {
           </div>
 
           {/* Map Card */}
-          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 flex flex-col shadow-sm relative">
+          <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 flex flex-col relative">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-base font-bold text-[#1f3b2c]">Farmland Boundary Overlay</h3>
               <button 

@@ -69,7 +69,7 @@ const AnimatedModal: React.FC<AnimatedModalProps> = ({
       
       {/* Modal Content */}
       <div
-        className={`modal-content relative bg-white rounded-lg shadow-xl ${getSizeClasses()} w-full max-h-[90vh] overflow-hidden ${className}`}
+        className={`modal-content relative bg-white rounded-lg  ${getSizeClasses()} w-full max-h-[90vh] overflow-hidden ${className}`}
       >
         {/* Header */}
         {(title || showCloseButton) && (

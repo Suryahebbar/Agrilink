@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
       'administrative.hobli': { $regex: new RegExp(`^${hobli}$`, 'i') },
       'administrative.village': { $regex: new RegExp(`^${village}$`, 'i') },
       'administrative.survey': survey,
-      'administrative.surnoc': surnoc || '—',
-      'administrative.hissa': hissa || '—'
+      'administrative.surnoc': surnoc || ' - ',
+      'administrative.hissa': hissa || ' - '
     });
 
     if (!plot) {

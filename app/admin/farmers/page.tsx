@@ -220,7 +220,7 @@ export default function FarmersManagement() {
       )}
 
       {/* Search and Advanced Filters */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 space-y-4">
         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
@@ -237,7 +237,7 @@ export default function FarmersManagement() {
           <div className="flex gap-2">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-sm font-bold shadow-md transition-all shrink-0"
+              className="px-6 py-2.5 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-sm font-bold transition-all shrink-0"
             >
               Search
             </button>
@@ -333,7 +333,7 @@ export default function FarmersManagement() {
       </div>
 
       {/* Main Table Grid */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="p-12 text-center">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#1A9B9A] mx-auto"></div>
@@ -525,7 +525,7 @@ export default function FarmersManagement() {
       {/* Reject / Suspend / Password Reset Modal */}
       {selectedFarmer && actionType && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-gray-100">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-gray-100">
             <h3 className="text-lg font-bold text-[#232F3E] border-b border-gray-100 pb-3 uppercase tracking-wider">
               {actionType === 'reject' && 'Reject Farmer Application'}
               {actionType === 'suspend' && 'Suspend Farmer Account'}
@@ -579,7 +579,7 @@ export default function FarmersManagement() {
                     executeAction(selectedFarmer.id, actionType, { reason });
                   }
                 }}
-                className={`px-4 py-2 text-white rounded-xl text-xs font-bold transition-all shadow-md ${
+                className={`px-4 py-2 text-white rounded-xl text-xs font-bold transition-all  ${
                   actionType === 'password_reset' 
                     ? 'bg-[#1A9B9A] hover:bg-[#147878]' 
                     : 'bg-rose-600 hover:bg-rose-700'

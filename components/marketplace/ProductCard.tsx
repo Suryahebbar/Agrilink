@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
+import { Star, Heart, ShoppingCart } from '../ui/icons';
 import { Button } from '@/components/ui/button';
 
 interface ProductCardProps {
@@ -68,7 +68,7 @@ export default function ProductCard({
 
   return (
     <div 
-      className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 h-full flex flex-col"
+      className="group bg-white rounded-lg overflow-hidden transition-shadow border border-gray-100 h-full flex flex-col"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onView}
@@ -79,19 +79,19 @@ export default function ProductCard({
           src={primaryImageUrl}
           alt={primaryImageAlt}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover transition-transform duration-300 group-"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
           {product.isSponsored && (
-            <span className="bg-amber-400 text-amber-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs">
+            <span className="bg-amber-400 text-amber-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">
               Sponsored
             </span>
           )}
           {discount > 0 && (
-            <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shadow-xs">
+            <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
               {discount}% OFF
             </span>
           )}
@@ -127,9 +127,9 @@ export default function ProductCard({
                 e.stopPropagation();
                 onBuyAsPool();
               }}
-              className="w-full bg-emerald-50 hover:bg-emerald-100 text-[#166534] border border-emerald-300 text-xs py-1.5 rounded-md font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs"
+              className="w-full bg-emerald-50 hover:bg-emerald-100 text-[#166534] border border-emerald-300 text-xs py-1.5 rounded-md font-bold transition-all flex items-center justify-center gap-1.5"
             >
-              <span>👥 Buy as Farm Pool</span>
+              <span> Buy as Farm Pool</span>
             </button>
           )}
         </div>

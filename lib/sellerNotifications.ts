@@ -73,7 +73,7 @@ export async function sendSellerNewOrderEmail(
       '',
       'Please log in to your supplier dashboard to view and process this order.',
       '',
-      '— AgriLink',
+      ' -  AgriLink',
     ].join('\n');
 
     await transporter.sendMail({

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Format crop history
-    const croppingHistory = plot.crops.map((c: any) => `${c.name} (${c.area || '—'})`).join(', ');
+    const croppingHistory = plot.crops.map((c: any) => `${c.name} (${c.area || ' - '})`).join(', ');
 
     // Fetch existing profile to preserve fields safely
     const existingProfile = await FarmerProfile.findOne({ user: userObjectId });
@@ -85,8 +85,8 @@ export async function POST(request: NextRequest) {
         },
         rtcDetails: {
           surveyNumber: plot.administrative.survey,
-          surnoc: plot.administrative.surnoc || '—',
-          hissa: plot.administrative.hissa || '—',
+          surnoc: plot.administrative.surnoc || ' - ',
+          hissa: plot.administrative.hissa || ' - ',
           extent: plot.land.total_area || '',
           location: `${plot.administrative.village}, ${plot.administrative.hobli}`,
           taluk: plot.administrative.taluk,

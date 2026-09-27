@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, ShieldCheck, Tag } from 'lucide-react';
+import {  ArrowRight, ShieldCheck, Tag } from '../ui/icons';
 
 interface Ad {
   _id: string;
@@ -86,7 +86,7 @@ export default function SponsoredAdBanner({ userId }: { userId?: string | null }
   if (!currentAd) {
     // Elegant fallback promotion banner
     return (
-      <div className="mb-8 bg-gradient-to-r from-[#166534] via-[#15803d] to-[#14532d] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+      <div className="mb-8 bg-[#166534] rounded-2xl p-6 text-white relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-white/5 skew-x-12 pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
@@ -100,7 +100,7 @@ export default function SponsoredAdBanner({ userId }: { userId?: string | null }
           </div>
           <Link
             href={buildMarketplaceUrl('/dashboard/farmer/marketplace')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm transition shadow-md whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm transition whitespace-nowrap"
           >
             Explore Marketplace
             <ArrowRight className="w-4 h-4" />
@@ -113,12 +113,12 @@ export default function SponsoredAdBanner({ userId }: { userId?: string | null }
   const destinationUrl = currentAd.targetUrl || `/dashboard/farmer/marketplace/products/${currentAd.productId?._id}`;
 
   return (
-    <div className="mb-8 bg-gradient-to-r from-[#064e3b] via-[#047857] to-[#0f766e] rounded-2xl p-6 text-white shadow-xl relative overflow-hidden border border-emerald-500/30">
+    <div className="mb-8 bg-[#166534] rounded-2xl p-6 text-white relative overflow-hidden border border-emerald-500/30">
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left Ad Content */}
         <div className="flex items-center gap-5 flex-1">
           {currentAd.imageUrl && (
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white/10 p-1 flex-shrink-0 border border-white/20 shadow-inner overflow-hidden">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white/10 p-1 flex-shrink-0 border border-white/20 overflow-hidden">
               <img
                 src={currentAd.imageUrl}
                 alt={currentAd.title}
@@ -129,8 +129,8 @@ export default function SponsoredAdBanner({ userId }: { userId?: string | null }
 
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 shadow-xs">
-                <Sparkles className="w-3 h-3" /> Sponsored Deal
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950">
+                 Sponsored Deal
               </span>
               {currentAd.sellerId?.companyName && (
                 <span className="inline-flex items-center gap-1 text-xs text-emerald-200">
@@ -166,7 +166,7 @@ export default function SponsoredAdBanner({ userId }: { userId?: string | null }
           <Link
             href={buildMarketplaceUrl(destinationUrl)}
             onClick={() => handleAdClick(currentAd._id)}
-            className="w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm transition shadow-lg hover:scale-105 transform duration-150"
+            className="w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm transition transform duration-150"
           >
             View Special Offer
             <ArrowRight className="w-4 h-4" />

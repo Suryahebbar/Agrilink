@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Users, X, Check, ShieldCheck, AlertCircle, 
-  HelpCircle, ChevronRight, Loader2, Sparkles 
-} from 'lucide-react';
+  HelpCircle, ChevronRight, Loader2 } from '../ui/icons';
 
 interface PoolPurchaseModalProps {
   product: {
@@ -153,10 +152,10 @@ export default function PoolPurchaseModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-3xl max-w-xl w-full border border-emerald-100 shadow-2xl overflow-hidden animate-scaleUp">
+      <div className="bg-white rounded-3xl max-w-xl w-full border border-emerald-100 overflow-hidden animate-scaleUp">
         
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-[#166534] to-[#15803d] px-6 py-4 text-white flex justify-between items-center">
+        <div className="bg-[#166534] px-6 py-4 text-white flex justify-between items-center">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md">
               <Users className="w-5 h-5 text-emerald-200" />
@@ -195,7 +194,7 @@ export default function PoolPurchaseModal({
               </div>
               <a
                 href={`/dashboard/farmer/pooling?userId=${userId || ''}`}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#166534] text-white text-xs font-bold hover:bg-[#14532d] transition-all shadow-md"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#166534] text-white text-xs font-bold hover:bg-[#14532d] transition-all"
               >
                 Go to Digital Farm Pooling <ChevronRight className="w-4 h-4" />
               </a>
@@ -248,10 +247,10 @@ export default function PoolPurchaseModal({
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-3.5 rounded-2xl border border-emerald-100 space-y-0.5 text-right flex flex-col justify-center">
+                <div className="bg-[#166534] p-3.5 rounded-2xl border border-emerald-100 space-y-0.5 text-right flex flex-col justify-center">
                   <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Gross Order Total</span>
                   <p className="text-2xl font-black text-[#166534] font-mono">₹{totalAmount.toLocaleString('en-IN')}</p>
-                  <p className="text-[10px] text-emerald-700 font-semibold">Bulk Rate Guaranteed ✓</p>
+                  <p className="text-[10px] text-emerald-700 font-semibold">Bulk Rate Guaranteed </p>
                 </div>
               </div>
 
@@ -289,7 +288,7 @@ export default function PoolPurchaseModal({
                       <div className="text-right">
                         <p className="font-bold text-sm text-[#166534] font-mono">₹{s.shareAmount.toLocaleString('en-IN')}</p>
                         <span className={`text-[10px] font-medium ${s.isMe ? 'text-emerald-700' : 'text-amber-600'}`}>
-                          {s.isMe ? '✓ Auto-Agreed' : 'Pending Vote ⏳'}
+                          {s.isMe ? ' Auto-Agreed' : 'Pending Vote ⏳'}
                         </span>
                       </div>
                     </div>
@@ -332,7 +331,7 @@ export default function PoolPurchaseModal({
                   type="button"
                   onClick={handleSubmitProposal}
                   disabled={submitting}
-                  className="flex-2 py-3 px-6 bg-gradient-to-r from-[#166534] to-[#15803d] hover:from-[#14532d] hover:to-[#166534] text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-2 py-3 px-6 bg-[#166534] hover:from-[#14532d] hover:to-[#166534] text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {submitting ? (
                     <>
@@ -340,7 +339,7 @@ export default function PoolPurchaseModal({
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4 text-emerald-300" /> Propose to Farm Pool
+                       Propose to Farm Pool
                     </>
                   )}
                 </button>

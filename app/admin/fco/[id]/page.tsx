@@ -112,7 +112,7 @@ export default function FcoProfileDetails({
       </div>
 
       {/* Main Profile Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b border-gray-100">
           {fco.profilePicture ? (
             <img 
@@ -157,7 +157,7 @@ export default function FcoProfileDetails({
         <div className="p-6 bg-gray-50/50 border-b border-gray-100">
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Workload & Meeting Summary</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase">Assigned Groups</p>
                 <p className="text-2xl font-black text-[#232F3E] mt-1">{fco.workloadSummary.assignedGroupsCount}</p>
@@ -167,7 +167,7 @@ export default function FcoProfileDetails({
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase">Pending Meetings</p>
                 <p className="text-2xl font-black text-[#232F3E] mt-1">{fco.workloadSummary.pendingMeetingsCount}</p>
@@ -177,7 +177,7 @@ export default function FcoProfileDetails({
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase">Completed Counselling</p>
                 <p className="text-2xl font-black text-[#232F3E] mt-1">{fco.workloadSummary.completedCounsellingCount}</p>
@@ -187,7 +187,7 @@ export default function FcoProfileDetails({
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase">Completed Agreements</p>
                 <p className="text-2xl font-black text-[#232F3E] mt-1">{fco.workloadSummary.completedAgreementsCount}</p>

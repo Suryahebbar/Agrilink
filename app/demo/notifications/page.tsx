@@ -120,7 +120,7 @@ function NotificationDemo() {
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800">Usage Instructions</h2>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Alert Component</h3>
             <pre className="bg-gray-100 p-4 rounded-md text-sm overflow-x-auto">
 {`import Alert from '@/components/Alert';
@@ -135,7 +135,7 @@ function NotificationDemo() {
             </pre>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Toast Notifications</h3>
             <pre className="bg-gray-100 p-4 rounded-md text-sm overflow-x-auto">
 {`import { useNotifications } from '@/lib/notifications';

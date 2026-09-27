@@ -194,7 +194,7 @@ export default function FarmerPaymentPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Order</p>
-              <p className="text-lg font-semibold text-gray-900">{orderNumber || '—'}</p>
+              <p className="text-lg font-semibold text-gray-900">{orderNumber || ' - '}</p>
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-600">Amount</p>

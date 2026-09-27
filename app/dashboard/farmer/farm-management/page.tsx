@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Calendar, Sprout, Droplets, Zap, ShieldAlert, CheckCircle2,
-  Clock, Plus, AlertCircle, Sparkles, ChevronRight, Filter,
+  Clock, Plus, AlertCircle,  ChevronRight, Filter,
   Layers, ArrowUpRight, Check, X, Bug, RefreshCw, BarChart3,
   Leaf, Info, Upload
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -170,7 +170,7 @@ export default function FarmManagementPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#166534] via-[#15803d] to-[#1e3a8a] text-white p-6 md:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-[#166534] text-white p-6 md:p-8 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-emerald-200 text-xs font-semibold backdrop-blur-md mb-3">
             <Sprout className="w-3.5 h-3.5" /> Module 4: Dynamic Farm Lifecycle Management
@@ -186,7 +186,7 @@ export default function FarmManagementPage() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-bold px-5 py-2.5 rounded-2xl shadow-lg flex items-center gap-2 transition-transform active:scale-95"
+            className="bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-bold px-5 py-2.5 rounded-2xl flex items-center gap-2 transition-transform active:scale-95"
           >
             <Plus className="w-4 h-4" /> Start New Crop Plan
           </Button>
@@ -197,11 +197,11 @@ export default function FarmManagementPage() {
       {plans.length > 0 && activePlan && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Active Crop Overview Card */}
-          <div className="lg:col-span-3 bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm">
+          <div className="lg:col-span-3 bg-white border border-[#e2d4b7] rounded-3xl p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl shadow-inner">
-                  🌾
+                <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl">
+                  
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -242,7 +242,7 @@ export default function FarmManagementPage() {
               </div>
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
                 <div 
-                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                  className="h-full bg-[#166534] rounded-full transition-all duration-500"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -289,7 +289,7 @@ export default function FarmManagementPage() {
           </div>
 
           {/* Quick Actions Sidebar */}
-          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
                 <Bug className="w-4 h-4 text-rose-600" /> Pest Surveillance
@@ -313,9 +313,9 @@ export default function FarmManagementPage() {
 
       {/* Empty State */}
       {plans.length === 0 && !loading && (
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-12 text-center max-w-xl mx-auto shadow-sm space-y-4">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-12 text-center max-w-xl mx-auto space-y-4">
           <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-2xl border border-emerald-100">
-            🌱
+            
           </div>
           <h2 className="text-xl font-bold text-slate-800">No Active Crop Lifecycle Plan</h2>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -323,7 +323,7 @@ export default function FarmManagementPage() {
           </p>
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="bg-[#166534] hover:bg-[#14532d] text-white font-bold px-6 py-2.5 rounded-2xl text-xs inline-flex items-center gap-2 shadow-md"
+            className="bg-[#166534] hover:bg-[#14532d] text-white font-bold px-6 py-2.5 rounded-2xl text-xs inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> Generate Crop Schedule
           </Button>
@@ -332,7 +332,7 @@ export default function FarmManagementPage() {
 
       {/* Interactive Task Schedule Table & Filter Tabs */}
       {activePlan && (
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden">
           {/* Filter Bar */}
           <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-slate-50/50">
             <div>
@@ -356,7 +356,7 @@ export default function FarmManagementPage() {
                     onClick={() => setActiveTab(tab.key as any)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                       active
-                        ? 'bg-[#166534] text-white shadow-sm'
+                        ? 'bg-[#166534] text-white '
                         : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                     }`}
                   >
@@ -388,7 +388,7 @@ export default function FarmManagementPage() {
                         onClick={() => handleToggleTask(task.taskId || task._id, task.completed)}
                         className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
                           task.completed
-                            ? 'bg-emerald-600 text-white shadow-sm'
+                            ? 'bg-emerald-600 text-white '
                             : 'border-2 border-slate-300 hover:border-emerald-500 bg-white'
                         }`}
                       >
@@ -423,7 +423,7 @@ export default function FarmManagementPage() {
                           </span>
                           {task.completedAt && (
                             <span className="text-emerald-700 font-medium">
-                              ✓ Completed on {new Date(task.completedAt).toLocaleDateString('en-IN')}
+                               Completed on {new Date(task.completedAt).toLocaleDateString('en-IN')}
                             </span>
                           )}
                         </div>
@@ -448,7 +448,7 @@ export default function FarmManagementPage() {
 
       {/* Pest Incident Log History */}
       {activePlan?.pestIncidents && activePlan.pestIncidents.length > 0 && (
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
               <Bug className="w-4 h-4 text-rose-600" /> Recorded Pest & Disease Incidents
@@ -485,7 +485,7 @@ export default function FarmManagementPage() {
       {/* Modal: Create Plan */}
       {isCreateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white border border-[#e2d4b7] w-full max-w-lg rounded-3xl shadow-2xl p-6 space-y-5">
+          <div className="bg-white border border-[#e2d4b7] w-full max-w-lg rounded-3xl p-6 space-y-5">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <Sprout className="w-5 h-5 text-emerald-600" /> Generate Seasonal Crop Plan
@@ -571,7 +571,7 @@ export default function FarmManagementPage() {
       {/* Modal: Report Pest */}
       {isPestModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white border border-[#e2d4b7] w-full max-w-lg rounded-3xl shadow-2xl p-6 space-y-5">
+          <div className="bg-white border border-[#e2d4b7] w-full max-w-lg rounded-3xl p-6 space-y-5">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <Bug className="w-5 h-5 text-rose-600" /> Log Pest Incident & Advisory

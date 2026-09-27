@@ -74,9 +74,9 @@ export default function SupplierRegisterPage() {
       if (response.ok) {
         setSuccess('Registration successful! Please check your console for OTP.');
         setShowOtpVerification(true);
-        console.log('🎉 Registration successful!');
-        console.log('📧 Your OTP is:', data.otp);
-        console.log('📋 Registration response:', data);
+        console.log(' Registration successful!');
+        console.log(' Your OTP is:', data.otp);
+        console.log(' Registration response:', data);
       } else {
         setError(data.error || 'Registration failed');
       }
@@ -144,7 +144,7 @@ export default function SupplierRegisterPage() {
 
       if (response.ok) {
         setSuccess('OTP resent successfully! Check your console.');
-        console.log('📧 New OTP sent:', data.otp);
+        console.log(' New OTP sent:', data.otp);
       } else {
         setError(data.error || 'Failed to resend OTP');
       }
@@ -354,7 +354,7 @@ export default function SupplierRegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1f3b2c] hover:bg-[#2d4f3c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1f3b2c] disabled:opacity-50"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-[#1f3b2c] hover:bg-[#2d4f3c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1f3b2c] disabled:opacity-50"
                 >
                   {loading ? 'Registering...' : 'Register Account'}
                 </button>
@@ -407,7 +407,7 @@ export default function SupplierRegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1f3b2c] hover:bg-[#2d4f3c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1f3b2c] disabled:opacity-50"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-[#1f3b2c] hover:bg-[#2d4f3c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1f3b2c] disabled:opacity-50"
                 >
                   {loading ? 'Verifying...' : 'Verify Account'}
                 </button>

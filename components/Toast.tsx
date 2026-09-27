@@ -41,21 +41,21 @@ function ToastItem({ toast, onClose }: ToastProps) {
   const getIcon = () => {
     switch (toast.type) {
       case 'success':
-        return '✅';
+        return '';
       case 'error':
-        return '❌';
+        return '';
       case 'warning':
-        return '⚠️';
+        return '️';
       case 'info':
         return 'ℹ️';
       default:
-        return '📢';
+        return '';
     }
   };
 
   return (
     <div
-      className={`${getToastStyles()} px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 min-w-[300px] max-w-md transform transition-all duration-300 ease-in-out`}
+      className={`${getToastStyles()} px-6 py-4 rounded-lg  flex items-center space-x-3 min-w-[300px] max-w-md transform transition-all duration-300 ease-in-out`}
     >
       <span className="text-xl">{getIcon()}</span>
       <p className="flex-1">{toast.message}</p>

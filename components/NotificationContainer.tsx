@@ -33,7 +33,7 @@ function NotificationItem({ notification, onClose }: NotificationItemProps) {
   }, [notification.id, notification.duration, onClose]);
 
   const getToastStyles = () => {
-    const baseStyles = 'fixed bottom-5 right-5 flex items-center gap-3 shadow-lg rounded-md p-4 text-white bg-[#232F3E] border-l-4';
+    const baseStyles = 'fixed bottom-5 right-5 flex items-center gap-3  rounded-md p-4 text-white bg-[#232F3E] border-l-4';
     
     switch (notification.type) {
       case 'success':

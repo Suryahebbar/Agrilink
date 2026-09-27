@@ -270,21 +270,21 @@ export function getActionLabel(action: string): string {
 // Helper function to get a resource icon
 export function getResourceIcon(resourceType: string): string {
   const icons: Record<string, string> = {
-    [ResourceType.USER]: '👤',
-    [ResourceType.ORDER]: '📦',
-    [ResourceType.PRODUCT]: '🛍️',
-    [ResourceType.DOCUMENT]: '📄',
-    [ResourceType.INVENTORY]: '📊',
-    [ResourceType.PAYMENT]: '💳',
-    [ResourceType.NOTIFICATION]: '🔔',
-    [ResourceType.SETTINGS]: '⚙️',
-    [ResourceType.AUDIT_LOG]: '📝',
-    [ResourceType.FARMER]: '👨‍🌾',
-    [ResourceType.SUPPLIER]: '🏭',
-    [ResourceType.MARKETPLACE]: '🛒',
+    [ResourceType.USER]: '',
+    [ResourceType.ORDER]: '',
+    [ResourceType.PRODUCT]: '️',
+    [ResourceType.DOCUMENT]: '',
+    [ResourceType.INVENTORY]: '',
+    [ResourceType.PAYMENT]: '',
+    [ResourceType.NOTIFICATION]: '',
+    [ResourceType.SETTINGS]: '️',
+    [ResourceType.AUDIT_LOG]: '',
+    [ResourceType.FARMER]: '‍',
+    [ResourceType.SUPPLIER]: '',
+    [ResourceType.MARKETPLACE]: '',
   };
 
-  return icons[resourceType] || '📌';
+  return icons[resourceType] || '';
 }
 
 // Helper function to get a status color

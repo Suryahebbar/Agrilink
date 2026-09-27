@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { CreditCard, Smartphone, Building, Wallet, Lock, Check } from 'lucide-react';
+import { CreditCard, Smartphone, Building, Wallet, Lock, Check } from '../ui/icons';
 
 interface PaymentGatewayProps {
   amount: number;

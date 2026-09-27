@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Star, ThumbsUp, MessageSquare, Filter } from 'lucide-react';
+import { Star, ThumbsUp, MessageSquare, Filter } from '../ui/icons';
 
 interface Review {
   _id: string;
@@ -176,7 +176,7 @@ export default function ReviewSection({ productId, userId, canReview = false, or
 
   if (loading && reviews.length === 0) {
     return (
-      <div className="animate-pulse">
+      <div className="">
         <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { FileText, Shield } from 'lucide-react';
+import { FileText, Shield } from '../../components/ui/icons';
 import HeaderWrapper from '../components/Header/HeaderWrapper';
 import Footer from '../components/Footer/Footer';
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditions() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#f7f0de] to-white">
+    <div className="min-h-screen flex flex-col from-[#f7f0de] to-white">
       <HeaderWrapper />
       
       {/* Hero Section */}
@@ -35,7 +35,7 @@ export default function TermsAndConditions() {
 
         {/* Content Section */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-          <div className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg shadow-sm p-8 md:p-12 space-y-8 text-sm md:text-base text-[#4b5563] leading-relaxed">
+          <div className="bg-[#fffaf1] border border-[#e2d4b7] rounded-lg p-8 md:p-12 space-y-8 text-sm md:text-base text-[#4b5563] leading-relaxed">
             
             <section>
               <h2 className="text-xl font-bold text-[#1f3b2c] mb-3 flex items-center gap-2">

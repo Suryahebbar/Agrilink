@@ -61,7 +61,7 @@ const PaginationDemo: React.FC = () => {
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">Pagination Usage Examples</h1>
           
           {/* Standalone Pagination with Hook */}

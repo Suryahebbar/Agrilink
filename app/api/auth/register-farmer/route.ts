@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     }
 
     // Always log OTP to server console
-    console.log('📬 [EMAIL OTP SENT]', { email: targetEmail, otp });
+    console.log(' [EMAIL OTP SENT]', { email: targetEmail, otp });
 
     return NextResponse.json({
       message: `Verification OTP sent to ${targetEmail}. Please check your inbox or spam folder.`,

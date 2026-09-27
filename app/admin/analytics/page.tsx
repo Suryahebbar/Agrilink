@@ -10,14 +10,14 @@ export default function Analytics() {
         <p className="text-sm text-gray-500 mt-1">Review dashboard performance, growth figures, crop yields, and financial logs.</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-semibold transition-colors" disabled>
               <FiCalendar /> Last 30 Days
             </button>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all" disabled>
+          <button className="flex items-center gap-2 px-4 py-2 bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-xl text-sm font-bold transition-all" disabled>
             <FiDownload /> Export PDF Report
           </button>
         </div>

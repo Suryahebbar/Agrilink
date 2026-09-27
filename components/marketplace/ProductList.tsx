@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
+import { Star, Heart, ShoppingCart } from '../ui/icons';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/types';
 
@@ -30,7 +30,7 @@ export default function ProductList({
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="animate-pulse">
+          <div key={i} className="">
             <div className="bg-gray-200 rounded-lg h-64 w-full"></div>
             <div className="mt-3 space-y-2">
               <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -57,7 +57,7 @@ export default function ProductList({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
-        <div key={product._id} className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div key={product._id} className="group relative bg-white rounded-lg overflow-hidden transition-shadow duration-200">
           <div className="relative aspect-square overflow-hidden">
             <Link href={`/dashboard/farmer/marketplace/products/${product._id}`}>
               <Image
@@ -65,7 +65,7 @@ export default function ProductList({
                 alt={product.name}
                 width={300}
                 height={300}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover transition-transform duration-300"
               />
             </Link>
             <button

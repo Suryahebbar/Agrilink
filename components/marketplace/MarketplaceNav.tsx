@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { ShoppingCart, Heart, Package, Home } from 'lucide-react';
+import { ShoppingCart, Heart, Package, Home } from '../ui/icons';
 import { cn } from '@/lib/utils';
 
 export default function MarketplaceNav() {

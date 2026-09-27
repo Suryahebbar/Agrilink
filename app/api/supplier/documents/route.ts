@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       await supplierUser.save();
     }
 
-    console.log('📄 Supplier documents uploaded:', {
+    console.log(' Supplier documents uploaded:', {
       userId: user._id,
       documentIds,
       documentsUploaded: true

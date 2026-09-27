@@ -47,7 +47,7 @@ export default function AgreementManagement() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Agreements List */}
-        <div className="lg:col-span-1 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col max-h-[70vh]">
+        <div className="lg:col-span-1 bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[70vh]">
           <div className="p-4 border-b border-gray-100">
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
@@ -108,7 +108,7 @@ export default function AgreementManagement() {
         {/* Right: Agreement Viewer */}
         <div className="lg:col-span-2 space-y-4">
           {selectedPool ? (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
               <div className="flex justify-between items-start border-b border-gray-100 pb-4 gap-4">
                 <div className="space-y-1 flex-1 min-w-0">
                   <h2 className="text-base font-black text-[#1f3b2c]">{selectedPool.name}</h2>
@@ -122,7 +122,7 @@ export default function AgreementManagement() {
                         onClick={() => navigator.clipboard.writeText(selectedPool._id)}
                         className="px-2.5 py-1.5 text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-all flex items-center gap-1"
                       >
-                        📋 Copy ID
+                         Copy ID
                       </button>
                       <a
                         href={`/verify?poolId=${selectedPool._id}`}
@@ -130,7 +130,7 @@ export default function AgreementManagement() {
                         rel="noreferrer"
                         className="px-3 py-1.5 text-[10px] font-bold bg-[#1A9B9A] hover:bg-[#147878] text-white rounded-lg transition-all flex items-center gap-1 whitespace-nowrap"
                       >
-                        🔍 Verify Authenticity ↗
+                         Verify Authenticity ↗
                       </a>
                     </div>
                   </div>
@@ -163,21 +163,21 @@ export default function AgreementManagement() {
               {/* Signature Audit Evidence Panel */}
               <div className="border-t border-gray-100 pt-6 mt-6 space-y-4">
                 <h3 className="text-xs font-black text-[#1f3b2c] tracking-tight uppercase flex items-center gap-1.5">
-                  🛡️ Cryptographic Signature Evidence Details
+                  ️ Cryptographic Signature Evidence Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedPool.participants && selectedPool.participants
                     .filter((p: any) => p.signatureHash)
                     .map((p: any, idx: number) => {
                       return (
-                        <div key={idx} className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-sm">
+                        <div key={idx} className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4">
                           <div className="flex justify-between items-start border-b border-slate-200 pb-2.5">
                             <div>
                               <h4 className="font-extrabold text-gray-800 text-xs">{p.fullName}</h4>
                               <p className="text-[10px] text-gray-400 font-mono">Farmer ID: {p.userId}</p>
                             </div>
                             <span className="bg-emerald-100 border border-emerald-200 text-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">
-                              ✓ Verified: Yes
+                               Verified: Yes
                             </span>
                           </div>
 
@@ -199,7 +199,7 @@ export default function AgreementManagement() {
                           {(p.signatureUrl || p.signatureImage) ? (
                             <div className="space-y-1.5 pt-2 border-t border-slate-200">
                               <p className="font-bold text-gray-400 uppercase text-[9px]">Signature Image Preview</p>
-                              <div className="bg-white border border-slate-200 rounded-xl p-2.5 w-fit flex items-center justify-center shadow-inner">
+                              <div className="bg-white border border-slate-200 rounded-xl p-2.5 w-fit flex items-center justify-center">
                                 <img
                                   src={p.signatureUrl || p.signatureImage}
                                   alt={`${p.fullName}'s Cryptographic Signature`}
@@ -227,7 +227,7 @@ export default function AgreementManagement() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-500 h-full flex flex-col justify-center items-center min-h-[400px]">
+            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-500 h-full flex flex-col justify-center items-center min-h-[400px]">
               <div className="mx-auto w-12 h-12 bg-[#e2d4b7]/20 text-[#166534] rounded-xl flex items-center justify-center mb-4">
                 <FiFileText className="h-6 w-6" />
               </div>

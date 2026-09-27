@@ -327,7 +327,7 @@ export default function AgreementModal({ isOpen, onClose, requestId, requestStat
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              ✕
+              
             </button>
           </div>
           
@@ -337,13 +337,13 @@ export default function AgreementModal({ isOpen, onClose, requestId, requestStat
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                   signatureStatus.userSigned ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                 }`}>
-                  {signatureStatus.userSigned ? '✅ You Signed' : '⏳ Not Signed'}
+                  {signatureStatus.userSigned ? ' You Signed' : '⏳ Not Signed'}
                 </span>
                 {signatureStatus.userSigned && (
                   <button
                     onClick={handleResign}
                     disabled={signingLoading}
-                    className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 font-bold transition-all shadow-sm"
+                    className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 font-bold transition-all"
                   >
                     {signingLoading ? 'Resetting...' : 'Re-sign (Testing)'}
                   </button>
@@ -353,12 +353,12 @@ export default function AgreementModal({ isOpen, onClose, requestId, requestStat
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                   signatureStatus.otherUserSigned ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                 }`}>
-                  {signatureStatus.otherUserSigned ? '✅ Other Party Signed' : '⏳ Other Party Not Signed'}
+                  {signatureStatus.otherUserSigned ? ' Other Party Signed' : '⏳ Other Party Not Signed'}
                 </span>
               </div>
               {signatureStatus.fullyExecuted && (
                 <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  📄 Agreement Fully Executed
+                   Agreement Fully Executed
                 </span>
               )}
             </div>
@@ -434,7 +434,7 @@ export default function AgreementModal({ isOpen, onClose, requestId, requestStat
                               ref={canvasRef}
                               width={500}
                               height={150}
-                              className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-crosshair touch-none shadow-inner w-full max-w-[500px]"
+                              className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-crosshair touch-none w-full max-w-[500px]"
                               onMouseDown={startDrawing}
                               onMouseMove={draw}
                               onMouseUp={stopDrawing}
@@ -446,7 +446,7 @@ export default function AgreementModal({ isOpen, onClose, requestId, requestStat
                             <button
                               type="button"
                               onClick={clearSignature}
-                              className="absolute right-2 bottom-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-bold transition-all shadow-sm"
+                              className="absolute right-2 bottom-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-bold transition-all"
                             >
                               Clear Pad
                             </button>
@@ -503,7 +503,7 @@ export default function AgreementModal({ isOpen, onClose, requestId, requestStat
                         <button
                           onClick={handleSignAgreement}
                           disabled={signingLoading}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl transition-all shadow-md disabled:opacity-50"
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl transition-all disabled:opacity-50"
                         >
                           {signingLoading ? 'Signing...' : 'Confirm & Sign Agreement'}
                         </button>

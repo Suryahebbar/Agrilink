@@ -13,7 +13,7 @@ export default function FarmerOverviewPage() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   
   const [stats, setStats] = useState({
-    totalLand: '—',
+    totalLand: ' - ',
     activeCrops: 0,
     monthlyRevenue: '₹45,250',
     pendingAgreements: 0
@@ -54,7 +54,7 @@ export default function FarmerOverviewPage() {
 
           setStats(prev => ({
             ...prev,
-            totalLand: totalAcres ? `${totalAcres.toFixed(2)} Acres` : '—',
+            totalLand: totalAcres ? `${totalAcres.toFixed(2)} Acres` : ' - ',
             activeCrops: activeCropsCount || 0
           }));
         }
@@ -140,9 +140,9 @@ export default function FarmerOverviewPage() {
             // Add simple popup
             plotLayer.bindPopup(`
               <div style="font-family: sans-serif; padding: 4px;">
-                <h4 style="margin: 0 0 4px 0; color: #1f3b2c;">Survey No. ${p.rtcDetails?.surveyNumber || '—'}</h4>
+                <h4 style="margin: 0 0 4px 0; color: #1f3b2c;">Survey No. ${p.rtcDetails?.surveyNumber || ' - '}</h4>
                 <p style="margin: 0 0 2px 0; font-size: 11px;"><b>Owner:</b> ${p.rtcDetails?.location || 'Verified'}</p>
-                <p style="margin: 0; font-size: 11px;"><b>Extent:</b> ${p.rtcDetails?.extent || '—'} Acres</p>
+                <p style="margin: 0; font-size: 11px;"><b>Extent:</b> ${p.rtcDetails?.extent || ' - '} Acres</p>
               </div>
             `);
 
@@ -162,9 +162,9 @@ export default function FarmerOverviewPage() {
   }, [leafletLoaded, landDetails]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7]">
+    <div className="min-h-screen bg-[#166534]">
       {/* Hero Section with Background */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#166534] to-[#15803d] rounded-b-3xl mb-8">
+      <div className="relative overflow-hidden bg-[#166534] rounded-b-3xl mb-8">
         <div 
           className="absolute inset-0 opacity-20"
           style={{
@@ -178,7 +178,7 @@ export default function FarmerOverviewPage() {
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  Welcome back, Farmer! 🌾
+                  Welcome back, Farmer! 
                 </h1>
                 <p className="text-[#bbf7d0] text-lg">
                   Your farm is thriving. Here's what's happening today.
@@ -202,19 +202,19 @@ export default function FarmerOverviewPage() {
 
         {/* Dynamic Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e5e7eb]">
+          <div className="bg-white p-4 rounded-xl border border-[#e5e7eb]">
             <span className="text-xs text-gray-500 block font-semibold">Total Linked Land</span>
             <strong className="text-[#166534] text-lg font-bold">{stats.totalLand}</strong>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e5e7eb]">
+          <div className="bg-white p-4 rounded-xl border border-[#e5e7eb]">
             <span className="text-xs text-gray-500 block font-semibold">Active Crops</span>
             <strong className="text-[#166534] text-lg font-bold">{stats.activeCrops}</strong>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e5e7eb]">
+          <div className="bg-white p-4 rounded-xl border border-[#e5e7eb]">
             <span className="text-xs text-gray-500 block font-semibold">Monthly Revenue Est.</span>
             <strong className="text-[#166534] text-lg font-bold">{stats.monthlyRevenue}</strong>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e5e7eb]">
+          <div className="bg-white p-4 rounded-xl border border-[#e5e7eb]">
             <span className="text-xs text-gray-500 block font-semibold">Verification Status</span>
             <strong className="text-[#166534] text-lg font-bold">{landDetails.length > 0 ? 'Verified' : 'Pending Link'}</strong>
           </div>
@@ -227,10 +227,10 @@ export default function FarmerOverviewPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <a
             href="/dashboard/farmer/land"
-            className="group bg-white rounded-xl p-6 shadow-lg border border-[#e5e7eb] hover:shadow-xl hover:border-[#d97706] transition-all"
+            className="group bg-white rounded-xl p-6 border border-[#e5e7eb] hover:border-[#d97706] transition-all"
           >
             <div className="flex items-start gap-4">
-              <div className="bg-gradient-to-br from-[#d97706] to-[#ea580c] rounded-lg p-3 group-hover:scale-110 transition-transform">
+              <div className="bg-[#166534] rounded-lg p-3 group- transition-transform">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -249,10 +249,10 @@ export default function FarmerOverviewPage() {
 
           <a
             href={`/dashboard/farmer/crop-price-prediction${userId ? `?userId=${userId}` : ''}`}
-            className="group bg-white rounded-xl p-6 shadow-lg border border-[#e5e7eb] hover:shadow-xl hover:border-[#1e40af] transition-all text-left"
+            className="group bg-white rounded-xl p-6 border border-[#e5e7eb] hover:border-[#1e40af] transition-all text-left"
           >
             <div className="flex items-start gap-4">
-              <div className="bg-gradient-to-br from-[#1e40af] to-[#1e3a8a] rounded-lg p-3 group-hover:scale-110 transition-transform">
+              <div className="bg-[#166534] rounded-lg p-3 group- transition-transform">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -273,7 +273,7 @@ export default function FarmerOverviewPage() {
         {/* Map Visualization & Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map Visualization Panel */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-lg border border-[#e5e7eb] flex flex-col">
+          <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-[#e5e7eb] flex flex-col">
             <h3 className="text-lg font-semibold text-[#1f3b2c] mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-[#166534]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -312,7 +312,7 @@ export default function FarmerOverviewPage() {
 
           {/* Activities & Tips */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-[#e5e7eb]">
+            <div className="bg-white rounded-xl p-6 border border-[#e5e7eb]">
               <h3 className="text-lg font-semibold text-[#1f3b2c] mb-4 flex items-center gap-2">
                 <svg className="w-5 h-5 text-[#166534]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -322,7 +322,7 @@ export default function FarmerOverviewPage() {
               {loading ? (
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 bg-[#f9fafb] rounded-lg animate-pulse">
+                    <div key={i} className="flex items-start gap-3 p-3 bg-[#f9fafb] rounded-lg">
                       <div className="w-2 h-2 bg-gray-300 rounded-full mt-2"></div>
                       <div className="space-y-2 flex-1">
                         <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -376,7 +376,7 @@ export default function FarmerOverviewPage() {
               )}
             </div>
 
-            <div className="bg-gradient-to-br from-[#fef3c7] to-[#fde68a] rounded-xl p-6 shadow-lg border border-[#fbbf24]">
+            <div className="bg-[#166534] rounded-xl p-6 border border-[#fbbf24]">
               <h3 className="text-lg font-semibold text-[#92400e] mb-4 flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />

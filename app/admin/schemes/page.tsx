@@ -456,14 +456,14 @@ export default function SchemeManagement() {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="flex items-center gap-2 bg-[#1A9B9A] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#158080] transition-colors disabled:opacity-50 shadow-sm"
+            className="flex items-center gap-2 bg-[#1A9B9A] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#158080] transition-colors disabled:opacity-50"
           >
             <FiUploadCloud className="w-4 h-4" />
             {uploading ? 'Processing...' : 'Upload Fresh Sheet'}
           </button>
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-[#1f3b2c] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#2d4f3c] transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-[#1f3b2c] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#2d4f3c] transition-colors"
           >
             <FiPlus className="w-4 h-4" />
             Add Scheme Manually
@@ -514,7 +514,7 @@ export default function SchemeManagement() {
       {/* Spreadsheet Upload Preview Diff Modal */}
       {previewData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh]">
+          <div className="bg-white rounded-2xl max-w-4xl w-full p-6 flex flex-col max-h-[85vh]">
             <div className="flex justify-between items-center pb-4 border-b border-gray-100">
               <h2 className="text-lg font-bold text-[#1f3b2c]">Preview Spreadsheet Changes</h2>
               <button onClick={() => setPreviewData(null)} className="text-gray-400 hover:text-gray-600">
@@ -567,7 +567,7 @@ export default function SchemeManagement() {
               {/* Updated Schemes list */}
               {previewData.updatedSchemes.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider">Updated Schemes to Modify (✎)</h3>
+                  <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider">Updated Schemes to Modify ()</h3>
                   <div className="border border-gray-100 rounded-xl overflow-hidden max-h-[200px] overflow-y-auto">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
@@ -640,7 +640,7 @@ export default function SchemeManagement() {
       {/* Scheme Recommend Modal */}
       {showRecommendModal && recommendingScheme && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
             <div className="flex justify-between items-center pb-3 border-b border-gray-100">
               <h2 className="text-lg font-bold text-[#1f3b2c]">Recommend Scheme</h2>
               <button onClick={() => setShowRecommendModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -726,7 +726,7 @@ export default function SchemeManagement() {
       {/* Schemes List Tab */}
       {activeTab === 'schemes' && (
         <>
-          <div className="bg-white p-5 rounded-2xl border border-[#e2d4b7] flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
+          <div className="bg-white p-5 rounded-2xl border border-[#e2d4b7] flex flex-col md:flex-row gap-4 items-center justify-between">
             <form onSubmit={handleSearchSubmit} className="flex-1 w-full flex items-center gap-2">
               <div className="relative flex-1">
                 <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -787,7 +787,7 @@ export default function SchemeManagement() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e2d4b7] overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-[#e2d4b7] overflow-hidden">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <FiRefreshCw className="w-8 h-8 text-[#1A9B9A] animate-spin mb-4" />
@@ -918,7 +918,7 @@ export default function SchemeManagement() {
 
       {/* Recommendations Campaign Tracker Tab */}
       {activeTab === 'recommendations' && (
-        <div className="bg-white rounded-2xl border border-[#e2d4b7] overflow-hidden shadow-sm p-6 space-y-6">
+        <div className="bg-white rounded-2xl border border-[#e2d4b7] overflow-hidden p-6 space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold text-[#1f3b2c]">Sent Recommendations Campaigns</h2>
             <button
@@ -998,7 +998,7 @@ export default function SchemeManagement() {
                           <button
                             onClick={() => handleBulkApply(rec._id)}
                             disabled={interested === 0}
-                            className="w-full bg-green-700 hover:bg-green-800 text-white rounded-xl py-2.5 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+                            className="w-full bg-green-700 hover:bg-green-800 text-white rounded-xl py-2.5 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                           >
                             <FiUsers className="w-4 h-4" />
                             Bulk Apply ({interested} Farmers)
@@ -1018,7 +1018,7 @@ export default function SchemeManagement() {
       {/* Details View Modal */}
       {viewingScheme && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6">
             <div className="flex justify-between items-center pb-3 border-b border-gray-100">
               <h2 className="text-lg font-bold text-[#1f3b2c]">Scheme Details</h2>
               <button onClick={() => setViewingScheme(null)} className="text-gray-400 hover:text-gray-600">
@@ -1077,7 +1077,7 @@ export default function SchemeManagement() {
       {/* Manual Create/Edit Form Modal */}
       {showFormModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh]">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 flex flex-col max-h-[85vh]">
             <div className="flex justify-between items-center pb-3 border-b border-gray-100">
               <h2 className="text-lg font-bold text-[#1f3b2c]">
                 {editingScheme ? 'Edit Government Scheme' : 'Add Manual Government Scheme'}

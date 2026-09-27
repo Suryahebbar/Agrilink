@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Shield, Eye, Lock, Database, User, FileText } from 'lucide-react';
+import { Shield, Eye, Lock, Database, User, FileText } from '../../components/ui/icons';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f0de] to-white">
+    <div className="min-h-screen from-[#f7f0de] to-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -50,7 +50,7 @@ export default function Privacy() {
             <h2 className="text-2xl font-bold text-[#1f3b2c] mb-4">Information We Collect</h2>
             
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <div className="flex items-start gap-4">
                   <User className="w-6 h-6 text-[#166534] mt-1 flex-shrink-0" />
                   <div>
@@ -65,7 +65,7 @@ export default function Privacy() {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <div className="flex items-start gap-4">
                   <Database className="w-6 h-6 text-[#166534] mt-1 flex-shrink-0" />
                   <div>
@@ -80,7 +80,7 @@ export default function Privacy() {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <div className="flex items-start gap-4">
                   <Eye className="w-6 h-6 text-[#166534] mt-1 flex-shrink-0" />
                   <div>
@@ -101,7 +101,7 @@ export default function Privacy() {
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-[#1f3b2c] mb-4">How We Use Your Information</h2>
             
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <ul className="text-[#4b5563] space-y-3">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-[#166534] rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -162,7 +162,7 @@ export default function Privacy() {
               We do not sell your personal information. We only share your data in the following circumstances:
             </p>
             
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <ul className="text-[#4b5563] space-y-3">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-[#166534] rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -189,28 +189,28 @@ export default function Privacy() {
             <h2 className="text-2xl font-bold text-[#1f3b2c] mb-4">Your Privacy Rights</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <h3 className="text-lg font-semibold text-[#1f3b2c] mb-3">Access and Correction</h3>
                 <p className="text-[#4b5563]">
                   You can access, update, or correct your personal information through your account settings or by contacting us.
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <h3 className="text-lg font-semibold text-[#1f3b2c] mb-3">Data Portability</h3>
                 <p className="text-[#4b5563]">
                   Request copies of your data in a machine-readable format for transfer to other services.
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <h3 className="text-lg font-semibold text-[#1f3b2c] mb-3">Deletion</h3>
                 <p className="text-[#4b5563]">
                   Request deletion of your personal information, subject to legal and contractual obligations.
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <h3 className="text-lg font-semibold text-[#1f3b2c] mb-3">Opt-Out</h3>
                 <p className="text-[#4b5563]">
                   Control how we contact you and manage your communication preferences.
@@ -269,7 +269,7 @@ export default function Privacy() {
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-[#1f3b2c] mb-4">Contact Us</h2>
             
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <p className="text-[#4b5563] leading-relaxed mb-4">
                 If you have any questions about this Privacy Policy or our data practices, please contact us:
               </p>

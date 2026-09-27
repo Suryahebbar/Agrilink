@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { Camera, MapPin, Calendar, CheckCircle2, User, Phone, Briefcase, Sparkles, X, Save } from 'lucide-react';
+import { Camera, MapPin, Calendar, CheckCircle2, User, Phone, Briefcase,  X, Save } from '../../../../components/ui/icons';
 
 interface FarmerProfileData {
   id: string;
@@ -177,7 +177,7 @@ export default function FarmerProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         
         {/* Left Column: Fiverr-style Premium Info Card */}
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-xl relative flex flex-col items-center">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 relative flex flex-col items-center">
           
           {/* Status Pill Badge */}
           <div className="absolute top-4 right-4">
@@ -194,7 +194,7 @@ export default function FarmerProfilePage() {
           {/* Profile Picture Container */}
           <div 
             onClick={triggerFileSelect}
-            className={`w-32 h-32 rounded-full border-4 border-emerald-50 shadow-md relative overflow-hidden group mt-6 ${
+            className={`w-32 h-32 rounded-full border-4 border-emerald-50  relative overflow-hidden group mt-6 ${
               isEditing ? 'cursor-pointer' : ''
             }`}
           >
@@ -270,7 +270,7 @@ export default function FarmerProfilePage() {
 
             <div className="flex items-center justify-between">
               <span className="text-gray-500 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#166534]" /> Integration
+                 Integration
               </span>
               <strong className={profile.readyToIntegrate ? 'text-emerald-700 font-bold' : 'text-amber-600 font-medium'}>
                 {profile.readyToIntegrate ? 'Active' : 'Inactive'}
@@ -282,7 +282,7 @@ export default function FarmerProfilePage() {
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="w-full py-2.5 rounded-xl border border-gray-300 bg-white font-bold text-gray-700 text-xs shadow-sm hover:bg-gray-50 transition-all text-center"
+                className="w-full py-2.5 rounded-xl border border-gray-300 bg-white font-bold text-gray-700 text-xs hover:bg-gray-50 transition-all text-center"
               >
                 Edit Profile
               </button>
@@ -291,14 +291,14 @@ export default function FarmerProfilePage() {
                 <button
                   onClick={handleSaveChanges}
                   disabled={saving}
-                  className="py-2.5 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+                  className="py-2.5 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5"
                 >
                   <Save className="w-3.5 h-3.5" />
                   {saving ? 'Saving...' : 'Save'}
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+                  className="py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all flex items-center justify-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
                   Cancel
@@ -312,7 +312,7 @@ export default function FarmerProfilePage() {
         <div className="md:col-span-2 space-y-6">
           
           {/* 1. Account Settings Fields */}
-          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
             <h3 className="text-base font-bold text-[#1f3b2c] border-b border-gray-100 pb-3">Personal Configurations</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -332,7 +332,7 @@ export default function FarmerProfilePage() {
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Mobile Number</label>
                 <input 
                   type="text" 
-                  value={isEditing ? editPhone : (profile.phone || '—')} 
+                  value={isEditing ? editPhone : (profile.phone || ' - ')} 
                   onChange={(e) => setEditPhone(e.target.value)}
                   disabled={!isEditing} 
                   className={`w-full rounded-xl border px-4 py-2.5 text-xs text-[#1f3b2c] ${
@@ -346,7 +346,7 @@ export default function FarmerProfilePage() {
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Date of Birth</label>
                 <input 
                   type={isEditing ? "date" : "text"}
-                  value={isEditing ? editDob : (profile.dob || '—')} 
+                  value={isEditing ? editDob : (profile.dob || ' - ')} 
                   onChange={(e) => setEditDob(e.target.value)}
                   disabled={!isEditing} 
                   className={`w-full rounded-xl border px-4 py-2.5 text-xs text-[#1f3b2c] ${
@@ -372,7 +372,7 @@ export default function FarmerProfilePage() {
                 ) : (
                   <input 
                     type="text" 
-                    value={profile.gender || '—'} 
+                    value={profile.gender || ' - '} 
                     disabled 
                     className="w-full rounded-xl border border-transparent bg-gray-50/50 px-4 py-2.5 text-xs text-[#1f3b2c] font-semibold" 
                   />
@@ -384,7 +384,7 @@ export default function FarmerProfilePage() {
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1">Home Address</label>
               <textarea 
-                value={isEditing ? editAddress : (profile.address || '—')} 
+                value={isEditing ? editAddress : (profile.address || ' - ')} 
                 onChange={(e) => setEditAddress(e.target.value)}
                 disabled={!isEditing} 
                 rows={2}
@@ -398,7 +398,7 @@ export default function FarmerProfilePage() {
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1">About Me (Bio)</label>
               <textarea 
-                value={isEditing ? editBio : (profile.bio || '—')} 
+                value={isEditing ? editBio : (profile.bio || ' - ')} 
                 onChange={(e) => setEditBio(e.target.value)}
                 disabled={!isEditing} 
                 rows={3}
@@ -430,7 +430,7 @@ export default function FarmerProfilePage() {
           </div>
 
           {/* 2. Official Cadastral Farmland details (if verified) */}
-          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
             <h3 className="text-base font-bold text-[#1f3b2c] border-b border-gray-100 pb-3">Official Land Records Registry</h3>
             {profile.landParcelIdentity ? (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
@@ -461,7 +461,7 @@ export default function FarmerProfilePage() {
           </div>
 
           {/* 3. Fiverr-style Intro video / Consortium Readiness Prompts */}
-          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-[#1f3b2c]">Consortium Cooperatives</h3>
               <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Beta</span>
@@ -472,7 +472,7 @@ export default function FarmerProfilePage() {
             <div className="pt-2">
               <Link
                 href="/dashboard/farmer/land"
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 active:scale-95 transition-all"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 active:scale-95 transition-all"
               >
                 Search Neighbors & Form Pool
               </Link>

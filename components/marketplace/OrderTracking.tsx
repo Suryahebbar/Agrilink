@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Package, Truck, CheckCircle, MapPin, Clock, Navigation } from 'lucide-react';
+import { Package, Truck, CheckCircle, MapPin, Clock, Navigation } from '../ui/icons';
 
 interface TrackingEvent {
   id: string;
@@ -72,7 +72,7 @@ export default function OrderTracking({ orderId, refreshInterval = 30000 }: Orde
 
   if (loading && !trackingData) {
     return (
-      <div className="animate-pulse space-y-4">
+      <div className="space-y-4">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center gap-4">
             <div className="w-10 h-10 bg-gray-200 rounded-full"></div>

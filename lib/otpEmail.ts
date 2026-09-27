@@ -7,7 +7,7 @@ const pass = process.env.SMTP_PASS;
 const from = process.env.SMTP_FROM || 'AgriLink <noreply@agrilink.app>';
 
 if (!user || !pass) {
-  console.warn('⚠️ SMTP credentials are missing in environment variables. Email notifications will be logged to console.');
+  console.warn('️ SMTP credentials are missing in environment variables. Email notifications will be logged to console.');
 }
 
 const transporter = nodemailer.createTransport({
@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
  * Send Two-Factor OTP Email during Registration / Login
  */
 export async function sendEmailOtp(to: string, otp: string, purpose: string = 'Verification') {
-  const subject = `🔐 AgriLink: Your Verification Code is ${otp}`;
+  const subject = ` AgriLink: Your Verification Code is ${otp}`;
   const html = `
     <!DOCTYPE html>
     <html>
@@ -43,7 +43,7 @@ export async function sendEmailOtp(to: string, otp: string, purpose: string = 'V
       <body>
         <div class="container">
           <div class="header">
-            <h1 class="logo">🌾 AgriLink</h1>
+            <h1 class="logo"> AgriLink</h1>
             <div class="subtitle">Next-Gen Agricultural Intelligence & Farm Pooling</div>
           </div>
           <div class="content">
@@ -86,13 +86,13 @@ export async function sendEmailOtp(to: string, otp: string, purpose: string = 'V
           'X-Mailer': 'AgriLink Security Mailer v2',
         },
       });
-      console.log('✅ OTP email dispatched via SMTP to:', to);
+      console.log(' OTP email dispatched via SMTP to:', to);
     } else {
-      console.log('📨 [DEV SIMULATION] OTP email for', to, ':', otp);
+      console.log(' [DEV SIMULATION] OTP email for', to, ':', otp);
     }
     return { success: true };
   } catch (err: any) {
-    console.error('❌ Failed to send OTP email via SMTP:', err);
+    console.error(' Failed to send OTP email via SMTP:', err);
     return { success: false, error: err.message || 'SMTP dispatch error' };
   }
 }
@@ -102,7 +102,7 @@ export async function sendEmailOtp(to: string, otp: string, purpose: string = 'V
  */
 export async function sendWelcomeEmail(to: string, fullName: string, role: string = 'farmer') {
   const roleDisplay = role.charAt(0).toUpperCase() + role.slice(1);
-  const subject = `🎉 Welcome to AgriLink, ${fullName}! Your Account is Active`;
+  const subject = ` Welcome to AgriLink, ${fullName}! Your Account is Active`;
   const html = `
     <!DOCTYPE html>
     <html>
@@ -127,7 +127,7 @@ export async function sendWelcomeEmail(to: string, fullName: string, role: strin
       <body>
         <div class="container">
           <div class="header">
-            <h1 class="logo">🌾 Welcome to AgriLink!</h1>
+            <h1 class="logo"> Welcome to AgriLink!</h1>
             <div class="badge">Verified ${roleDisplay} Portal</div>
           </div>
           <div class="content">
@@ -144,19 +144,19 @@ export async function sendWelcomeEmail(to: string, fullName: string, role: strin
             <h3 style="font-size: 14px; color: #111827; margin-bottom: 8px;">What You Can Do Next:</h3>
             <ul class="feature-list">
               <li class="feature-item">
-                <span class="feature-icon">✓</span>
+                <span class="feature-icon"></span>
                 <span><strong>Digital Farm Pooling:</strong> Collaborate with neighboring farmers, share equipment, and boost harvest profits.</span>
               </li>
               <li class="feature-item">
-                <span class="feature-icon">✓</span>
+                <span class="feature-icon"></span>
                 <span><strong>Crop Insurance (Module 11):</strong> Access PMFBY & top private multi-peril policies with FCO inspection backing.</span>
               </li>
               <li class="feature-item">
-                <span class="feature-icon">✓</span>
+                <span class="feature-icon"></span>
                 <span><strong>Government Schemes:</strong> Real-time scheme discovery tailored to your land parcel RTC.</span>
               </li>
               <li class="feature-item">
-                <span class="feature-icon">✓</span>
+                <span class="feature-icon"></span>
                 <span><strong>AgriLink Marketplace:</strong> Procure certified seeds, bio-fertilizers, and farm machinery directly from verified suppliers.</span>
               </li>
             </ul>
@@ -189,13 +189,13 @@ export async function sendWelcomeEmail(to: string, fullName: string, role: strin
           'List-Unsubscribe': `<mailto:${user}?subject=unsubscribe>`,
         },
       });
-      console.log('✅ Welcome email dispatched via SMTP to:', to);
+      console.log(' Welcome email dispatched via SMTP to:', to);
     } else {
-      console.log('📨 [DEV SIMULATION] Welcome email for', to, ':', fullName);
+      console.log(' [DEV SIMULATION] Welcome email for', to, ':', fullName);
     }
     return { success: true };
   } catch (err: any) {
-    console.error('❌ Failed to send Welcome email via SMTP:', err);
+    console.error(' Failed to send Welcome email via SMTP:', err);
     return { success: false, error: err.message || 'SMTP dispatch error' };
   }
 }

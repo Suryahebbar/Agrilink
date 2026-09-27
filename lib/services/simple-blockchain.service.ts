@@ -39,7 +39,7 @@ class SimpleBlockchainService {
     // Default to development mode, only try blockchain if explicitly requested
     this.isDevelopmentMode = true;
     this.initializationAttempted = false;
-    console.log('📝 Running in development mode (blockchain simulation)');
+    console.log(' Running in development mode (blockchain simulation)');
   }
 
   async deployContract(): Promise<string> {
@@ -50,7 +50,7 @@ class SimpleBlockchainService {
         this.contractAddress = mockAddress;
         process.env.BLOCKCHAIN_CONTRACT_ADDRESS = mockAddress;
         
-        console.log(`📝 [DEV] Mock contract deployed to: ${mockAddress}`);
+        console.log(` [DEV] Mock contract deployed to: ${mockAddress}`);
         return mockAddress;
       }
 
@@ -73,7 +73,7 @@ class SimpleBlockchainService {
       this.contract = new Contract(this.contractAddress, contractABI, this.provider);
       process.env.BLOCKCHAIN_CONTRACT_ADDRESS = contractAddress;
       
-      console.log('🔗 Contract deployed to:', contractAddress);
+      console.log(' Contract deployed to:', contractAddress);
       return contractAddress;
     } catch (error) {
       console.error('Error deploying contract:', error);
@@ -100,7 +100,7 @@ class SimpleBlockchainService {
       await this.provider.getBlockNumber(); // Test connection
       
       this.isDevelopmentMode = false;
-      console.log('🔗 Connected to Hardhat node');
+      console.log(' Connected to Hardhat node');
       
       // Initialize contract if address is known
       if (process.env.BLOCKCHAIN_CONTRACT_ADDRESS) {
@@ -113,7 +113,7 @@ class SimpleBlockchainService {
       this.isDevelopmentMode = true;
       this.provider = null;
       this.contract = null;
-      console.log('📝 Running in development mode (blockchain simulation)');
+      console.log(' Running in development mode (blockchain simulation)');
       return false;
     }
   }
@@ -129,8 +129,8 @@ class SimpleBlockchainService {
       if (this.isDevelopmentMode) {
         // Mock agreement creation
         const agreementId = `AGR_${Date.now()}_${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-        console.log(`📝 [DEV] Created agreement ${agreementId} between ${farmer1Name} and ${farmer2Name}`);
-        console.log(`📝 [DEV] Land sizes: ${farmer1LandSize} acres, ${farmer2LandSize} acres`);
+        console.log(` [DEV] Created agreement ${agreementId} between ${farmer1Name} and ${farmer2Name}`);
+        console.log(` [DEV] Land sizes: ${farmer1LandSize} acres, ${farmer2LandSize} acres`);
         return agreementId;
       }
 
@@ -171,7 +171,7 @@ class SimpleBlockchainService {
     try {
       if (this.isDevelopmentMode) {
         // Mock signing
-        console.log(`📝 [DEV] ${signerName} signed agreement ${agreementId}`);
+        console.log(` [DEV] ${signerName} signed agreement ${agreementId}`);
         return;
       }
 
@@ -188,7 +188,7 @@ class SimpleBlockchainService {
       const tx = await (contractWithSigner as any).signAgreement(agreementId, signerName);
       await tx.wait();
       
-      console.log(`✅ Agreement ${agreementId} signed by ${signerName}`);
+      console.log(` Agreement ${agreementId} signed by ${signerName}`);
     } catch (error) {
       console.error('Error signing agreement:', error);
       throw error;
@@ -279,7 +279,7 @@ class SimpleBlockchainService {
     try {
       if (this.isDevelopmentMode) {
         // Mock verification - always true in development
-        console.log(`📝 [DEV] Agreement ${agreementId} integrity verified (mock)`);
+        console.log(` [DEV] Agreement ${agreementId} integrity verified (mock)`);
         return true;
       }
 

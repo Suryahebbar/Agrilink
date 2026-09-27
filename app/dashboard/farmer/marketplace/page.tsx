@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Star, ShoppingCart, Heart, Search, X, Loader2, ChevronRight, Shield, Truck, RefreshCw, Tag, Sprout, Droplets, Wrench, Bug, Tractor, Wheat, Users } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Search, X, Loader2, ChevronRight, Shield, Truck, RefreshCw, Tag, Sprout, Droplets, Wrench, Bug, Tractor, Wheat, Users } from '../../../../components/ui/icons';
 import ProductCard from '@/components/marketplace/ProductCard';
 import PoolFinanceBar from '@/components/marketplace/PoolFinanceBar';
 import PoolPurchaseModal from '@/components/marketplace/PoolPurchaseModal';
@@ -284,7 +284,7 @@ export default function MarketplacePage() {
       ) : (
         <>
           {/* Hero Section */}
-          <div className="bg-gradient-to-r from-green-600 to-green-800 text-white py-16">
+          <div className="bg-[#166534] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to AgriMarket</h1>
@@ -295,7 +295,7 @@ export default function MarketplacePage() {
               <input
                 type="text"
                 placeholder="Search for products..."
-                className="w-full px-6 py-4 pr-12 rounded-full text-gray-800 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-6 py-4 pr-12 rounded-full text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     const query = e.currentTarget.value.trim();
@@ -382,11 +382,11 @@ export default function MarketplacePage() {
                     const url = userId ? `${base}&userId=${userId}` : base;
                     router.push(url);
                   }}
-                  className={`flex flex-col items-center p-5 rounded-xl border bg-white hover:shadow-md transition-all text-center group cursor-pointer ${
-                    category === cat.id ? 'ring-2 ring-green-600 border-green-600 shadow-sm' : 'border-gray-200'
+                  className={`flex flex-col items-center p-5 rounded-xl border bg-white  transition-all text-center group cursor-pointer ${
+                    category === cat.id ? 'ring-2 ring-green-600 border-green-600 ' : 'border-gray-200'
                   }`}
                 >
-                  <div className={`p-3 rounded-full mb-3 group-hover:scale-110 transition-transform ${cat.color}`}>
+                  <div className={`p-3 rounded-full mb-3 group- transition-transform ${cat.color}`}>
                     <Icon className="h-6 w-6" />
                   </div>
                   <span className="font-semibold text-gray-900 text-sm">{cat.name}</span>
@@ -490,7 +490,7 @@ export default function MarketplacePage() {
 
       {toast && (
         <div className="fixed bottom-6 right-6 z-50">
-          <div className={`px-4 py-3 rounded-lg shadow-lg border ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
+          <div className={`px-4 py-3 rounded-lg  border ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
             <span className={`${toast.type === 'success' ? 'text-green-700' : 'text-red-700'} text-sm font-medium`}>
               {toast.message}
             </span>

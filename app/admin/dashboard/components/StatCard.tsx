@@ -19,7 +19,7 @@ export default function StatCard({
 }: Omit<StatCardProps, 'change'>) {
   if (isLoading) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow animate-pulse">
+      <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between">
           <div className="w-full">
             <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>

@@ -560,7 +560,7 @@ export default function GovernmentSchemesPage() {
     if (cellLower === inputLower) return true;
 
     // 2. Ranges
-    const rangeRegex = /^\s*([0-9.]+)\s*([-–—]|to)\s*([0-9.]+)/i;
+    const rangeRegex = /^\s*([0-9.]+)\s*([-– - ]|to)\s*([0-9.]+)/i;
     const cellRange = cell.replace(/acres|acre/gi, "").match(rangeRegex);
     const inputRange = input.replace(/acres|acre/gi, "").match(rangeRegex);
 
@@ -795,7 +795,7 @@ export default function GovernmentSchemesPage() {
               : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
         >
-          🔍 Find Schemes
+           Find Schemes
         </button>
         <button
           onClick={() => {
@@ -807,7 +807,7 @@ export default function GovernmentSchemesPage() {
               : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
         >
-          📋 Recommended by FCO {recommended.length > 0 && (
+           Recommended by FCO {recommended.length > 0 && (
             <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1">
               {recommended.filter(r => r.status === 'pending' && !r.bulkApplied).length}
             </span>
@@ -823,7 +823,7 @@ export default function GovernmentSchemesPage() {
               : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
         >
-          🗳️ Group Proposals {activePool && activePool.proposedSchemes && activePool.proposedSchemes.length > 0 && (
+          ️ Group Proposals {activePool && activePool.proposedSchemes && activePool.proposedSchemes.length > 0 && (
             <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1">
               {activePool.proposedSchemes.filter((p: any) => p.status === 'voting').length}
             </span>
@@ -839,7 +839,7 @@ export default function GovernmentSchemesPage() {
               : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
         >
-          🛡️ Applied Schemes {recommended.length > 0 && (
+          ️ Applied Schemes {recommended.length > 0 && (
             <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1">
               {recommended.filter(r => r.bulkApplied && r.status === 'interested').length}
             </span>
@@ -886,9 +886,9 @@ export default function GovernmentSchemesPage() {
                               ? 'bg-green-100 text-green-800 border border-green-200'
                               : prop.status === 'rejected'
                                 ? 'bg-red-100 text-red-800 border border-red-200'
-                                : 'bg-amber-100 text-amber-800 border border-amber-200 animate-pulse'
+                                : 'bg-amber-100 text-amber-800 border border-amber-200 '
                             }`}>
-                            {prop.status === 'approved' ? '✓ Approved' : prop.status === 'rejected' ? '✗ Rejected' : 'Voting Active'}
+                            {prop.status === 'approved' ? ' Approved' : prop.status === 'rejected' ? ' Rejected' : 'Voting Active'}
                           </span>
                         </div>
                         <h3 className="text-lg font-bold text-[#1f3b2c] mt-2">{prop.schemeName}</h3>
@@ -918,7 +918,7 @@ export default function GovernmentSchemesPage() {
                             <div className="space-y-2">
                               <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${myVote === 'yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                 }`}>
-                                {myVote === 'yes' ? 'Voted YES 👍' : 'Voted NO 👎'}
+                                {myVote === 'yes' ? 'Voted YES ' : 'Voted NO '}
                               </span>
                               <div className="flex gap-2 justify-center">
                                 <button
@@ -940,15 +940,15 @@ export default function GovernmentSchemesPage() {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleVoteScheme(prop._id, 'yes')}
-                                className="flex-1 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm"
+                                className="flex-1 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold py-2 rounded-lg transition-colors"
                               >
-                                Agree 👍
+                                Agree 
                               </button>
                               <button
                                 onClick={() => handleVoteScheme(prop._id, 'no')}
-                                className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm"
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded-lg transition-colors"
                               >
-                                Disagree 👎
+                                Disagree 
                               </button>
                             </div>
                           )}
@@ -997,7 +997,7 @@ export default function GovernmentSchemesPage() {
               {recommended.filter(r => !r.bulkApplied).map((rec) => {
                 const constraints = rec.scheme ? getSchemeConstraintsList(rec.scheme) : [];
                 return (
-                  <div key={rec._id} className="border border-[#e2d4b7] rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col md:flex-row justify-between gap-6 bg-[#fcfbf9]/40">
+                  <div key={rec._id} className="border border-[#e2d4b7] rounded-lg p-6 transition-shadow flex flex-col md:flex-row justify-between gap-6 bg-[#fcfbf9]/40">
                     <div className="flex-1 space-y-4">
                       <div>
                         <span className="bg-[#f0f7e6] text-[#1f3b2c] text-[10px] font-bold px-2 py-0.5 rounded border border-[#e2d4b7] uppercase">
@@ -1026,7 +1026,7 @@ export default function GovernmentSchemesPage() {
                                   }`}
                               >
                                 <span className="font-bold leading-none mt-0.5">
-                                  {c.matched === true ? "✓" : c.matched === false ? "✗" : "○"}
+                                  {c.matched === true ? "" : c.matched === false ? "" : "○"}
                                 </span>
                                 <div>
                                   <span className="font-semibold text-gray-900">{c.label}</span>
@@ -1042,7 +1042,7 @@ export default function GovernmentSchemesPage() {
                     <div className="flex flex-col justify-center items-center md:items-end gap-3 min-w-[200px] border-t md:border-t-0 md:border-l border-[#e2d4b7] pt-4 md:pt-0 md:pl-6">
                       {rec.bulkApplied ? (
                         <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center w-full">
-                          <span className="text-xs font-bold text-green-800 block">✓ Bulk Applied</span>
+                          <span className="text-xs font-bold text-green-800 block"> Bulk Applied</span>
                           <span className="text-[10px] text-gray-400 block mt-0.5">Applied on your behalf by FCO</span>
                         </div>
                       ) : (
@@ -1054,13 +1054,13 @@ export default function GovernmentSchemesPage() {
                                 onClick={() => handleUpdateResponse(rec._id, 'interested')}
                                 className="flex-1 bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold py-2 rounded-lg transition-colors"
                               >
-                                Interested 👍
+                                Interested 
                               </button>
                               <button
                                 onClick={() => handleUpdateResponse(rec._id, 'not_interested')}
                                 className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded-lg transition-colors"
                               >
-                                Decline 👎
+                                Decline 
                               </button>
                             </div>
                           ) : (
@@ -1069,7 +1069,7 @@ export default function GovernmentSchemesPage() {
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-red-100 text-red-800'
                                 }`}>
-                                {rec.status === 'interested' ? 'Interested 👍' : 'Declined 👎'}
+                                {rec.status === 'interested' ? 'Interested ' : 'Declined '}
                               </span>
                               <button
                                 onClick={() => handleUpdateResponse(rec._id, rec.status === 'interested' ? 'not_interested' : 'interested')}
@@ -1126,7 +1126,7 @@ export default function GovernmentSchemesPage() {
                     </p>
                   </div>
                   <div className="flex flex-col items-center md:items-end justify-center min-w-[180px] bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-                    <span className="text-sm font-bold text-green-800 flex items-center gap-1">🛡️ Applied</span>
+                    <span className="text-sm font-bold text-green-800 flex items-center gap-1">️ Applied</span>
                     <span className="text-[10px] text-gray-500 mt-1">Managed securely on AgriLink ledger</span>
                   </div>
                 </div>
@@ -1381,7 +1381,7 @@ export default function GovernmentSchemesPage() {
                         type="button"
                         onClick={() => setActiveCategory(cat)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeCategory === cat
-                          ? "bg-[#1f3b2c] text-white shadow-sm"
+                          ? "bg-[#1f3b2c] text-white "
                           : "bg-gray-100 text-[#1f3b2c] hover:bg-gray-200"
                           }`}
                       >
@@ -1426,7 +1426,7 @@ export default function GovernmentSchemesPage() {
                         {displayed.map((scheme, i) => {
                           const constraints = getSchemeConstraintsList(scheme);
                           return (
-                            <div key={i} className="border border-[#e2d4b7] rounded-lg p-6 hover:shadow-lg transition-shadow">
+                            <div key={i} className="border border-[#e2d4b7] rounded-lg p-6 transition-shadow">
                               <div className="flex items-start justify-between mb-4">
                                 <div>
                                   <h3 className="text-lg font-semibold text-[#1f3b2c] flex-1">{scheme.name}</h3>
@@ -1438,9 +1438,9 @@ export default function GovernmentSchemesPage() {
                                   activePool ? (
                                     <button
                                       onClick={() => handleProposeSchemeToPool(String((scheme.raw as any)?._id || (scheme as any)._id || ''))}
-                                      className="bg-[#1A9B9A] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#147878] transition-colors ml-4 shadow-sm"
+                                      className="bg-[#1A9B9A] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#147878] transition-colors ml-4"
                                     >
-                                      Propose to Pool Group 🗳️
+                                      Propose to Pool Group ️
                                     </button>
                                   ) : (
                                     <a
@@ -1482,7 +1482,7 @@ export default function GovernmentSchemesPage() {
                                           }`}
                                       >
                                         <span className="font-bold text-sm leading-none mt-0.5">
-                                          {c.matched === true ? "✓" : c.matched === false ? "✗" : "○"}
+                                          {c.matched === true ? "" : c.matched === false ? "" : "○"}
                                         </span>
                                         <div>
                                           <span className="font-medium block text-gray-900">{c.label}</span>
@@ -1529,7 +1529,7 @@ export default function GovernmentSchemesPage() {
                           <button
                             type="button"
                             onClick={() => setDisplayLimit(prev => prev + 15)}
-                            className="px-6 py-2.5 bg-[#1f3b2c] text-white rounded-lg font-semibold hover:bg-[#2d4f3c] transition-colors text-sm shadow-sm"
+                            className="px-6 py-2.5 bg-[#1f3b2c] text-white rounded-lg font-semibold hover:bg-[#2d4f3c] transition-colors text-sm"
                           >
                             Load More Schemes ({filtered.length - displayLimit} remaining)
                           </button>

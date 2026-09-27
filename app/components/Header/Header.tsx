@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { ShoppingCart, User, LogOut, Link2 } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Link2 } from '../../../components/ui/icons';
 import { useEffect, useState } from 'react';
 
 export default function Header() {

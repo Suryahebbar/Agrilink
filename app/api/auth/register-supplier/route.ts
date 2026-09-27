@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { companyName, businessEmail, upiId, password } = body;
 
-    console.log('📝 Supplier Registration Request:', {
+    console.log(' Supplier Registration Request:', {
       companyName,
       businessEmail,
       upiId,
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     });
 
     if (!companyName || !businessEmail || !upiId || !password) {
-      console.log('❌ Missing required fields:', { companyName, businessEmail, upiId, hasPassword: !!password });
+      console.log(' Missing required fields:', { companyName, businessEmail, upiId, hasPassword: !!password });
       return NextResponse.json(
         { message: 'Missing required fields' },
         { status: 400 }
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     const existing = await User.findOne({ email: businessEmail });
     if (existing) {
-      console.log('❌ Email already registered:', businessEmail);
+      console.log(' Email already registered:', businessEmail);
       return NextResponse.json(
         { message: 'Email already registered' },
         { status: 400 }
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const emailOtp = generateOtp();
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    console.log('🔢 Generated OTP:', emailOtp);
+    console.log(' Generated OTP:', emailOtp);
     console.log('⏰ OTP Expires at:', otpExpiresAt);
 
     const user = await User.create({
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       verificationStatus: 'pending', // Admin verification required
     });
 
-    console.log('✅ User created successfully:', {
+    console.log(' User created successfully:', {
       id: user._id,
       email: user.email,
       companyName: user.companyName,
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     void sendEmailOtp(user.email, emailOtp, 'supplier registration');
 
-    console.log('📧 OTP sent to email:', user.email);
+    console.log(' OTP sent to email:', user.email);
 
     return NextResponse.json({
       message: 'Supplier registered. Verify OTP to activate account.',

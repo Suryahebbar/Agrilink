@@ -6,7 +6,7 @@ import { ActivityAction, ActivityStatus, LogModule, ResourceType } from '@/lib/a
  * POST /api/farmer/activity-log
  *
  * Lightweight endpoint for client-side farmer UI events.
- * Does NOT require admin auth — uses the farmer's session context
+ * Does NOT require admin auth  -  uses the farmer's session context
  * passed in the request body. Never blocks the UI.
  *
  * Body:

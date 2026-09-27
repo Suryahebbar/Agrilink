@@ -89,7 +89,7 @@ class BackendBlockchainService {
   private async initializeBlockchain(): Promise<void> {
     try {
       if (this.isDevelopmentMode) {
-        console.log('🔗 [BACKEND] Blockchain service running in DEVELOPMENT mode');
+        console.log(' [BACKEND] Blockchain service running in DEVELOPMENT mode');
         return;
       }
 
@@ -109,10 +109,10 @@ class BackendBlockchainService {
       }
 
       this.contract = new Contract(contractAddress, contractABI, this.adminWallet);
-      console.log(`🔗 [BACKEND] Connected to contract: ${contractAddress}`);
+      console.log(` [BACKEND] Connected to contract: ${contractAddress}`);
 
     } catch (error) {
-      console.error('🔗 [BACKEND] Failed to initialize blockchain:', error);
+      console.error(' [BACKEND] Failed to initialize blockchain:', error);
       this.isDevelopmentMode = true;
     }
   }
@@ -128,7 +128,7 @@ class BackendBlockchainService {
 
       if (this.isDevelopmentMode) {
         // Mock blockchain upload for development
-        console.log(`📝 [BACKEND] [DEV] Uploading agreement ${agreementData.agreementId} to blockchain`);
+        console.log(` [BACKEND] [DEV] Uploading agreement ${agreementData.agreementId} to blockchain`);
         
         // Simulate IPFS upload
         const mockCid = `bafybeig${Math.random().toString(36).substr(2, 44)}`;
@@ -166,9 +166,9 @@ class BackendBlockchainService {
 
       const receipt = await tx.wait();
 
-      console.log(`✅ [BACKEND] Agreement ${agreementData.agreementId} uploaded to blockchain`);
-      console.log(`📄 Document CID: ${documentCid}`);
-      console.log(`🔗 Transaction: ${tx.hash}`);
+      console.log(` [BACKEND] Agreement ${agreementData.agreementId} uploaded to blockchain`);
+      console.log(` Document CID: ${documentCid}`);
+      console.log(` Transaction: ${tx.hash}`);
 
       return {
         success: true,
@@ -179,7 +179,7 @@ class BackendBlockchainService {
       };
 
     } catch (error) {
-      console.error('🔗 [BACKEND] Error uploading agreement to blockchain:', error);
+      console.error(' [BACKEND] Error uploading agreement to blockchain:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -198,7 +198,7 @@ class BackendBlockchainService {
       const result = await this.enhancedService.uploadToIPFS(mockFile, agreementId, 'system');
       return result.cid;
     } catch (error) {
-      console.error('📁 [BACKEND] Error uploading to IPFS:', error);
+      console.error(' [BACKEND] Error uploading to IPFS:', error);
       throw error;
     }
   }
@@ -206,7 +206,7 @@ class BackendBlockchainService {
   async verifyAgreementOnBlockchain(agreementId: string): Promise<boolean> {
     try {
       if (this.isDevelopmentMode) {
-        console.log(`📝 [BACKEND] [DEV] Verifying agreement ${agreementId} on blockchain`);
+        console.log(` [BACKEND] [DEV] Verifying agreement ${agreementId} on blockchain`);
         return true;
       }
 
@@ -220,7 +220,7 @@ class BackendBlockchainService {
       return agreement.timestamp > 0 && agreement.isActive;
 
     } catch (error) {
-      console.error('🔗 [BACKEND] Error verifying agreement:', error);
+      console.error(' [BACKEND] Error verifying agreement:', error);
       return false;
     }
   }

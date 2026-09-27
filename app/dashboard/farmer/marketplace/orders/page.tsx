@@ -231,7 +231,7 @@ export default function FarmerMarketplaceOrders() {
       ) : (
         <div className="space-y-4">
           {filteredOrders.map((order) => (
-            <div key={order._id} className="bg-white rounded-lg border border-[#e2d4b7] p-6 hover:shadow-lg transition-shadow">
+            <div key={order._id} className="bg-white rounded-lg border border-[#e2d4b7] p-6 transition-shadow">
               {/* Order Header */}
               <div className="flex items-center justify-between mb-4">
                 <div>

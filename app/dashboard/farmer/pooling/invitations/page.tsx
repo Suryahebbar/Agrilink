@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Users, CheckCircle, XCircle, RefreshCw, Radio, ArrowLeft, FileText, ShieldCheck
-} from 'lucide-react';
+} from '../../../../../components/ui/icons';
 import AgreementModal from '@/app/components/AgreementModal/AgreementModal';
 
 interface Invitation {
@@ -83,7 +83,7 @@ export default function InvitationsInboxPage() {
       case 'rejected':
         return <span className="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 w-fit"><XCircle className="w-3.5 h-3.5" /> Rejected</span>;
       default:
-        return <span className="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 w-fit"><Radio className="w-3.5 h-3.5 animate-pulse" /> Pending</span>;
+        return <span className="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 w-fit"><Radio className="w-3.5 h-3.5" /> Pending</span>;
     }
   };
 
@@ -120,21 +120,21 @@ export default function InvitationsInboxPage() {
         </div>
         <button
           onClick={fetchInvitations}
-          className="inline-flex items-center gap-2 self-start rounded-lg border border-[#e2d4b7] bg-white px-4 py-2 text-xs font-semibold text-[#1f3b2c] shadow-sm hover:bg-[#f7f0de] transition-all"
+          className="inline-flex items-center gap-2 self-start rounded-lg border border-[#e2d4b7] bg-white px-4 py-2 text-xs font-semibold text-[#1f3b2c] hover:bg-[#f7f0de] transition-all"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh Inbox
         </button>
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-3 text-rose-800 shadow-sm">
+        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-3 text-rose-800">
           <XCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <p className="text-xs font-medium leading-relaxed">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-800 shadow-sm animate-slideDown">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-800 animate-slideDown">
           <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <p className="text-xs font-medium leading-relaxed">{success}</p>
         </div>
@@ -144,7 +144,7 @@ export default function InvitationsInboxPage() {
         {/* Received Inbox */}
         <div className="space-y-4">
           <h3 className="text-lg font-bold text-[#1f3b2c] flex items-center gap-2 pb-1.5 border-b border-slate-100">
-            📥 Received Invitations
+             Received Invitations
           </h3>
           {receivedInvitations.length === 0 ? (
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 text-center text-xs text-gray-500">
@@ -153,7 +153,7 @@ export default function InvitationsInboxPage() {
           ) : (
             <div className="space-y-4">
               {receivedInvitations.map((inv) => (
-                <div key={inv._id} className="bg-white border border-[#e2d4b7] rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4">
+                <div key={inv._id} className="bg-white border border-[#e2d4b7] rounded-2xl p-5 flex flex-col justify-between gap-4">
                   <div>
                     <h4 className="text-sm font-bold text-[#1f3b2c]">From: {inv.senderName}</h4>
                     <p className="text-[11px] text-[#6b7280] mt-1">
@@ -197,7 +197,7 @@ export default function InvitationsInboxPage() {
                           {inv.status === 'accepted' && inv.integrationRequestId && (
                             <button
                               onClick={() => setSelectedAgreementRequestId(inv.integrationRequestId || null)}
-                              className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5"
+                              className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5"
                             >
                               <FileText className="w-3.5 h-3.5" /> View & Sign Smart Contract
                             </button>
@@ -215,7 +215,7 @@ export default function InvitationsInboxPage() {
         {/* Sent Outbox */}
         <div className="space-y-4">
           <h3 className="text-lg font-bold text-[#1f3b2c] flex items-center gap-2 pb-1.5 border-b border-slate-100">
-            📤 Sent Invitations
+             Sent Invitations
           </h3>
           {sentInvitations.length === 0 ? (
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 text-center text-xs text-gray-500">
@@ -224,7 +224,7 @@ export default function InvitationsInboxPage() {
           ) : (
             <div className="space-y-4">
               {sentInvitations.map((inv) => (
-                <div key={inv._id} className="bg-white border border-[#e2d4b7] rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4">
+                <div key={inv._id} className="bg-white border border-[#e2d4b7] rounded-2xl p-5 flex flex-col justify-between gap-4">
                   <div>
                     <h4 className="text-sm font-bold text-[#1f3b2c]">To: {inv.receiverName}</h4>
                     <p className="text-[11px] text-[#6b7280] mt-1">
@@ -250,7 +250,7 @@ export default function InvitationsInboxPage() {
                       {inv.status === 'accepted' && inv.integrationRequestId && (
                         <button
                           onClick={() => setSelectedAgreementRequestId(inv.integrationRequestId || null)}
-                          className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5"
+                          className="bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5"
                         >
                           <FileText className="w-3.5 h-3.5" /> View & Sign Smart Contract
                         </button>

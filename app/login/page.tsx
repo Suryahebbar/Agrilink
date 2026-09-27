@@ -47,7 +47,7 @@ function LoginForm() {
           if (user.role === 'farmer') {
             router.push(`/dashboard/farmer?userId=${user.id}`);
           } else if (user.role === 'supplier') {
-            router.push(`/dashboard/seller?userId=${user.id}`);
+            router.push(`/dashboard/supplier?userId=${user.id}`);
           } else if (user.role === 'fco') {
             router.push(`/fco/dashboard?userId=${user.id}`);
           }
@@ -61,7 +61,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md bg-[#fffaf1] border border-[#e2d4b7] rounded-lg shadow-md px-8 py-10">
+    <div className="w-full max-w-md bg-[#fffaf1] border border-[#e2d4b7] rounded-lg px-8 py-10">
       <h1 className="text-2xl font-semibold text-center text-[#1f3b2c] mb-2">
         {loginRole === 'fco' ? 'FCO Portal Login' : 'Welcome Back'}
       </h1>
@@ -119,7 +119,7 @@ export default function LoginPage() {
       <HeaderWrapper />
       <main className="flex-grow flex items-center justify-center px-4 py-16">
         <Suspense fallback={
-          <div className="w-full max-w-md bg-[#fffaf1] border border-[#e2d4b7] rounded-lg shadow-md px-8 py-12 text-center">
+          <div className="w-full max-w-md bg-[#fffaf1] border border-[#e2d4b7] rounded-lg px-8 py-12 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#166534] mx-auto"></div>
           </div>
         }>

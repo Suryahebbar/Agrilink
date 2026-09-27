@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send, Clock, MessageSquare, Users } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Clock, MessageSquare, Users } from '../../components/ui/icons';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -66,7 +66,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f0de] to-white">
+    <div className="min-h-screen from-[#f7f0de] to-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -219,7 +219,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-[#166534] to-[#15803d] text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-[#166534] text-white px-6 py-3 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -240,7 +240,7 @@ export default function Contact() {
           <div>
             <h2 className="text-3xl font-bold text-[#1f3b2c] mb-6">How We Can Help</h2>
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <div className="flex items-start gap-4">
                   <MessageSquare className="w-6 h-6 text-[#166534] mt-1 flex-shrink-0" />
                   <div>
@@ -252,7 +252,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <div className="flex items-start gap-4">
                   <Users className="w-6 h-6 text-[#166534] mt-1 flex-shrink-0" />
                   <div>
@@ -264,7 +264,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg">
+              <div className="bg-white p-6 rounded-xl">
                 <div className="flex items-start gap-4">
                   <Clock className="w-6 h-6 text-[#166534] mt-1 flex-shrink-0" />
                   <div>

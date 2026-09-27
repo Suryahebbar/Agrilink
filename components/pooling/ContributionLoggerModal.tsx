@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { 
   X, Clock, Tractor, Coins, Calendar, 
-  FileText, CheckCircle2, AlertCircle, Loader2, Sparkles 
-} from 'lucide-react';
+  FileText, CheckCircle2, AlertCircle, Loader2 } from '../ui/icons';
 
 interface ContributionLoggerModalProps {
   isOpen: boolean;
@@ -93,13 +92,13 @@ export default function ContributionLoggerModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white border border-[#e2d4b7] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white border border-[#e2d4b7] w-full max-w-lg rounded-3xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
         <div className="p-5 border-b border-emerald-100 flex items-center justify-between bg-emerald-50/70">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-emerald-100 text-[#166534] rounded-2xl border border-emerald-200">
-              <Sparkles className="w-5 h-5" />
+              
             </div>
             <div>
               <h3 className="font-bold text-[#1f3b2c] text-lg">Log Member Contribution</h3>
@@ -134,7 +133,7 @@ export default function ContributionLoggerModal({
                 onClick={() => handleTypeChange('labour')}
                 className={`py-2.5 px-3 rounded-xl text-xs font-bold flex flex-col items-center gap-1 border transition ${
                   type === 'labour'
-                    ? 'bg-[#166534] text-white border-[#166534] shadow-xs'
+                    ? 'bg-[#166534] text-white border-[#166534] '
                     : 'bg-[#f8fafc] text-slate-600 border-slate-200 hover:bg-emerald-50'
                 }`}
               >
@@ -146,7 +145,7 @@ export default function ContributionLoggerModal({
                 onClick={() => handleTypeChange('machinery')}
                 className={`py-2.5 px-3 rounded-xl text-xs font-bold flex flex-col items-center gap-1 border transition ${
                   type === 'machinery'
-                    ? 'bg-[#166534] text-white border-[#166534] shadow-xs'
+                    ? 'bg-[#166534] text-white border-[#166534] '
                     : 'bg-[#f8fafc] text-slate-600 border-slate-200 hover:bg-emerald-50'
                 }`}
               >
@@ -158,7 +157,7 @@ export default function ContributionLoggerModal({
                 onClick={() => handleTypeChange('capital')}
                 className={`py-2.5 px-3 rounded-xl text-xs font-bold flex flex-col items-center gap-1 border transition ${
                   type === 'capital'
-                    ? 'bg-[#166534] text-white border-[#166534] shadow-xs'
+                    ? 'bg-[#166534] text-white border-[#166534] '
                     : 'bg-[#f8fafc] text-slate-600 border-slate-200 hover:bg-emerald-50'
                 }`}
               >
@@ -284,7 +283,7 @@ export default function ContributionLoggerModal({
             <button
               type="submit"
               disabled={submitting || quantity <= 0}
-              className="px-5 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl transition shadow-xs flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl transition flex items-center gap-2 disabled:opacity-50"
             >
               {submitting ? (
                 <>

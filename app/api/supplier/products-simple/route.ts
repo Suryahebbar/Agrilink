@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       createdAt: new Date()
     };
 
-    console.log('✅ Simple product created:', product);
+    console.log(' Simple product created:', product);
 
     return NextResponse.json({
       message: 'Product created successfully (simple test)',
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('❌ Error creating simple product:', error);
+    console.error(' Error creating simple product:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'

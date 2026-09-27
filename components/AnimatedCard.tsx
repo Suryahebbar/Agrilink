@@ -60,7 +60,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   };
 
   const cardClasses = [
-    'bg-white rounded-lg border border-gray-200 shadow-sm',
+    'bg-white rounded-lg border border-gray-200 ',
     getAnimationClasses(),
     getHoverClasses(),
     clickable && 'cursor-pointer',

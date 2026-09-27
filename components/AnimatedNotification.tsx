@@ -112,7 +112,7 @@ const AnimatedNotification: React.FC<AnimatedNotificationProps> = ({
 
   return (
     <div
-      className={`fixed z-50 flex items-start space-x-3 p-4 border rounded-lg shadow-lg max-w-sm ${getPositionClasses()} ${getTypeClasses()} ${isExiting ? 'notification-exit' : 'notification-enter'} ${className}`}
+      className={`fixed z-50 flex items-start space-x-3 p-4 border rounded-lg  max-w-sm ${getPositionClasses()} ${getTypeClasses()} ${isExiting ? 'notification-exit' : 'notification-enter'} ${className}`}
     >
       <div className="flex-shrink-0">
         {getIcon()}

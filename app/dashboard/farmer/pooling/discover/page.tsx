@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Users, Compass, ArrowRight, RefreshCw, XCircle, CheckCircle, ArrowLeft
-} from 'lucide-react';
+} from '../../../../../components/ui/icons';
 
 interface LandInfo {
   id: string;
@@ -196,13 +196,13 @@ export default function DiscoverNeighboursPage() {
         <div className="flex gap-2">
           <button
             onClick={fetchInitialData}
-            className="inline-flex items-center gap-2 rounded-lg border border-[#e2d4b7] bg-white px-4 py-2 text-xs font-semibold text-[#1f3b2c] shadow-sm hover:bg-[#f7f0de] transition-all"
+            className="inline-flex items-center gap-2 rounded-lg border border-[#e2d4b7] bg-white px-4 py-2 text-xs font-semibold text-[#1f3b2c] hover:bg-[#f7f0de] transition-all"
           >
             <RefreshCw className="w-3.5 h-3.5" /> Re-scan
           </button>
           <button
             onClick={navigateToInvitations}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#166534] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#14532d] transition-all"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#166534] px-4 py-2 text-xs font-semibold text-white hover:bg-[#14532d] transition-all"
           >
             Go to Invitations & Inbox <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -210,7 +210,7 @@ export default function DiscoverNeighboursPage() {
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-3 text-rose-800 shadow-sm">
+        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-3 text-rose-800">
           <XCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="font-bold text-sm">Notice</h4>
@@ -228,7 +228,7 @@ export default function DiscoverNeighboursPage() {
       )}
 
       {success && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-800 shadow-sm animate-slideDown">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-800 animate-slideDown">
           <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <p className="text-xs font-medium leading-relaxed">{success}</p>
         </div>
@@ -260,7 +260,7 @@ export default function DiscoverNeighboursPage() {
               {neighbours.map((neighbour) => {
                 const isInvited = sentInvitations.some(inv => inv.receiverId === neighbour.userId);
                 return (
-                  <div key={neighbour.userId} className="bg-white border border-[#e2d4b7] rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                  <div key={neighbour.userId} className="bg-white border border-[#e2d4b7] rounded-2xl p-5 space-y-4 transition-shadow">
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-bold text-[#1f3b2c] text-sm">{neighbour.userName}</h4>
@@ -296,7 +296,7 @@ export default function DiscoverNeighboursPage() {
                       className={`w-full py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                         isInvited 
                           ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                          : 'bg-[#166534] hover:bg-[#14532d] text-white shadow-sm'
+                          : 'bg-[#166534] hover:bg-[#14532d] text-white '
                       }`}
                     >
                       {isInvited ? 'Invitation Sent' : <>Invite Neighbour <ArrowRight className="w-3.5 h-3.5" /></>}

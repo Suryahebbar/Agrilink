@@ -278,7 +278,7 @@ export default function WeatherPage() {
             <div className="space-y-3">
               <div>
                 <h3 className="text-sm font-semibold text-[#1f3b2c]">
-                  🗓 {new Date(day.date).toLocaleDateString('en-US', { 
+                   {new Date(day.date).toLocaleDateString('en-US', { 
                     weekday: 'short', 
                     month: 'short', 
                     day: 'numeric' 

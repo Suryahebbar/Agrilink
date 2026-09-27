@@ -114,7 +114,7 @@ const AlertDialog = ({
       showCloseButton={true}
       footer={footer}
     >
-      <div className={`bg-white rounded-lg shadow-xl p-6 border-l-4 ${variantStyles.border}`}>
+      <div className={`bg-white rounded-lg  p-6 border-l-4 ${variantStyles.border}`}>
         <div className="flex items-start gap-3">
           <div className={`flex-shrink-0 ${variantStyles.icon}`}>
             {icon || getDefaultIcon()}

@@ -13,7 +13,7 @@ import {
   DollarSign,
   Truck,
   Award
-} from 'lucide-react';
+} from '../../components/ui/icons';
 
 export const metadata: Metadata = {
   title: 'Platform Features',
@@ -99,7 +99,7 @@ export default function Features() {
   const categories = ["All", "Farmer Tools", "Marketplace", "Land Management", "Analytics", "Weather", "Payments", "Mobile", "Community", "Supply Chain", "Finance", "Logistics", "Quality"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f0de] to-white">
+    <div className="min-h-screen from-[#f7f0de] to-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -112,7 +112,7 @@ export default function Features() {
             </p>
             <Link
               href="/register"
-              className="bg-gradient-to-r from-[#166534] to-[#15803d] text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition-all"
+              className="bg-[#166534] text-white px-8 py-3 rounded-lg font-medium transition-all"
             >
               Start Using Features
             </Link>
@@ -133,7 +133,7 @@ export default function Features() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+            <div key={index} className="bg-white p-8 rounded-xl transition-all">
               <div className="w-16 h-16 bg-[#166534] rounded-xl flex items-center justify-center mb-6 text-white">
                 {feature.icon}
               </div>

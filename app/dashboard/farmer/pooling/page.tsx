@@ -7,7 +7,7 @@ import {
   ArrowRight, Radio, RefreshCw, Compass, Calendar, 
   MapPin, Video, FileText, Check, Cpu, DollarSign, 
   List, BookOpen, BarChart2, Activity, PieChart, HelpCircle, Download, Clock
-} from 'lucide-react';
+} from '../../../../components/ui/icons';
 import SmartContractDocument from '@/app/components/SmartContractDocument/SmartContractDocument';
 import PoolFinanceBar from '@/components/marketplace/PoolFinanceBar';
 import ContributionHistoryTable from '@/components/pooling/ContributionHistoryTable';
@@ -842,12 +842,12 @@ export default function FarmPoolingPage() {
     return (
       <div className="space-y-6 animate-fadeIn pb-12">
         {/* 1. Executive Top Header Card */}
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 sm:p-8 relative overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   Active Farm Pool
                 </span>
                 <span className="px-3 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded-full text-xs font-semibold">
@@ -871,23 +871,23 @@ export default function FarmPoolingPage() {
                   setSuccess('Agreement ID copied!');
                   setTimeout(() => setSuccess(null), 2000);
                 }}
-                className="px-3.5 py-2 text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl transition flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-2 text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl transition flex items-center gap-1.5"
               >
-                <span>📋 Copy ID</span>
+                <span> Copy ID</span>
               </button>
               <a
                 href={`/verify?poolId=${activePool._id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="px-4 py-2 text-xs font-bold bg-[#166534] hover:bg-[#14532d] text-white rounded-xl transition shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2 text-xs font-bold bg-[#166534] hover:bg-[#14532d] text-white rounded-xl transition flex items-center gap-1.5"
               >
-                <span>🔍 Verify Contract ↗</span>
+                <span> Verify Contract ↗</span>
               </a>
               <button
                 onClick={() => setShowTicketModal(true)}
                 className="px-3.5 py-2 text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl transition flex items-center gap-1.5"
               >
-                <span>🚩 Raise Query</span>
+                <span> Raise Query</span>
               </button>
             </div>
           </div>
@@ -912,18 +912,18 @@ export default function FarmPoolingPage() {
             <div className="p-3 bg-[#f8fafc] border border-slate-100 rounded-2xl">
               <span className="text-[11px] text-slate-500 uppercase font-semibold block">Assigned FCO</span>
               <span className="text-lg font-black text-[#1f3b2c] truncate block">{activePool.counselorName || 'Field Officer'}</span>
-              <span className="text-[10px] text-emerald-600 font-semibold block">✓ Legal Verified</span>
+              <span className="text-[10px] text-emerald-600 font-semibold block"> Legal Verified</span>
             </div>
           </div>
         </div>
 
         {/* 2. Clean Tab Navigation Bar */}
-        <div className="flex border border-[#e2d4b7] bg-white rounded-2xl p-1.5 shadow-sm overflow-x-auto gap-1">
+        <div className="flex border border-[#e2d4b7] bg-white rounded-2xl p-1.5 overflow-x-auto gap-1">
           <button
             onClick={() => setActivePoolWorkspaceTab('overview')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all ${
               activePoolWorkspaceTab === 'overview'
-                ? 'bg-[#166534] text-white shadow-sm'
+                ? 'bg-[#166534] text-white '
                 : 'text-slate-600 hover:text-[#166534] hover:bg-emerald-50/50'
             }`}
           >
@@ -935,7 +935,7 @@ export default function FarmPoolingPage() {
             onClick={() => setActivePoolWorkspaceTab('contributions')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all ${
               activePoolWorkspaceTab === 'contributions'
-                ? 'bg-[#166534] text-white shadow-sm'
+                ? 'bg-[#166534] text-white '
                 : 'text-slate-600 hover:text-[#166534] hover:bg-emerald-50/50'
             }`}
           >
@@ -947,7 +947,7 @@ export default function FarmPoolingPage() {
             onClick={() => setActivePoolWorkspaceTab('finances')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all ${
               activePoolWorkspaceTab === 'finances'
-                ? 'bg-[#166534] text-white shadow-sm'
+                ? 'bg-[#166534] text-white '
                 : 'text-slate-600 hover:text-[#166534] hover:bg-emerald-50/50'
             }`}
           >
@@ -959,7 +959,7 @@ export default function FarmPoolingPage() {
             onClick={() => setActivePoolWorkspaceTab('governance')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all ${
               activePoolWorkspaceTab === 'governance'
-                ? 'bg-[#166534] text-white shadow-sm'
+                ? 'bg-[#166534] text-white '
                 : 'text-slate-600 hover:text-[#166534] hover:bg-emerald-50/50'
             }`}
           >
@@ -971,7 +971,7 @@ export default function FarmPoolingPage() {
             onClick={() => setActivePoolWorkspaceTab('disputes')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all ${
               activePoolWorkspaceTab === 'disputes'
-                ? 'bg-[#166534] text-white shadow-sm'
+                ? 'bg-[#166534] text-white '
                 : 'text-slate-600 hover:text-[#166534] hover:bg-emerald-50/50'
             }`}
           >
@@ -983,7 +983,7 @@ export default function FarmPoolingPage() {
             onClick={() => setActivePoolWorkspaceTab('contract')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all ${
               activePoolWorkspaceTab === 'contract'
-                ? 'bg-[#166534] text-white shadow-sm'
+                ? 'bg-[#166534] text-white '
                 : 'text-slate-600 hover:text-[#166534] hover:bg-emerald-50/50'
             }`}
           >
@@ -1000,7 +1000,7 @@ export default function FarmPoolingPage() {
             <div className="lg:col-span-8 space-y-6">
               
               {/* Cultivation Tasks & Milestones */}
-              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
                     <List className="w-5 h-5 text-[#166534]" /> Crop Cultivation Milestones & Tasks
@@ -1034,7 +1034,7 @@ export default function FarmPoolingPage() {
               </div>
 
               {/* FCO Advisories & Shared Documents */}
-              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
                 <div className="border-b border-slate-100 pb-3">
                   <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
                     <FileText className="w-5 h-5 text-[#166534]" /> Pool Files & Shared Advisories
@@ -1054,7 +1054,7 @@ export default function FarmPoolingPage() {
                       <a
                         href={file.url}
                         download={file.name}
-                        className="p-2 bg-white hover:bg-emerald-50 text-emerald-800 rounded-xl border border-slate-200 transition-all flex items-center justify-center shrink-0 shadow-xs"
+                        className="p-2 bg-white hover:bg-emerald-50 text-emerald-800 rounded-xl border border-slate-200 transition-all flex items-center justify-center shrink-0"
                         title="Download Document"
                       >
                         <Download className="w-4 h-4" />
@@ -1073,7 +1073,7 @@ export default function FarmPoolingPage() {
             <div className="lg:col-span-4 space-y-6">
               
               {/* Member Land Holdings & Allocations */}
-              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
                 <h4 className="font-bold text-sm text-[#1f3b2c] flex items-center gap-2">
                   <Users className="w-4 h-4 text-[#166534]" /> Participating Land Roster
                 </h4>
@@ -1095,7 +1095,7 @@ export default function FarmPoolingPage() {
               </div>
 
               {/* Cultivation Plan Metadata */}
-              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-3 text-xs">
+              <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-3 text-xs">
                 <h4 className="font-bold text-sm text-[#1f3b2c] flex items-center gap-2 border-b border-slate-100 pb-2">
                   <BookOpen className="w-4 h-4 text-[#166534]" /> Farm Plan Parameters
                 </h4>
@@ -1141,7 +1141,7 @@ export default function FarmPoolingPage() {
             />
 
             {/* Shared Expense Ledger */}
-            <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 shadow-sm space-y-4">
+            <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
                   <DollarSign className="w-5 h-5 text-[#166534]" /> Shared Expense Ledger
@@ -1184,10 +1184,10 @@ export default function FarmPoolingPage() {
           <div className="space-y-6">
             
             {/* Collaborative Scheme Selection & Voting Consensus */}
-            <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm p-6 space-y-6">
+            <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-6">
               <div className="border-b border-slate-100 pb-4">
                 <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
-                  🗳️ Shared Group Schemes & Proposals
+                  ️ Shared Group Schemes & Proposals
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
                   Propose a government scheme for the pooled land. Unanimous (100% agreement) vote is required to approve the proposal.
@@ -1245,7 +1245,7 @@ export default function FarmPoolingPage() {
                                   ? 'bg-rose-100 text-rose-800'
                                   : 'bg-amber-100 text-amber-800'
                             }`}>
-                              {prop.status === 'approved' ? '✓ Approved' : prop.status === 'rejected' ? '✗ Rejected' : 'Voting'}
+                              {prop.status === 'approved' ? ' Approved' : prop.status === 'rejected' ? ' Rejected' : 'Voting'}
                             </span>
                           </div>
 
@@ -1266,7 +1266,7 @@ export default function FarmPoolingPage() {
                             <div className="flex items-center justify-between pt-1 text-[10px]">
                               {hasUserVoted ? (
                                 <span className={`font-bold ${myVote === 'yes' ? 'text-emerald-700' : 'text-rose-700'}`}>
-                                  Your Vote: {myVote === 'yes' ? 'Agree 👍' : 'Disagree 👎'}
+                                  Your Vote: {myVote === 'yes' ? 'Agree ' : 'Disagree '}
                                 </span>
                               ) : (
                                 <span className="text-slate-400 italic">Voting pending...</span>
@@ -1277,21 +1277,21 @@ export default function FarmPoolingPage() {
                                   onClick={() => handleVoteScheme(prop._id, 'yes')}
                                   className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
                                     myVote === 'yes'
-                                      ? 'bg-emerald-700 text-white shadow-xs'
+                                      ? 'bg-emerald-700 text-white '
                                       : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200'
                                   }`}
                                 >
-                                  👍 Agree
+                                   Agree
                                 </button>
                                 <button
                                   onClick={() => handleVoteScheme(prop._id, 'no')}
                                   className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
                                     myVote === 'no'
-                                      ? 'bg-rose-600 text-white shadow-xs'
+                                      ? 'bg-rose-600 text-white '
                                       : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200'
                                   }`}
                                 >
-                                  👎 Disagree
+                                   Disagree
                                 </button>
                               </div>
                             </div>
@@ -1310,7 +1310,7 @@ export default function FarmPoolingPage() {
         {/* 7. TAB 5: DISPUTE & SUPPORT QUERY DESK */}
         {activePoolWorkspaceTab === 'disputes' && (
           <div className="space-y-6">
-            <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm p-6 space-y-4">
+            <div className="bg-white border border-[#e2d4b7] rounded-3xl p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                 <div>
                   <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
@@ -1322,9 +1322,9 @@ export default function FarmPoolingPage() {
                 </div>
                 <button
                   onClick={() => setShowTicketModal(true)}
-                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all shrink-0"
+                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shrink-0"
                 >
-                  🚩 Raise Conflict / Query
+                   Raise Conflict / Query
                 </button>
               </div>
 
@@ -1341,7 +1341,7 @@ export default function FarmPoolingPage() {
                         <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-md uppercase ${
                           t.visibility === 'private' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                         }`}>
-                          {t.visibility === 'private' ? '🔒 Private' : '🌐 Shared'}
+                          {t.visibility === 'private' ? ' Private' : ' Shared'}
                         </span>
                         <span className="text-[10px] text-slate-500 font-mono bg-white px-2 py-0.5 rounded-md uppercase border border-slate-200">Category: {t.category}</span>
                       </div>
@@ -1373,7 +1373,7 @@ export default function FarmPoolingPage() {
         {/* 8. TAB 6: SIGNED SMART CONTRACT */}
         {activePoolWorkspaceTab === 'contract' && (
           <div className="space-y-6">
-            <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm overflow-hidden space-y-4 p-6">
+            <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden space-y-4 p-6">
               <div className="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
                 <div>
                   <h3 className="text-base font-bold text-[#1f3b2c] flex items-center gap-2">
@@ -1399,10 +1399,10 @@ export default function FarmPoolingPage() {
         {/* Dispute Ticket Modal Overlay */}
         {showTicketModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-6 max-w-md w-full border border-[#e2d4b7] shadow-2xl space-y-4 animate-scaleUp">
+            <div className="bg-white rounded-3xl p-6 max-w-md w-full border border-[#e2d4b7] space-y-4 animate-scaleUp">
               <div className="border-b border-slate-100 pb-2 flex justify-between items-center">
                 <h3 className="font-extrabold text-sm text-[#1f3b2c] flex items-center gap-1.5">
-                  🚩 Raise Dispute or Support Ticket
+                   Raise Dispute or Support Ticket
                 </h3>
                 <button onClick={() => setShowTicketModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
               </div>
@@ -1456,8 +1456,8 @@ export default function FarmPoolingPage() {
                     className="w-full border border-slate-200 rounded-xl px-2.5 py-2 bg-white text-[#1f3b2c] font-semibold"
                     required
                   >
-                    <option value="public">🌐 Share with pooled farmers (Public)</option>
-                    <option value="private">🔒 Send privately to FCO & Admin only (Private)</option>
+                    <option value="public"> Share with pooled farmers (Public)</option>
+                    <option value="private"> Send privately to FCO & Admin only (Private)</option>
                   </select>
                   <p className="text-[10px] text-slate-500 mt-1 leading-normal">
                     Private tickets are hidden from the query feed of other farmers in your pool.
@@ -1467,7 +1467,7 @@ export default function FarmPoolingPage() {
                 <button
                   type="submit"
                   disabled={isSubmittingTicket}
-                  className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-sm transition-all"
+                  className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all"
                 >
                   {isSubmittingTicket ? 'Filing Query...' : 'Submit Support Ticket'}
                 </button>
@@ -1505,7 +1505,7 @@ export default function FarmPoolingPage() {
         )}
 
         {/* Contract Layout */}
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl overflow-hidden">
           <div className="p-1">
             <SmartContractDocument pool={activePool} />
           </div>
@@ -1520,7 +1520,7 @@ export default function FarmPoolingPage() {
                 <button
                   onClick={handleResign}
                   disabled={isSigningLoading}
-                  className="mt-3 bg-white border border-emerald-200 text-emerald-800 hover:bg-emerald-50 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm"
+                  className="mt-3 bg-white border border-emerald-200 text-emerald-800 hover:bg-emerald-50 text-xs font-bold px-4 py-2 rounded-xl transition-all"
                 >
                   {isSigningLoading ? 'Resetting...' : 'Re-sign Contract (Testing)'}
                 </button>
@@ -1568,7 +1568,7 @@ export default function FarmPoolingPage() {
                         ref={canvasRef}
                         width={500}
                         height={150}
-                        className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-crosshair touch-none shadow-inner w-full"
+                        className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-crosshair touch-none w-full"
                         onMouseDown={startDrawing}
                         onMouseMove={draw}
                         onMouseUp={stopDrawing}
@@ -1580,7 +1580,7 @@ export default function FarmPoolingPage() {
                       <button
                         type="button"
                         onClick={clearSignature}
-                        className="absolute right-2 bottom-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-bold transition-all shadow-sm"
+                        className="absolute right-2 bottom-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-bold transition-all"
                       >
                         Clear Pad
                       </button>
@@ -1638,7 +1638,7 @@ export default function FarmPoolingPage() {
                     <button
                       onClick={handleSignContract}
                       disabled={!signingName || isSigningLoading}
-                      className="px-6 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg disabled:opacity-50 transition-all w-full sm:w-auto text-center"
+                      className="px-6 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl disabled:opacity-50 transition-all w-full sm:w-auto text-center"
                     >
                       {isSigningLoading ? 'Signing...' : 'Accept & Sign'}
                     </button>
@@ -1660,7 +1660,7 @@ export default function FarmPoolingPage() {
         {/* Rejection/Modification Modal */}
         {showRejectionModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div className="bg-white rounded-3xl p-6 max-w-md w-full border border-gray-100 shadow-xl space-y-4">
+            <div className="bg-white rounded-3xl p-6 max-w-md w-full border border-gray-100 space-y-4">
               <div>
                 <h3 className="font-extrabold text-[#1f3b2c] text-base">Request Agreement Changes</h3>
                 <p className="text-xs text-gray-500 mt-1">Specify what revisions are needed. This agreement will be returned to the FCO (Farm Counseling Officer) for modification.</p>
@@ -1707,7 +1707,7 @@ export default function FarmPoolingPage() {
           <p className="text-sm text-gray-500 mt-1">Review meeting details, operational planning progress, and next steps.</p>
         </div>
 
-        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-8 shadow-sm space-y-6">
+        <div className="bg-white border border-[#e2d4b7] rounded-3xl p-8 space-y-6">
           <div className="flex items-center justify-between">
             <span className="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold rounded-full">
               STAGE: {activePool.status.toUpperCase().replace('_', ' ')}
@@ -1800,7 +1800,7 @@ export default function FarmPoolingPage() {
         </div>
         <button
           onClick={fetchInitialData}
-          className="inline-flex items-center gap-2 self-start rounded-lg border border-[#e2d4b7] bg-white px-4 py-2 text-xs font-semibold text-[#1f3b2c] shadow-sm hover:bg-[#f7f0de] transition-all"
+          className="inline-flex items-center gap-2 self-start rounded-lg border border-[#e2d4b7] bg-white px-4 py-2 text-xs font-semibold text-[#1f3b2c] hover:bg-[#f7f0de] transition-all"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh Console
         </button>
@@ -1808,7 +1808,7 @@ export default function FarmPoolingPage() {
 
       {/* Alert Notices */}
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-3 text-rose-800 shadow-sm">
+        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-3 text-rose-800">
           <XCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="font-bold text-sm">Action Required</h4>
@@ -1818,7 +1818,7 @@ export default function FarmPoolingPage() {
       )}
 
       {success && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-800 shadow-sm animate-slideDown">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-800 animate-slideDown">
           <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <p className="text-xs font-medium leading-relaxed">{success}</p>
         </div>
@@ -1828,7 +1828,7 @@ export default function FarmPoolingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Controls Panel */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white border border-[#e2d4b7] rounded-2xl shadow-sm p-6 space-y-6">
+            <div className="bg-white border border-[#e2d4b7] rounded-2xl p-6 space-y-6">
               <div>
                 <h3 className="text-lg font-bold text-[#1f3b2c] flex items-center gap-2">
                   <Grid className="w-5 h-5 text-[#166534]" /> Step 1: Farm Registry Information
@@ -1838,7 +1838,7 @@ export default function FarmPoolingPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] rounded-xl p-5 border border-slate-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#166534] rounded-xl p-5 border border-slate-100">
                 <div className="space-y-1">
                   <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Survey Number</span>
                   <p className="text-sm font-bold text-[#1f3b2c]">{land.surveyNumber}</p>
@@ -1876,7 +1876,7 @@ export default function FarmPoolingPage() {
 
                 <button
                   onClick={togglePoolingAvailability}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.98] ${
+                  className={`px-5 py-2.5 rounded-xl text-sm font-bold  transition-all active:scale-[0.98] ${
                     readyToPool 
                       ? 'bg-rose-600 hover:bg-rose-700 text-white' 
                       : 'bg-[#166534] hover:bg-[#14532d] text-white'
@@ -1891,13 +1891,13 @@ export default function FarmPoolingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => router.push(`/dashboard/farmer/pooling/discover?userId=${userId || ''}`)}
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[#166534] px-6 py-4 text-sm font-bold text-white shadow-md hover:bg-[#14532d] transition-all"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[#166534] px-6 py-4 text-sm font-bold text-white hover:bg-[#14532d] transition-all"
                 >
                   <Compass className="w-5 h-5" /> Step 2: Discover Neighbouring Farmers <ArrowRight className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => router.push(`/dashboard/farmer/pooling/invitations?userId=${userId || ''}`)}
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#e2d4b7] bg-white px-6 py-4 text-sm font-bold text-[#1f3b2c] shadow-sm hover:bg-[#f7f0de] transition-all"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#e2d4b7] bg-white px-6 py-4 text-sm font-bold text-[#1f3b2c] hover:bg-[#f7f0de] transition-all"
                 >
                   <Users className="w-5 h-5" /> Step 3: View Received Invitations <ArrowRight className="w-4 h-4" />
                 </button>
@@ -1907,7 +1907,7 @@ export default function FarmPoolingPage() {
 
           {/* Right Sidebar Info Panel */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-gradient-to-br from-[#166534] to-[#15803d] text-white rounded-3xl p-6 shadow-lg space-y-4">
+            <div className="bg-[#166534] text-white rounded-3xl p-6 space-y-4">
               <h3 className="font-bold text-base flex items-center gap-2">
                 <Shield className="w-5 h-5 text-[#fef3c7]" /> Collaborative Agriculture
               </h3>

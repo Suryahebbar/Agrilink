@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Search, Filter, ShoppingCart, Heart, Star, Loader2, Grid, List } from 'lucide-react';
+import { Search, Filter, ShoppingCart, Heart, Star, Loader2, Grid, List } from '../../../../../components/ui/icons';
 import Link from 'next/link';
 import ProductCard from '@/components/marketplace/ProductCard';
 import { useCartWishlist } from '@/contexts/CartWishlistContext';
@@ -240,7 +240,7 @@ export default function MarketplaceProductsPage() {
 
       {/* Wishlist Summary */}
       {wishlist.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-40">
+        <div className="fixed bottom-4 right-4 bg-white rounded-lg p-4 border z-40">
           <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500 fill-current" />
             <span className="text-sm font-medium text-gray-900">{wishlist.length} items in wishlist</span>
@@ -255,7 +255,7 @@ export default function MarketplaceProductsPage() {
       )}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50">
-          <div className={`px-4 py-3 rounded-lg shadow-lg border ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
+          <div className={`px-4 py-3 rounded-lg  border ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
             <span className={`${toast.type === 'success' ? 'text-green-700' : 'text-red-700'} text-sm font-medium`}>
               {toast.message}
             </span>

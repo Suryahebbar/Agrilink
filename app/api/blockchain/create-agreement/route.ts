@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       documentCid
     }, privateKey || process.env.BLOCKCHAIN_PRIVATE_KEY || '');
 
-    console.log(`✅ Agreement created: ${agreementId}`);
+    console.log(` Agreement created: ${agreementId}`);
 
     return NextResponse.json({
       success: true,

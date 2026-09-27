@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import HeaderWrapper from '../../components/Header/HeaderWrapper';
 import Footer from '../../components/Footer/Footer';
-import { ShieldCheck, Info, FileText, CheckCircle } from 'lucide-react';
+import { ShieldCheck, Info, FileText, CheckCircle } from '../../../components/ui/icons';
 
 export default function RegisterFarmerPage() {
   const [fullName, setFullName] = useState('');
@@ -187,10 +187,10 @@ export default function RegisterFarmerPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#f7f0de] to-[#fffaf1]">
+    <div className="min-h-screen flex flex-col bg-[#166534]">
       <HeaderWrapper />
       <main className="flex-grow flex items-center justify-center px-4 py-24">
-        <div className="w-full max-w-lg bg-white/80 backdrop-blur-md border border-[#e2d4b7] rounded-2xl shadow-xl p-8 md:p-10 transition-all duration-300">
+        <div className="w-full max-w-lg bg-white/80 backdrop-blur-md border border-[#e2d4b7] rounded-2xl p-8 md:p-10 transition-all duration-300">
           
           {/* Header */}
           <div className="text-center mb-8">
@@ -220,7 +220,7 @@ export default function RegisterFarmerPage() {
           {verifiedCredentials ? (
             /* Success Display */
             <div className="space-y-6 text-center py-4">
-              <div className="w-16 h-16 bg-[#166534]/10 rounded-full flex items-center justify-center mx-auto mb-2 animate-bounce">
+              <div className="w-16 h-16 bg-[#166534]/10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <CheckCircle className="w-10 h-10 text-[#166534]" />
               </div>
               <h2 className="text-xl font-bold text-[#1f3b2c]">Registration Complete</h2>
@@ -242,7 +242,7 @@ export default function RegisterFarmerPage() {
 
               <Link
                 href="/login"
-                className="w-full inline-flex items-center justify-center rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] shadow-md transition-all active:scale-[0.98]"
+                className="w-full inline-flex items-center justify-center rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] transition-all active:scale-[0.98]"
               >
                 Go to Login
               </Link>
@@ -281,7 +281,7 @@ export default function RegisterFarmerPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
+                className="w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
               >
                 {loading ? 'Setting Password...' : 'Set Password & Complete'}
               </button>
@@ -379,7 +379,7 @@ export default function RegisterFarmerPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-4 w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
+                className="mt-4 w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
               >
                 {loading ? 'Sending Verification OTP...' : 'Send Email OTP & Continue'}
               </button>
@@ -408,7 +408,7 @@ export default function RegisterFarmerPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
+                className="w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
               >
                 {loading ? 'Verifying OTP...' : 'Verify OTP & Complete Setup'}
               </button>

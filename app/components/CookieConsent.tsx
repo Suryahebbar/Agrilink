@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Cookie, ShieldCheck, X } from 'lucide-react';
+import { Cookie, ShieldCheck, X } from '../../components/ui/icons';
 
 const COOKIE_CONSENT_KEY = 'agrilink_cookie_consent';
 
@@ -38,10 +38,10 @@ export default function CookieConsent() {
       aria-label="Cookie consent banner"
       className="fixed bottom-4 left-4 right-4 md:left-6 md:right-auto md:max-w-md z-50 animate-in fade-in slide-in-from-bottom-5 duration-300"
     >
-      <div className="bg-[#1f3b2c] text-white border border-[#2d523e] rounded-2xl p-5 shadow-2xl backdrop-blur-md">
+      <div className="bg-[#1f3b2c] text-white border border-[#2d523e] rounded-2xl p-5 backdrop-blur-md">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#166534] flex items-center justify-center text-emerald-300 shadow-inner flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#166534] flex items-center justify-center text-emerald-300 flex-shrink-0">
               <Cookie className="w-5 h-5" />
             </div>
             <div>
@@ -75,7 +75,7 @@ export default function CookieConsent() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={handleAcceptAll}
-            className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2.5 px-3.5 rounded-xl transition-all shadow-md active:scale-95 text-center"
+            className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2.5 px-3.5 rounded-xl transition-all active:scale-95 text-center"
           >
             Accept All
           </button>

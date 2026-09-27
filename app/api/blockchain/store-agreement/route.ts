@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     
     // Auto-deploy contract if not deployed
     if (!blockchainService.isContractDeployed()) {
-      console.log('📝 Auto-deploying blockchain contract...');
+      console.log(' Auto-deploying blockchain contract...');
       await blockchainService.deployContract();
     }
 

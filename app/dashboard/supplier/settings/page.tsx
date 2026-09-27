@@ -640,7 +640,7 @@ export default function SettingsPage() {
       {/* Change Password Modal */}
       {isChangePasswordOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-4">
+          <div className="bg-white rounded-lg w-full max-w-md p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Change Password</h2>
               <button

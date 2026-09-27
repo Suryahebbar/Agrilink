@@ -178,7 +178,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Activities */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold text-[#232F3E]">Recent Administrative Activities</h2>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -191,12 +191,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100">
           <h2 className="text-lg font-bold text-[#232F3E] mb-6">Quick Actions</h2>
           <div className="space-y-4">
             {quickActions.map((action, index) => (
               <div key={index} className="p-4 rounded-xl border border-gray-100 hover:border-[#1A9B9A]/30 hover:bg-[#E6F7F7]/10 transition-all flex items-start gap-4">
-                <div className={`p-2.5 rounded-xl ${action.btnColor} shadow-md shrink-0`}>
+                <div className={`p-2.5 rounded-xl ${action.btnColor}  shrink-0`}>
                   {action.icon}
                 </div>
                 <div className="flex-1 min-w-0">

@@ -34,7 +34,7 @@ const ResponsiveNav: React.FC<ResponsiveNavProps> = ({
   };
 
   return (
-    <nav className={`bg-white shadow-sm ${className}`}>
+    <nav className={`bg-white  ${className}`}>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}

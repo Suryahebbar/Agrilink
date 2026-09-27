@@ -101,7 +101,7 @@ const AnimatedDropdown: React.FC<AnimatedDropdownProps> = ({
       {/* Dropdown */}
       {isOpen && (
         <div
-          className={`absolute z-50 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 ${getPlacementClasses()} ${dropdownClassName} ${isOpen ? 'dropdown-enter' : ''}`}
+          className={`absolute z-50 w-48 bg-white border border-gray-200 rounded-lg  py-1 ${getPlacementClasses()} ${dropdownClassName} ${isOpen ? 'dropdown-enter' : ''}`}
         >
           {items.map((item) => (
             <button

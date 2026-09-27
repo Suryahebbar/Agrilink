@@ -12,10 +12,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, password } = body;
 
-    console.log('🔐 Supplier Login Request:', { email, hasPassword: !!password });
+    console.log(' Supplier Login Request:', { email, hasPassword: !!password });
 
     if (!email || !password) {
-      console.log('❌ Missing email or password');
+      console.log(' Missing email or password');
       return NextResponse.json({ 
         error: 'Email and password are required' 
       }, { status: 400 });
@@ -24,13 +24,13 @@ export async function POST(request: Request) {
     // Find seller by email
     const seller = await Seller.findOne({ email });
     if (!seller) {
-      console.log('❌ Seller not found:', email);
+      console.log(' Seller not found:', email);
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Check if account is verified
     if (seller.verificationStatus !== 'verified') {
-      console.log('❌ Account not verified:', seller.verificationStatus);
+      console.log(' Account not verified:', seller.verificationStatus);
       return NextResponse.json({ 
         error: 'Please verify your account first. Check your email for OTP.' 
       }, { status: 401 });
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
     // Check if account is active
     if (!seller.isActive) {
-      console.log('❌ Account is inactive');
+      console.log(' Account is inactive');
       return NextResponse.json({ 
         error: 'Your account has been deactivated. Please contact support.' 
       }, { status: 401 });
@@ -47,11 +47,11 @@ export async function POST(request: Request) {
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, seller.passwordHash);
     if (!isPasswordValid) {
-      console.log('❌ Invalid password');
+      console.log(' Invalid password');
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    console.log('✅ Login successful:', {
+    console.log(' Login successful:', {
       id: seller._id,
       companyName: seller.companyName,
       email: seller.email,
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
-    console.error('❌ Error during login:', error);
+    console.error(' Error during login:', error);
     return NextResponse.json({ error: 'Login failed' }, { status: 500 });
   }
 }
@@ -98,7 +98,7 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { email } = body;
 
-    console.log('📧 Resend OTP Request:', { email });
+    console.log(' Resend OTP Request:', { email });
 
     if (!email) {
       return NextResponse.json({ 
@@ -109,13 +109,13 @@ export async function PUT(request: Request) {
     // Find seller by email
     const seller = await Seller.findOne({ email });
     if (!seller) {
-      console.log('❌ Seller not found:', email);
+      console.log(' Seller not found:', email);
       return NextResponse.json({ error: 'Seller not found' }, { status: 404 });
     }
 
     // Check if already verified
     if (seller.verificationStatus === 'verified') {
-      console.log('❌ Account already verified');
+      console.log(' Account already verified');
       return NextResponse.json({ 
         error: 'Account is already verified' 
       }, { status: 400 });
@@ -125,7 +125,7 @@ export async function PUT(request: Request) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    console.log('🔢 New OTP generated:', otp);
+    console.log(' New OTP generated:', otp);
     console.log('⏰ OTP Expires at:', otpExpiry);
 
     // Update seller with new OTP
@@ -133,7 +133,7 @@ export async function PUT(request: Request) {
     seller.otpExpiry = otpExpiry;
     await seller.save();
 
-    console.log('✅ OTP resent successfully:', {
+    console.log(' OTP resent successfully:', {
       id: seller._id,
       email: seller.email
     });
@@ -143,7 +143,7 @@ export async function PUT(request: Request) {
       otp // Include OTP in development only
     });
   } catch (error) {
-    console.error('❌ Error resending OTP:', error);
+    console.error(' Error resending OTP:', error);
     return NextResponse.json({ error: 'Failed to resend OTP' }, { status: 500 });
   }
 }

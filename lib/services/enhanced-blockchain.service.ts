@@ -153,7 +153,7 @@ class EnhancedBlockchainService {
     // Initialize asynchronously
     this.initializeWeb3Storage().catch(console.error);
     this.isDevelopmentMode = process.env.BLOCKCHAIN_MODE !== 'real';
-    console.log(`🔗 Enhanced Blockchain Service - Mode: ${this.isDevelopmentMode ? 'DEVELOPMENT' : 'PRODUCTION'}`);
+    console.log(` Enhanced Blockchain Service - Mode: ${this.isDevelopmentMode ? 'DEVELOPMENT' : 'PRODUCTION'}`);
   }
 
   private async initializeWeb3Storage() {
@@ -163,15 +163,15 @@ class EnhancedBlockchainService {
         const web3StorageModule = await importWeb3Storage();
         if (web3StorageModule) {
           this.web3StorageClient = new web3StorageModule.Web3Storage({ token: web3StorageToken });
-          console.log('📁 Web3.Storage client initialized');
+          console.log(' Web3.Storage client initialized');
         } else {
-          console.log('⚠️ Web3.Storage module not available - IPFS uploads will be simulated');
+          console.log('️ Web3.Storage module not available - IPFS uploads will be simulated');
         }
       } catch (error) {
-        console.log('⚠️ Failed to initialize Web3.Storage - IPFS uploads will be simulated');
+        console.log('️ Failed to initialize Web3.Storage - IPFS uploads will be simulated');
       }
     } else {
-      console.log('⚠️ Web3.Storage API key not found - IPFS uploads will be simulated');
+      console.log('️ Web3.Storage API key not found - IPFS uploads will be simulated');
     }
   }
 
@@ -204,7 +204,7 @@ class EnhancedBlockchainService {
         wrapWithDirectory: true
       });
 
-      console.log(`📁 File uploaded to IPFS: ${cid}`);
+      console.log(` File uploaded to IPFS: ${cid}`);
 
       return {
         cid: cid,
@@ -226,8 +226,8 @@ class EnhancedBlockchainService {
     try {
       if (this.isDevelopmentMode) {
         // Mock agreement creation
-        console.log(`📝 [DEV] Creating agreement ${agreementData.agreementId}`);
-        console.log(`📝 [DEV] Document CID: ${agreementData.documentCid}`);
+        console.log(` [DEV] Creating agreement ${agreementData.agreementId}`);
+        console.log(` [DEV] Document CID: ${agreementData.documentCid}`);
         return agreementData.agreementId;
       }
 
@@ -254,7 +254,7 @@ class EnhancedBlockchainService {
       );
 
       const receipt = await tx.wait();
-      console.log(`✅ Agreement ${agreementData.agreementId} created on blockchain`);
+      console.log(` Agreement ${agreementData.agreementId} created on blockchain`);
       
       return agreementData.agreementId;
     } catch (error) {
@@ -271,7 +271,7 @@ class EnhancedBlockchainService {
   ): Promise<void> {
     try {
       if (this.isDevelopmentMode) {
-        console.log(`📝 [DEV] Stored additional document ${cid} for agreement ${agreementId}`);
+        console.log(` [DEV] Stored additional document ${cid} for agreement ${agreementId}`);
         return;
       }
 
@@ -291,7 +291,7 @@ class EnhancedBlockchainService {
       );
 
       await tx.wait();
-      console.log(`📄 Additional document stored for agreement ${agreementId}`);
+      console.log(` Additional document stored for agreement ${agreementId}`);
     } catch (error) {
       console.error('Error storing document:', error);
       throw error;
@@ -305,7 +305,7 @@ class EnhancedBlockchainService {
   ): Promise<void> {
     try {
       if (this.isDevelopmentMode) {
-        console.log(`📝 [DEV] ${signerName} signed agreement ${agreementId}`);
+        console.log(` [DEV] ${signerName} signed agreement ${agreementId}`);
         return;
       }
 
@@ -324,7 +324,7 @@ class EnhancedBlockchainService {
       );
 
       await tx.wait();
-      console.log(`✅ Agreement ${agreementId} signed by ${signerName}`);
+      console.log(` Agreement ${agreementId} signed by ${signerName}`);
     } catch (error) {
       console.error('Error signing agreement:', error);
       throw error;
@@ -375,7 +375,7 @@ class EnhancedBlockchainService {
   async verifyDocumentIntegrity(agreementId: string, cid: string): Promise<boolean> {
     try {
       if (this.isDevelopmentMode) {
-        console.log(`📝 [DEV] Document ${cid} verified for agreement ${agreementId}`);
+        console.log(` [DEV] Document ${cid} verified for agreement ${agreementId}`);
         return true;
       }
 
@@ -405,7 +405,7 @@ class EnhancedBlockchainService {
       if (process.env.BLOCKCHAIN_CONTRACT_ADDRESS) {
         this.contractAddress = process.env.BLOCKCHAIN_CONTRACT_ADDRESS;
         this.contract = new Contract(this.contractAddress, contractABI, this.provider);
-        console.log(`🔗 Connected to contract: ${this.contractAddress}`);
+        console.log(` Connected to contract: ${this.contractAddress}`);
       }
     } catch (error) {
       console.error('Error initializing blockchain:', error);

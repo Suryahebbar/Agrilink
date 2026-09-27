@@ -509,10 +509,10 @@ function setupCropHandlers() {
 
     tempCrops.push({
       name: name,
-      season: season || '—',
-      area: area || '—',
+      season: season || ' - ',
+      area: area || ' - ',
       land_use: landUse,
-      irrigation: irrigation || '—'
+      irrigation: irrigation || ' - '
     });
 
     // Reset fields
@@ -534,7 +534,7 @@ function renderCropsTable() {
       <td><strong>${escapeHtml(c.name)}</strong></td>
       <td>${escapeHtml(c.season)}</td>
       <td>${escapeHtml(c.area)}</td>
-      <td><button type="button" class="del-crop-btn danger small-btn" data-index="${idx}">✕</button></td>
+      <td><button type="button" class="del-crop-btn danger small-btn" data-index="${idx}"></button></td>
     `;
     tbody.appendChild(tr);
   });
@@ -726,7 +726,7 @@ function renderPlotList() {
     if (isLine) {
       metaText = `LineString · ${p.gis.perimeter} px length`;
     } else {
-      metaText = `${p.owner.name || 'No Owner'} · Extent: ${p.land.total_area || '—'} · ${p.crops.length} Crop(s)`;
+      metaText = `${p.owner.name || 'No Owner'} · Extent: ${p.land.total_area || ' - '} · ${p.crops.length} Crop(s)`;
     }
 
     row.innerHTML = `
@@ -738,8 +738,8 @@ function renderPlotList() {
         <div class="meta">${escapeHtml(metaText)}</div>
       </div>
       <div style="display:flex; align-items:center; gap:6px;">
-        <button class="edit-info" data-id="${p.id}" style="border:none; background:none; padding:4px; font-size:16px; cursor:pointer;">✎</button>
-        <button class="del" data-id="${p.id}" style="border:none; background:none; padding:4px; font-size:16px; cursor:pointer;">✕</button>
+        <button class="edit-info" data-id="${p.id}" style="border:none; background:none; padding:4px; font-size:16px; cursor:pointer;"></button>
+        <button class="del" data-id="${p.id}" style="border:none; background:none; padding:4px; font-size:16px; cursor:pointer;"></button>
       </div>
     `;
 
@@ -1057,10 +1057,10 @@ function compileAgreement(parcels) {
     tableRows += `
       <tr>
         <td>${index + 1}</td>
-        <td><strong>${escapeHtml(p.administrative.survey)}</strong> / Surnoc ${escapeHtml(p.administrative.surnoc || '—')} / Hissa ${escapeHtml(p.administrative.hissa || '—')}</td>
+        <td><strong>${escapeHtml(p.administrative.survey)}</strong> / Surnoc ${escapeHtml(p.administrative.surnoc || ' - ')} / Hissa ${escapeHtml(p.administrative.hissa || ' - ')}</td>
         <td>${escapeHtml(p.administrative.village)} / ${escapeHtml(p.administrative.hobli)}</td>
         <td>${escapeHtml(p.owner.name)}</td>
-        <td>${escapeHtml(p.land.total_area || '—')} (${escapeHtml(p.land.land_type || 'Dry')})</td>
+        <td>${escapeHtml(p.land.total_area || ' - ')} (${escapeHtml(p.land.land_type || 'Dry')})</td>
         <td>${escapeHtml(cropsText)}</td>
       </tr>
     `;

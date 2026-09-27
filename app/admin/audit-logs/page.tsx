@@ -42,15 +42,15 @@ const MODULE_COLORS: Record<string, string> = {
 };
 
 const ACTION_ICONS: Record<string, string> = {
-  login: '🔐', login_failed: '🚫', logout: '👋',
-  agreement_opened: '📄', agreement_signed: '✍️',
-  agreement_rejected: '❌', agreement_downloaded: '⬇️',
-  blockchain_sealed: '⛓️', contract_verified: '🔍',
-  upload: '📤', document_verified: '✅', document_rejected: '❌',
-  land_added: '🌾', polygon_uploaded: '🗺️',
-  pdf_generated: '📋', signature_captured: '🖊️',
-  otp_verify: '🔑', password_change: '🔒',
-  create: '➕', update: '✏️', delete: '🗑️',
+  login: '', login_failed: '', logout: '',
+  agreement_opened: '', agreement_signed: '️',
+  agreement_rejected: '', agreement_downloaded: '⬇️',
+  blockchain_sealed: '️', contract_verified: '',
+  upload: '', document_verified: '', document_rejected: '',
+  land_added: '', polygon_uploaded: '️',
+  pdf_generated: '', signature_captured: '️',
+  otp_verify: '', password_change: '',
+  create: '', update: '️', delete: '️',
 };
 
 function actionLabel(action: string): string {
@@ -77,7 +77,7 @@ function statusDot(status: string) {
 // ─── Stats Bar ─────────────────────────────────────────────────────────────────
 function StatCard({ label, value, icon, color }: { label: string; value: number; icon: string; color: string }) {
   return (
-    <div className={`bg-white rounded-2xl border p-4 space-y-1 shadow-sm ${color}`}>
+    <div className={`bg-white rounded-2xl border p-4 space-y-1  ${color}`}>
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
         <span className="text-lg">{icon}</span>
@@ -92,11 +92,11 @@ function DetailDrawer({ log, onClose }: { log: AuditLogEntry; onClose: () => voi
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-white flex flex-col h-full overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
           <div>
             <p className="font-extrabold text-slate-900 text-sm">
-              {ACTION_ICONS[log.action] ?? '📌'} {actionLabel(log.action)}
+              {ACTION_ICONS[log.action] ?? ''} {actionLabel(log.action)}
             </p>
             <p className="text-[11px] text-slate-400 font-mono">{fmt(log.timestamp)}</p>
           </div>
@@ -120,10 +120,10 @@ function DetailDrawer({ log, onClose }: { log: AuditLogEntry; onClose: () => voi
             <p className="font-extrabold text-slate-500 text-[10px] uppercase tracking-wider">Actor</p>
             <div className="bg-slate-50 rounded-xl p-3 space-y-1.5 font-mono">
               {[
-                ['Name', log.userName || '—'],
-                ['Email', log.userEmail || '—'],
-                ['Role', log.userRole || '—'],
-                ['User ID', log.userId || '—'],
+                ['Name', log.userName || ' - '],
+                ['Email', log.userEmail || ' - '],
+                ['Role', log.userRole || ' - '],
+                ['User ID', log.userId || ' - '],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4">
                   <span className="text-slate-400 flex-shrink-0">{k}:</span>
@@ -139,9 +139,9 @@ function DetailDrawer({ log, onClose }: { log: AuditLogEntry; onClose: () => voi
             <div className="bg-slate-50 rounded-xl p-3 space-y-1.5 font-mono">
               {[
                 ['Type', log.resourceType],
-                ['Name', log.resourceName || '—'],
+                ['Name', log.resourceName || ' - '],
                 ['ID', log.resourceId],
-                ['Reference ID', log.referenceId || '—'],
+                ['Reference ID', log.referenceId || ' - '],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4">
                   <span className="text-slate-400 flex-shrink-0">{k}:</span>
@@ -156,9 +156,9 @@ function DetailDrawer({ log, onClose }: { log: AuditLogEntry; onClose: () => voi
             <section className="space-y-2">
               <p className="font-extrabold text-slate-500 text-[10px] uppercase tracking-wider">State Change</p>
               <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-3 font-mono">
-                <span className="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-lg">{log.oldValue || '—'}</span>
+                <span className="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-lg">{log.oldValue || ' - '}</span>
                 <span className="text-slate-400">→</span>
-                <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-lg">{log.newValue || '—'}</span>
+                <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-lg">{log.newValue || ' - '}</span>
               </div>
             </section>
           )}
@@ -176,10 +176,10 @@ function DetailDrawer({ log, onClose }: { log: AuditLogEntry; onClose: () => voi
             <p className="font-extrabold text-slate-500 text-[10px] uppercase tracking-wider">Device & Network</p>
             <div className="bg-slate-50 rounded-xl p-3 space-y-1.5 font-mono">
               {[
-                ['IP Address', log.ipAddress || '—'],
-                ['Browser', log.browser || '—'],
-                ['OS', log.os || '—'],
-                ['Device', log.deviceType || '—'],
+                ['IP Address', log.ipAddress || ' - '],
+                ['Browser', log.browser || ' - '],
+                ['OS', log.os || ' - '],
+                ['Device', log.deviceType || ' - '],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4">
                   <span className="text-slate-400 flex-shrink-0">{k}:</span>
@@ -329,10 +329,10 @@ export default function AuditLogsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
           <h1 className="text-2xl font-black text-[#1f3b2c] tracking-tight flex items-center gap-2">
-            📋 Audit Logs
+             Audit Logs
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Complete timestamped record of every system action — {total.toLocaleString()} total entries
+            Complete timestamped record of every system action  -  {total.toLocaleString()} total entries
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -342,7 +342,7 @@ export default function AuditLogsPage() {
               autoRefresh ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-600'
             }`}
           >
-            {autoRefresh ? '🔄 Auto-refresh ON' : '🔄 Auto-refresh OFF'}
+            {autoRefresh ? ' Auto-refresh ON' : ' Auto-refresh OFF'}
           </button>
           <button
             onClick={fetchLogs}
@@ -362,14 +362,14 @@ export default function AuditLogsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Total Logs" value={stats.total} icon="📊" color="border-slate-200" />
-        <StatCard label="Signed Today" value={stats.todaySigned} icon="✍️" color="border-blue-200" />
-        <StatCard label="Failed Logins Today" value={stats.failedLogins} icon="🚫" color="border-rose-200" />
-        <StatCard label="Blockchain Seals" value={stats.blockchainSeals} icon="⛓️" color="border-purple-200" />
+        <StatCard label="Total Logs" value={stats.total} icon="" color="border-slate-200" />
+        <StatCard label="Signed Today" value={stats.todaySigned} icon="️" color="border-blue-200" />
+        <StatCard label="Failed Logins Today" value={stats.failedLogins} icon="" color="border-rose-200" />
+        <StatCard label="Blockchain Seals" value={stats.blockchainSeals} icon="️" color="border-purple-200" />
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+      <div className="bg-white border border-slate-100 rounded-2xl p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search */}
           <div className="lg:col-span-2">
@@ -424,13 +424,13 @@ export default function AuditLogsPage() {
             onClick={() => { setSearch(''); setModule('All'); setRole('All'); setStatus('All'); setStartDate(''); setEndDate(''); setPage(1); }}
             className="text-xs font-bold text-slate-400 hover:text-slate-700 transition-all"
           >
-            ✕ Clear filters
+             Clear filters
           </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-2">
             <div className="animate-spin text-2xl">⟳</div>
@@ -438,7 +438,7 @@ export default function AuditLogsPage() {
           </div>
         ) : logs.length === 0 ? (
           <div className="p-12 text-center space-y-2">
-            <span className="text-3xl">📋</span>
+            <span className="text-3xl"></span>
             <p className="text-slate-500 font-medium">No logs found for the current filters</p>
           </div>
         ) : (
@@ -463,18 +463,18 @@ export default function AuditLogsPage() {
                         {fmt(log.timestamp)}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <p className="font-bold text-slate-800">{log.userName || '—'}</p>
+                        <p className="font-bold text-slate-800">{log.userName || ' - '}</p>
                         <p className="text-slate-400 text-[10px]">{log.userEmail || ''}</p>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="font-bold text-slate-500 capitalize">{log.userRole || '—'}</span>
+                        <span className="font-bold text-slate-500 capitalize">{log.userRole || ' - '}</span>
                       </td>
                       <td className="px-4 py-3">
                         {log.module ? (
                           <span className={`px-2 py-0.5 rounded-lg font-bold text-[10px] border ${MODULE_COLORS[log.module] ?? 'bg-slate-100 text-slate-700 border-slate-200'}`}>
                             {log.module}
                           </span>
-                        ) : '—'}
+                        ) : ' - '}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span className="flex items-center gap-1">
@@ -492,11 +492,11 @@ export default function AuditLogsPage() {
                       <td className="px-4 py-3 whitespace-nowrap font-mono">
                         {(log.oldValue || log.newValue) ? (
                           <span className="flex items-center gap-1 text-[10px]">
-                            <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">{log.oldValue || '—'}</span>
+                            <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">{log.oldValue || ' - '}</span>
                             <span className="text-slate-400">→</span>
-                            <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">{log.newValue || '—'}</span>
+                            <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">{log.newValue || ' - '}</span>
                           </span>
-                        ) : '—'}
+                        ) : ' - '}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase w-fit ${statusBadge(log.status)}`}>

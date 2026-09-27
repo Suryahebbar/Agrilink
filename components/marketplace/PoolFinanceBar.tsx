@@ -5,7 +5,7 @@ import {
   Users, TrendingUp, DollarSign, PieChart, 
   CheckCircle2, AlertCircle, ChevronDown, ChevronUp, 
   Layers, ShoppingBag, ShieldCheck, ArrowRight
-} from 'lucide-react';
+} from '../ui/icons';
 
 interface FinanceMetrics {
   poolId?: string;
@@ -93,7 +93,7 @@ export default function PoolFinanceBar({ userId, onOpenPoolOrders, variant = 'fu
     utilization > 60 ? 'text-amber-700 bg-amber-50 border-amber-200' : 'text-emerald-700 bg-emerald-50 border-emerald-200';
 
   return (
-    <div className="w-full bg-white text-[#1f3b2c] rounded-3xl shadow-sm border border-[#e2d4b7] p-5 md:p-6 mb-6 transition-all relative overflow-hidden animate-fadeIn">
+    <div className="w-full bg-white text-[#1f3b2c] rounded-3xl border border-[#e2d4b7] p-5 md:p-6 mb-6 transition-all relative overflow-hidden animate-fadeIn">
       {/* Main Top Summary Row */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
         
@@ -109,7 +109,7 @@ export default function PoolFinanceBar({ userId, onOpenPoolOrders, variant = 'fu
             {metrics.pendingProposalsCount && metrics.pendingProposalsCount > 0 ? (
               <button
                 onClick={onOpenPoolOrders}
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse hover:bg-amber-200 transition-all shadow-xs"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 transition-all"
               >
                 <AlertCircle className="w-3.5 h-3.5" /> {metrics.pendingProposalsCount} Action Required
               </button>
@@ -118,7 +118,7 @@ export default function PoolFinanceBar({ userId, onOpenPoolOrders, variant = 'fu
           <h2 className="text-lg md:text-xl font-bold tracking-tight text-[#1f3b2c] flex items-center gap-2">
             {metrics.poolName}
             <span className="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-mono font-normal border border-emerald-200">
-              FCO Synced ✓
+              FCO Synced 
             </span>
           </h2>
         </div>
@@ -185,19 +185,19 @@ export default function PoolFinanceBar({ userId, onOpenPoolOrders, variant = 'fu
             </p>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-slate-600">
-                <span>🌱 Seeds & Nutrients</span>
+                <span> Seeds & Nutrients</span>
                 <span className="font-bold text-[#1f3b2c] font-mono">₹{(metrics.categoryBreakdown?.seeds || 0).toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between items-center text-slate-600">
-                <span>🧪 Fertilizers & Bio-stimulants</span>
+                <span> Fertilizers & Bio-stimulants</span>
                 <span className="font-bold text-[#1f3b2c] font-mono">₹{(metrics.categoryBreakdown?.fertilizers || 0).toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between items-center text-slate-600">
-                <span>🚜 Tools & Equipment</span>
+                <span> Tools & Equipment</span>
                 <span className="font-bold text-[#1f3b2c] font-mono">₹{(metrics.categoryBreakdown?.equipment || 0).toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between items-center text-slate-600">
-                <span>🛡️ Pesticides & Crop Care</span>
+                <span>️ Pesticides & Crop Care</span>
                 <span className="font-bold text-[#1f3b2c] font-mono">₹{(metrics.categoryBreakdown?.others || 0).toLocaleString('en-IN')}</span>
               </div>
             </div>

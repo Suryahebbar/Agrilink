@@ -315,7 +315,7 @@ export default function LandIntegrationPage() {
               <span className="font-semibold text-[#1f3b2c]">Land Size: </span>
               {userLand.landData.landSizeInAcres ? 
                 `${userLand.landData.landSizeInAcres.toFixed(2)} acres` : 
-                '—'
+                ' - '
               }
             </div>
             <div>
@@ -324,7 +324,7 @@ export default function LandIntegrationPage() {
                 userLand.processingStatus === 'completed' ? 'bg-green-100 text-green-800' : 
                 'bg-yellow-100 text-yellow-800'
               }`}>
-                {userLand.processingStatus === 'completed' ? '✅ Mapped' : '⏳ Processing'}
+                {userLand.processingStatus === 'completed' ? ' Mapped' : '⏳ Processing'}
               </span>
             </div>
             <div>
@@ -336,7 +336,7 @@ export default function LandIntegrationPage() {
               <span className={`px-2 py-1 rounded-full text-xs ${
                 readyToIntegrate ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
               }`}>
-                {readyToIntegrate ? '✅ Ready' : '❌ Not Ready'}
+                {readyToIntegrate ? ' Ready' : ' Not Ready'}
               </span>
             </div>
           </div>
@@ -377,8 +377,8 @@ export default function LandIntegrationPage() {
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {request.status === 'pending' ? '⏳ Pending' :
-                         request.status === 'accepted' ? '✅ Accepted' :
-                         request.status === 'rejected' ? '❌ Rejected' :
+                         request.status === 'accepted' ? ' Accepted' :
+                         request.status === 'rejected' ? ' Rejected' :
                          request.status}
                       </span>
                     </div>

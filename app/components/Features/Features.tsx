@@ -1,4 +1,4 @@
-import { LandPlot, LineChart, Tractor, ScrollText } from 'lucide-react';
+import { LandPlot, LineChart, Tractor, ScrollText } from '../../../components/ui/icons';
 
 const features = [
   {
@@ -38,7 +38,7 @@ export default function Features() {
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
-            <div key={feature.name} className="bg-[#fffaf1] p-6 rounded-lg border border-[#f4b36b] shadow-sm hover:shadow-md transition-shadow">
+            <div key={feature.name} className="bg-[#fffaf1] p-6 rounded-lg border border-[#f4b36b] transition-shadow">
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-[#fbead1] text-[#b45309] mb-4">
                 <feature.icon className="h-6 w-6" />
               </div>

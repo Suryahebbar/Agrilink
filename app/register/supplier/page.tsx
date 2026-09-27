@@ -107,7 +107,7 @@ export default function RegisterSupplierPage() {
       
       <main className="flex-grow bg-[#fffaf1]">
         <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="bg-white border border-[#e2d4b7] rounded-lg shadow-sm p-8">
+          <div className="bg-white border border-[#e2d4b7] rounded-lg p-8">
             {/* Page Header */}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-[#1f3b2c] mb-2">

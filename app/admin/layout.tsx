@@ -157,7 +157,7 @@ export default function AdminLayout({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen flex bg-gradient-to-br from-[#f7f0de]/50 to-[#e6f7f7]/30">
+      <div className="min-h-screen flex from-[#f7f0de]/50 to-[#e6f7f7]/30">
         
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
@@ -174,7 +174,7 @@ export default function AdminLayout({
           {/* Sidebar Header */}
           <div className="h-16 px-6 border-b border-gray-700 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#1A9B9A] flex items-center justify-center shadow-md">
+              <div className="w-8 h-8 rounded-lg bg-[#1A9B9A] flex items-center justify-center">
                 <FiShield className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -200,7 +200,7 @@ export default function AdminLayout({
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 group ${
                     isActive 
-                      ? 'bg-[#1A9B9A] text-white shadow-lg shadow-[#1A9B9A]/30'
+                      ? 'bg-[#1A9B9A] text-white  shadow-[#1A9B9A]/30'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                   }`}
                 >
@@ -236,7 +236,7 @@ export default function AdminLayout({
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           
           {/* Top Navbar */}
-          <header className="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center px-4 justify-between lg:px-8 shrink-0">
+          <header className="h-16 bg-white border-b border-gray-200 flex items-center px-4 justify-between lg:px-8 shrink-0">
             <div className="flex items-center gap-4">
               <button 
                 className="lg:hidden text-gray-500 hover:text-gray-700" 

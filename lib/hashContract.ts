@@ -34,7 +34,7 @@ export interface ContractPayload {
     cultivationPeriod?: string;
   };
   version: string;
-  sealedAt: string; // ISO string — locked at signing time
+  sealedAt: string; // ISO string  -  locked at signing time
 }
 
 /**

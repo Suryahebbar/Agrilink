@@ -295,7 +295,7 @@ export default function ProductsPage() {
               <button
                 onClick={() => handleBulkAction(bulkAction)}
                 disabled={!bulkAction}
-                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white ${
+                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md  text-white ${
                   bulkAction
                     ? 'bg-indigo-600 hover:bg-indigo-700'
                     : 'bg-indigo-300 cursor-not-allowed'
@@ -308,7 +308,7 @@ export default function ProductsPage() {
                   setSelectedProducts(new Set());
                   setShowBulkActions(false);
                 }}
-                className="ml-2 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="ml-2 inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Cancel
               </button>
@@ -316,7 +316,7 @@ export default function ProductsPage() {
           </div>
           <button
             onClick={exportToCSV}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <FiDownload className="mr-2 h-4 w-4" />
             Export
@@ -342,7 +342,7 @@ export default function ProductsPage() {
               <button
                 type="button"
                 onClick={() => router.push('/admin/products/new')}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <FiPackage className="-ml-1 mr-2 h-5 w-5" />
                 New Product
@@ -487,7 +487,7 @@ export default function ProductsPage() {
               </p>
             </div>
             <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <nav className="relative z-0 inline-flex rounded-md -space-x-px" aria-label="Pagination">
                 <button
                   onClick={() =>
                     setPagination((prev) => ({

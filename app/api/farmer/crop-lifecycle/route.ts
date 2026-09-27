@@ -158,7 +158,7 @@ export async function PATCH(request: Request) {
               farmerId: plan.userId,
               farmerName: plan.farmerName || 'Farmer Member',
               category: 'others',
-              title: `🚨 Pest Outbreak Alert: ${pestIncident.pestName} (${pestIncident.severity?.toUpperCase()} Severity)`,
+              title: ` Pest Outbreak Alert: ${pestIncident.pestName} (${pestIncident.severity?.toUpperCase()} Severity)`,
               description: `Crop: ${plan.cropName}. Symptoms: ${pestIncident.symptoms || 'Visual damage noticed in field'}. Recommended Agronomic Action: ${pestIncident.advisory || 'Inspection requested.'}`,
               status: 'pending',
               visibility: 'public'

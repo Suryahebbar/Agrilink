@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('❌ Error in test:', error);
+    console.error(' Error in test:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'

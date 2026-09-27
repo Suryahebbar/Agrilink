@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Users, Target, Heart, Award, Globe, Lightbulb, Shield } from 'lucide-react';
+import { Users, Target, Heart, Award, Globe, Lightbulb, Shield } from '../../components/ui/icons';
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -32,7 +32,7 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f7f0de] to-white">
+    <div className="min-h-screen from-[#f7f0de] to-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -45,7 +45,7 @@ export default function About() {
             </p>
             <Link
               href="/contact"
-              className="bg-gradient-to-r from-[#166534] to-[#15803d] text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition-all"
+              className="bg-[#166534] text-white px-8 py-3 rounded-lg font-medium transition-all"
             >
               Get in Touch
             </Link>
@@ -92,7 +92,7 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <Heart className="w-8 h-8 text-[#166534] mb-4" />
               <h3 className="text-xl font-semibold text-[#1f3b2c] mb-3">Farmer First</h3>
               <p className="text-[#4b5563]">
@@ -100,7 +100,7 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <Lightbulb className="w-8 h-8 text-[#166534] mb-4" />
               <h3 className="text-xl font-semibold text-[#1f3b2c] mb-3">Innovation</h3>
               <p className="text-[#4b5563]">
@@ -108,14 +108,14 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <Shield className="w-8 h-8 text-[#166534] mb-4" />
               <h3 className="text-xl font-semibold text-[#1f3b2c] mb-3">Trust & Security</h3>
               <p className="text-[#4b5563]">
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <Users className="w-8 h-8 text-[#166534] mb-4" />
               <h3 className="text-xl font-semibold text-[#1f3b2c] mb-3">Community</h3>
               <p className="text-[#4b5563]">
@@ -123,7 +123,7 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <Globe className="w-8 h-8 text-[#166534] mb-4" />
               <h3 className="text-xl font-semibold text-[#1f3b2c] mb-3">Sustainability</h3>
               <p className="text-[#4b5563]">
@@ -131,7 +131,7 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-6 rounded-xl">
               <Award className="w-8 h-8 text-[#166534] mb-4" />
               <h3 className="text-xl font-semibold text-[#1f3b2c] mb-3">Excellence</h3>
               <p className="text-[#4b5563]">
@@ -156,7 +156,7 @@ export default function About() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {team.map((member, index) => (
             <div key={index} className="text-center">
-              <div className="w-24 h-24 bg-gradient-to-r from-[#166534] to-[#15803d] rounded-full mx-auto mb-4 flex items-center justify-center">
+              <div className="w-24 h-24 bg-[#166534] rounded-full mx-auto mb-4 flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </span>

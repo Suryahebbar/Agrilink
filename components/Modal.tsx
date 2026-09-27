@@ -87,7 +87,7 @@ const Modal = ({
       {/* Modal */}
       <div
         ref={modalRef}
-        className={`relative bg-white rounded-lg w-full ${getSizeClasses()} shadow-xl animate-modal-in modal-container`}
+        className={`relative bg-white rounded-lg w-full ${getSizeClasses()}  animate-modal-in modal-container`}
       >
         {/* Header */}
         {(title || showCloseButton) && (

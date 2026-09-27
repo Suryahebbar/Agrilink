@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Compass, Home, ArrowLeft, Sprout, Search } from 'lucide-react';
+import { Compass, Home, ArrowLeft, Sprout, Search } from '../components/ui/icons';
 import HeaderWrapper from './components/Header/HeaderWrapper';
 import Footer from './components/Footer/Footer';
 
@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#f7f0de] via-[#fffdf9] to-white text-slate-800">
+    <div className="min-h-screen flex flex-col from-[#f7f0de] via-[#fffdf9] to-white text-slate-800">
       <HeaderWrapper />
 
       <main className="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20">
@@ -18,10 +18,10 @@ export default function NotFound() {
           {/* Visual Icon Illustration */}
           <div className="relative mx-auto w-32 h-32 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-emerald-100/70 animate-ping opacity-30" />
-            <div className="relative w-28 h-28 rounded-3xl bg-gradient-to-tr from-[#166534] to-[#22c55e] flex items-center justify-center shadow-2xl shadow-emerald-900/20 text-white transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-              <Compass className="w-14 h-14 animate-pulse" />
+            <div className="relative w-28 h-28 rounded-3xl bg-[#166534] flex items-center justify-center shadow-emerald-900/20 text-white transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+              <Compass className="w-14 h-14" />
             </div>
-            <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-[#f59e0b] flex items-center justify-center text-white shadow-md">
+            <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-[#f59e0b] flex items-center justify-center text-white">
               <Sprout className="w-5 h-5" />
             </div>
           </div>
@@ -43,7 +43,7 @@ export default function NotFound() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-semibold text-sm shadow-lg shadow-emerald-900/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-semibold text-sm shadow-emerald-900/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Home className="w-4 h-4" />
               Return Home
@@ -51,7 +51,7 @@ export default function NotFound() {
 
             <Link
               href="/features"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#1f3b2c] border border-slate-200 font-semibold text-sm shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#1f3b2c] border border-slate-200 font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Search className="w-4 h-4 text-emerald-600" />
               Explore Features

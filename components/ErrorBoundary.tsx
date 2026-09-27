@@ -30,7 +30,7 @@ class ErrorBoundary extends React.Component<
         this.props.fallback || (
           <div className="min-h-screen bg-gray-50 flex items-center justify-center">
             <div className="text-center">
-              <span className="text-6xl">⚠️</span>
+              <span className="text-6xl">️</span>
               <h2 className="text-2xl font-semibold text-[#1f3b2c] mt-4">Something went wrong</h2>
               <p className="text-[#6b7280] mt-2">We're sorry, but something unexpected happened.</p>
               <button
