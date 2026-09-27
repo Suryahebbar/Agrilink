@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#166534" />
+      <stop offset="100%" stop-color="#22c55e" />
+    </linearGradient>
+  </defs>
+  <!-- Background rounded squircle -->
+  <rect width="32" height="32" rx="8" fill="#1f3b2c" />
+  
+  <!-- Clean minimalist sprouting leaf node -->
+  <!-- Stem -->
+  <path d="M16 26 C16 18 16 13 16 7" stroke="#86efac" stroke-width="2" stroke-linecap="round" fill="none" />
+  
+  <!-- Left Leaf -->
+  <path d="M16 18 C11 18 8 15 8 11 C12 11 15 14 16 18 Z" fill="url(#leafGrad)" />
+  
+  <!-- Right Leaf -->
+  <path d="M16 13 C21 13 24 10 24 6 C20 6 17 9 16 13 Z" fill="url(#leafGrad)" />
+  
+  <!-- Top Node Accent -->
+  <circle cx="16" cy="7" r="2" fill="#4ade80" />
+</svg>

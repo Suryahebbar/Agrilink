@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Shield, Eye, Lock, Database, User, FileText } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'Understand how AgriLink protects your personal information, agricultural data, and blockchain records.',
+};
 
 export default function Privacy() {
   return (

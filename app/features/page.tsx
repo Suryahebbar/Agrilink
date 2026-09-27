@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
   Sprout, 
@@ -13,6 +14,11 @@ import {
   Truck,
   Award
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Platform Features',
+  description: 'Explore AgriLink features: AI smart farming, boundary land pooling, blockchain agreements, fair marketplace, and weather intelligence.',
+};
 
 export default function Features() {
   const features = [

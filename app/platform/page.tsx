@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Shield, Users, TrendingUp, Globe, Database, Cpu } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Platform Architecture & Technology',
+  description: 'Explore AgriLink\'s decentralized agricultural ecosystem powered by Ethereum smart contracts, IPFS storage, and AI analytics.',
+};
 
 export default function Platform() {
   return (

@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FileText, Shield } from 'lucide-react';
 import HeaderWrapper from '../components/Header/HeaderWrapper';
 import Footer from '../components/Footer/Footer';
+
+export const metadata: Metadata = {
+  title: 'Terms & Conditions',
+  description: 'Review the terms, eligibility, land pooling rules, and agreements for using AgriLink services.',
+};
 
 export default function TermsAndConditions() {
   return (

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import HeaderWrapper from '../components/Header/HeaderWrapper';
 import Footer from '../components/Footer/Footer';
+
+export const metadata: Metadata = {
+  title: 'Register - Join AgriLink',
+  description: 'Create an AgriLink account as a Farmer or Supplier to access land integration, marketplace, and crop planning.',
+};
 
 export default function RegisterPage() {
   return (

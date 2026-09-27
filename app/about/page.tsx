@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Users, Target, Heart, Award, Globe, Lightbulb, Shield } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn about AgriLink\'s mission to empower Indian farmers with smart land pooling, transparent technology, and direct marketplace access.',
+};
 
 export default function About() {
   const team = [
