@@ -141,9 +141,10 @@ function DashboardContent() {
   const activeSidebarTab =
     searchParams.get('tab') === 'calendar' ? 'calendar' :
       searchParams.get('tab') === 'manage-pools' ? 'manage-pools' :
-        searchParams.get('tab') === 'schemes' ? 'schemes' : 'assigned-farmers';
+        searchParams.get('tab') === 'schemes' ? 'schemes' :
+          searchParams.get('tab') === 'claims' ? 'claims' : 'assigned-farmers';
 
-  const setActiveSidebarTab = (tab: 'assigned-farmers' | 'manage-pools' | 'calendar' | 'schemes') => {
+  const setActiveSidebarTab = (tab: 'assigned-farmers' | 'manage-pools' | 'calendar' | 'schemes' | 'claims') => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('tab', tab);
     router.push(`/fco/dashboard?${params.toString()}`);
@@ -237,6 +238,16 @@ function DashboardContent() {
 
   // File Upload State
   const [isUploadingFile, setIsUploadingFile] = useState(false);
+
+  // FCO Insurance Claims Inspection States
+  const [fcoClaims, setFcoClaims] = useState<any[]>([]);
+  const [loadingFcoClaims, setLoadingFcoClaims] = useState(false);
+  const [inspectingClaim, setInspectingClaim] = useState<any | null>(null);
+  const [inspectionDamagePct, setInspectionDamagePct] = useState<number>(50);
+  const [inspectionAssessedLoss, setInspectionAssessedLoss] = useState<number>(50000);
+  const [inspectionRec, setInspectionRec] = useState<'approve' | 'reject' | 'revise'>('approve');
+  const [inspectionNotes, setInspectionNotes] = useState('');
+  const [isSubmittingInspection, setIsSubmittingInspection] = useState(false);
 
   // Farm Planning Form States
   const [farmPlan, setFarmPlan] = useState({
@@ -729,6 +740,62 @@ function DashboardContent() {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  // Fetch FCO Insurance Claims
+  const fetchFcoClaimsData = async () => {
+    setLoadingFcoClaims(true);
+    try {
+      const res = await fetch('/api/insurance/claims?isFCO=true');
+      const data = await res.json();
+      if (data.success) {
+        setFcoClaims(data.claims || []);
+      }
+    } catch (err) {
+      console.error('Error fetching FCO insurance claims:', err);
+    } finally {
+      setLoadingFcoClaims(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeSidebarTab === 'claims') {
+      fetchFcoClaimsData();
+    }
+  }, [activeSidebarTab]);
+
+  const handleSubmitClaimInspection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inspectingClaim) return;
+    setIsSubmittingInspection(true);
+    try {
+      const res = await fetch('/api/insurance/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'fco_inspection',
+          claimId: inspectingClaim._id,
+          fcoId: searchParams.get('userId') || 'fco_system_user',
+          fcoName: 'AgriLink FCO Field Officer',
+          verifiedDamagePercent: Number(inspectionDamagePct),
+          assessedLossAmount: Number(inspectionAssessedLoss),
+          recommendation: inspectionRec,
+          inspectionNotes: inspectionNotes || 'Damage verified by FCO physical site assessment.'
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('FCO On-Site Inspection Report signed and recorded successfully!');
+        setInspectingClaim(null);
+        fetchFcoClaimsData();
+      } else {
+        alert(data.error || 'Failed to submit inspection.');
+      }
+    } catch (err: any) {
+      alert('Error submitting inspection report: ' + err.message);
+    } finally {
+      setIsSubmittingInspection(false);
     }
   };
 
@@ -1370,6 +1437,22 @@ function DashboardContent() {
               <FiFileText className={`h-4 w-4 ${activeSidebarTab === 'schemes' ? 'text-white' : 'text-[#166534]'}`} />
             </div>
             <span className="font-medium text-sm">Government Schemes</span>
+          </button>
+
+          <button
+            onClick={() => setActiveSidebarTab('claims')}
+            className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${activeSidebarTab === 'claims'
+                ? 'bg-gradient-to-r from-[#166534] to-[#15803d] text-white shadow-md font-bold'
+                : 'text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]'
+              }`}
+          >
+            <div className={`p-1.5 rounded-lg transition-all ${activeSidebarTab === 'claims'
+                ? 'bg-white/20'
+                : 'bg-[#f0fdf4] group-hover:bg-white group-hover:shadow-sm'
+              }`}>
+              <FiShield className={`h-4 w-4 ${activeSidebarTab === 'claims' ? 'text-white' : 'text-[#166534]'}`} />
+            </div>
+            <span className="font-medium text-sm">Insurance Claim Inspections</span>
           </button>
         </nav>
 
@@ -2394,18 +2477,100 @@ function DashboardContent() {
                                 {activeTab === 'insurance' && (
                                   <div className="space-y-4 text-xs">
                                     <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 space-y-4">
-                                      <h4 className="font-bold text-gray-700 uppercase tracking-wider">Crop Insurance Policy Setup</h4>
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div className="flex items-center justify-between">
+                                        <h4 className="font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                                          <FiShield className="text-emerald-700" /> FCO Crop Insurance Recommendation & Agreement Setup
+                                        </h4>
+                                        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                                          Module 11 Active
+                                        </span>
+                                      </div>
+
+                                      {/* Quick Recommender Presets */}
+                                      <div className="space-y-2">
+                                        <label className="block font-bold text-gray-500 uppercase text-[10px]">
+                                          Quick Recommend from Verified Insurance Catalog:
+                                        </label>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                          {[
+                                            {
+                                              id: 'pmfby-govt',
+                                              name: 'PMFBY (Govt Subsidized)',
+                                              provider: 'AIC of India (Govt)',
+                                              type: 'government',
+                                              rate: 2.0,
+                                              claim: 'Direct DBT to Aadhaar bank accounts. Payout conditional on official state drought/excess rain declaration.'
+                                            },
+                                            {
+                                              id: 'hdfc-ergo-agri',
+                                              name: 'HDFC ERGO Parametric Cover',
+                                              provider: 'HDFC ERGO General Insurance',
+                                              type: 'private',
+                                              rate: 4.8,
+                                              claim: 'Automated 14-day parametric weather station settlement directly to AgriLink Pool Escrow.'
+                                            },
+                                            {
+                                              id: 'icici-lombard-crop',
+                                              name: 'ICICI Lombard Kisan Kavach',
+                                              provider: 'ICICI Lombard General Insurance',
+                                              type: 'private',
+                                              rate: 5.5,
+                                              claim: 'FCO on-site damage assessment within 48 hrs with rapid claim settlement into pool account.'
+                                            }
+                                          ].map(preset => {
+                                            const isSelected = farmPlan.insuranceProvider === preset.provider;
+                                            const totalCost = Number(farmPlan.estimatedCost) || 160000;
+                                            const estPrem = Math.round((totalCost * preset.rate) / 100);
+
+                                            return (
+                                              <button
+                                                key={preset.id}
+                                                type="button"
+                                                onClick={() => {
+                                                  setFarmPlan({
+                                                    ...farmPlan,
+                                                    insuranceType: preset.type as any,
+                                                    insuranceProvider: preset.provider,
+                                                    coverageDetails: preset.type === 'government'
+                                                      ? 'Government PMFBY: Subsidized crop yield and natural adversity cover up to ₹' + totalCost
+                                                      : `${preset.name}: Full cost indemnity & weather index protection up to ₹` + totalCost,
+                                                    claimResponsibility: preset.claim
+                                                  });
+                                                  if (preset.type === 'private') {
+                                                    setTotalPrivatePremium(estPrem);
+                                                  } else {
+                                                    setTotalPrivatePremium(0);
+                                                  }
+                                                }}
+                                                className={`p-3 rounded-xl border text-left transition-all ${
+                                                  isSelected
+                                                    ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold shadow-sm'
+                                                    : 'bg-white border-gray-200 hover:border-emerald-400 text-gray-700'
+                                                }`}
+                                              >
+                                                <div className="flex justify-between items-center text-[10px] mb-1">
+                                                  <span className="font-bold text-emerald-800">{preset.type.toUpperCase()}</span>
+                                                  <span className="font-mono text-gray-500">~₹{estPrem} Prem.</span>
+                                                </div>
+                                                <p className="font-bold text-xs truncate">{preset.name}</p>
+                                                <p className="text-[10px] text-gray-400 truncate mt-0.5">{preset.provider}</p>
+                                              </button>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                                         <div>
-                                          <label className="block font-bold text-gray-400 uppercase mb-1">Insurance Type</label>
+                                          <label className="block font-bold text-gray-400 uppercase mb-1">Insurance Scheme Type</label>
                                           <select
                                             value={farmPlan.insuranceType}
                                             onChange={(e) => setFarmPlan({ ...farmPlan, insuranceType: e.target.value as any })}
                                             className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 font-semibold"
                                           >
-                                            <option value="government">Government Scheme</option>
-                                            <option value="private">Private Insurance</option>
-                                            <option value="none">No Insurance</option>
+                                            <option value="government">Government Scheme (PMFBY / RWBCIS)</option>
+                                            <option value="private">Private Crop Insurance (HDFC ERGO / ICICI Lombard / Bajaj)</option>
+                                            <option value="none">No Insurance (Farmers Bear 100% Risk)</option>
                                           </select>
                                         </div>
 
@@ -2415,14 +2580,14 @@ function DashboardContent() {
                                               <label className="block font-bold text-gray-400 uppercase mb-1">Insurance Provider Name</label>
                                               <input
                                                 type="text"
-                                                placeholder="e.g. HDFC Ergo, ICICI Lombard..."
+                                                placeholder="e.g. HDFC ERGO, ICICI Lombard, Bajaj Allianz..."
                                                 value={farmPlan.insuranceProvider}
                                                 onChange={(e) => setFarmPlan({ ...farmPlan, insuranceProvider: e.target.value })}
                                                 className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-800 bg-white font-semibold"
                                               />
                                             </div>
                                             <div>
-                                              <label className="block font-bold text-gray-400 uppercase mb-1">Total Insurance Premium (₹)</label>
+                                              <label className="block font-bold text-gray-400 uppercase mb-1">Total Pool Insurance Premium (₹)</label>
                                               <input
                                                 type="number"
                                                 placeholder="e.g. 5000"
@@ -2432,12 +2597,12 @@ function DashboardContent() {
                                               />
                                             </div>
                                             <div className="p-3 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100/50 text-[10px] leading-relaxed flex items-center md:col-span-2">
-                                              <span>Private insurance premium cost will be shared by farmers proportionate to their profit sharing percentages.</span>
+                                              <span>✓ Private insurance premium cost is automatically shared by farmers proportionate to their profit sharing percentages in Agreement Clause 5.</span>
                                             </div>
                                           </>
                                         ) : farmPlan.insuranceType === 'government' ? (
                                           <div className="col-span-1 md:col-span-2 p-3 bg-amber-50 text-amber-800 rounded-xl border border-amber-200 text-[11px] leading-relaxed">
-                                            <strong>Government Scheme warning:</strong> Payout is NOT guaranteed. Payouts depend strictly on official state government declarations of drought or heavy rain conditions in the region.
+                                            <strong>Government Scheme Notice:</strong> Payout is subsidized by Central/State govt. Payouts depend strictly on official state government declarations of drought or heavy rain conditions in the region.
                                           </div>
                                         ) : (
                                           <div className="col-span-1 md:col-span-2 p-3 bg-red-50 text-red-800 rounded-xl border border-red-200 text-[11px] leading-relaxed">
@@ -2446,21 +2611,21 @@ function DashboardContent() {
                                         )}
 
                                         <div className="md:col-span-2">
-                                          <label className="block font-bold text-gray-400 uppercase mb-1">Insurance Coverage Details</label>
+                                          <label className="block font-bold text-gray-400 uppercase mb-1">Insurance Coverage Details (Enshrined in Contract Agreement)</label>
                                           <input
                                             type="text"
-                                            readOnly
                                             value={farmPlan.coverageDetails}
-                                            className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-500 bg-gray-100 font-semibold cursor-not-allowed"
+                                            onChange={(e) => setFarmPlan({ ...farmPlan, coverageDetails: e.target.value })}
+                                            className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-800 bg-white font-semibold"
                                           />
                                         </div>
                                         <div>
-                                          <label className="block font-bold text-gray-400 uppercase mb-1">Claim Responsibility</label>
+                                          <label className="block font-bold text-gray-400 uppercase mb-1">Claim Responsibility & FCO Role</label>
                                           <input
                                             type="text"
-                                            readOnly
                                             value={farmPlan.claimResponsibility}
-                                            className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-500 bg-gray-100 font-semibold cursor-not-allowed"
+                                            onChange={(e) => setFarmPlan({ ...farmPlan, claimResponsibility: e.target.value })}
+                                            className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-slate-800 bg-white font-semibold"
                                           />
                                         </div>
                                         <div>
@@ -3118,7 +3283,7 @@ function DashboardContent() {
 
                 </div>
               </div>
-            ) : (
+            ) : activeSidebarTab === 'schemes' ? (
               /* FCO GOVERNMENT SCHEMES MANAGER VIEW (Step 7, 10 Refinements) */
               <div className="space-y-8 animate-fadeIn text-xs">
                 <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -3502,6 +3667,215 @@ function DashboardContent() {
                             className="px-5 py-2 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                           >
                             {isSendingRecommendation ? 'Broadcasting...' : 'Broadcast Recommendation 🚀'}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* FCO INSURANCE CLAIM INSPECTIONS VIEW */
+              <div className="space-y-6 animate-fadeIn text-xs">
+                <div className="bg-white p-6 rounded-3xl border border-gray-200/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl font-black text-[#1f3b2c] mb-1 flex items-center gap-2">
+                      <FiShield className="text-[#166534]" /> Crop Insurance Claim Inspections & Damage Verification
+                    </h1>
+                    <p className="text-xs text-gray-500">Conduct physical field assessments for submitted crop loss claims, certify damage percentage, and disburse payouts.</p>
+                  </div>
+                  <button
+                    onClick={fetchFcoClaimsData}
+                    className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all flex items-center gap-1.5"
+                  >
+                    Refresh Claims List
+                  </button>
+                </div>
+
+                {/* Claims List Table */}
+                <div className="bg-white rounded-3xl border border-gray-200/60 shadow-sm p-6 space-y-4">
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+                    <h3 className="text-sm font-bold text-gray-800">Submitted Farmer Claims ({fcoClaims.length})</h3>
+                    <span className="text-xs text-gray-400">Total Claims Pending or Inspected</span>
+                  </div>
+
+                  {loadingFcoClaims ? (
+                    <div className="py-12 text-center text-gray-400">Loading claims...</div>
+                  ) : fcoClaims.length === 0 ? (
+                    <div className="py-12 text-center text-gray-400 space-y-2">
+                      <FiCheckCircle className="w-8 h-8 text-emerald-600 mx-auto" />
+                      <p className="font-bold text-gray-700">No active insurance claims pending inspection.</p>
+                      <p className="text-[11px] text-gray-400">When farmers file damage reports from their dashboard, they will appear here for FCO verification.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {fcoClaims.map((claim) => (
+                        <div key={claim._id} className="p-5 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all bg-gray-50/30 space-y-3">
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+                            <div>
+                              <span className="font-mono text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200/60">
+                                {claim.claimNumber}
+                              </span>
+                              <h4 className="font-bold text-sm text-gray-900 mt-1">
+                                {claim.farmerName} &mdash; {claim.cropName} ({claim.calamityType.replace('_', ' ').toUpperCase()})
+                              </h4>
+                              <p className="text-[11px] text-gray-400">
+                                Policy: <strong className="text-gray-700">{claim.policyName}</strong> ({claim.providerName}) • Incident Date: {new Date(claim.incidentDate).toLocaleDateString()}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <span className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider ${
+                                claim.status === 'settled' 
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : claim.status === 'inspected' || claim.status === 'approved'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : claim.status === 'rejected'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-amber-100 text-amber-800'
+                              }`}>
+                                {claim.status.replace('_', ' ')}
+                              </span>
+
+                              {claim.status === 'submitted' && (
+                                <button
+                                  onClick={() => {
+                                    setInspectingClaim(claim);
+                                    setInspectionDamagePct(claim.estimatedLossPercentage || 50);
+                                    setInspectionAssessedLoss(claim.estimatedLossAmount || 50000);
+                                    setInspectionNotes(`Inspected farm parcel of ${claim.farmerName}. Verified crop loss caused by ${claim.calamityType.replace('_', ' ')}.`);
+                                  }}
+                                  className="px-3.5 py-1.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl text-xs shadow-sm transition-all flex items-center gap-1"
+                                >
+                                  Conduct Field Inspection
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div>
+                              <span className="text-gray-400 text-[10px] block">Affected Area</span>
+                              <strong className="text-gray-800">{claim.affectedAcres} of {claim.totalFarmAcres} Acres</strong>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 text-[10px] block">Farmer Loss Estimate</span>
+                              <strong className="text-amber-700">{claim.estimatedLossPercentage}% (₹{claim.estimatedLossAmount?.toLocaleString()})</strong>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 text-[10px] block">Verified FCO Loss</span>
+                              <strong className="text-emerald-700">
+                                {claim.fcoInspection ? `${claim.fcoInspection.verifiedDamagePercent}% (₹${claim.fcoInspection.assessedLossAmount?.toLocaleString()})` : 'Pending Inspection'}
+                              </strong>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 text-[10px] block">Disbursement Status</span>
+                              <strong className="text-indigo-700">
+                                {claim.status === 'settled' ? `Disbursed (Ref: ${claim.settlementReference})` : 'Awaiting Settlement'}
+                              </strong>
+                            </div>
+                          </div>
+
+                          <p className="text-[11px] text-gray-600 bg-white p-3 rounded-xl border border-gray-150">
+                            <strong>Damage Statement:</strong> {claim.description}
+                          </p>
+
+                          {claim.fcoInspection && (
+                            <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-[11px] text-blue-900 space-y-1">
+                              <p className="font-bold flex items-center gap-1">
+                                <FiCheckCircle className="text-blue-700" /> FCO Field Certificate Signed ({claim.fcoInspection.reportSignedHash?.slice(0, 16)}...)
+                              </p>
+                              <p>Notes: {claim.fcoInspection.inspectionNotes}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* MODAL: FCO ON-SITE INSPECTION FORM */}
+                {inspectingClaim && (
+                  <div className="fixed inset-0 bg-[#1f3b2c]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl border border-gray-200/60 shadow-2xl w-full max-w-lg overflow-hidden animate-fadeIn">
+                      <div className="bg-[#1f3b2c] p-5 text-white flex justify-between items-center">
+                        <div>
+                          <h3 className="font-black text-sm uppercase tracking-wide">FCO On-Site Field Assessment</h3>
+                          <p className="text-[10px] text-emerald-200 mt-0.5">Claim #{inspectingClaim.claimNumber} &mdash; {inspectingClaim.farmerName}</p>
+                        </div>
+                        <button
+                          onClick={() => setInspectingClaim(null)}
+                          className="text-white hover:text-emerald-200 font-extrabold text-sm bg-[#2e5741] px-2.5 py-1 rounded"
+                        >
+                          &times;
+                        </button>
+                      </div>
+
+                      <form onSubmit={handleSubmitClaimInspection} className="p-6 space-y-4 text-xs">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-bold text-gray-500 uppercase mb-1">Verified Damage (%)</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="100"
+                              required
+                              value={inspectionDamagePct}
+                              onChange={(e) => setInspectionDamagePct(Number(e.target.value))}
+                              className="w-full border border-gray-200 rounded-lg p-2.5 bg-white font-semibold text-slate-800"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-bold text-gray-500 uppercase mb-1">Assessed Loss Value (₹)</label>
+                            <input
+                              type="number"
+                              required
+                              value={inspectionAssessedLoss}
+                              onChange={(e) => setInspectionAssessedLoss(Number(e.target.value))}
+                              className="w-full border border-gray-200 rounded-lg p-2.5 bg-white font-semibold text-slate-800"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block font-bold text-gray-500 uppercase mb-1">Inspection Recommendation</label>
+                          <select
+                            value={inspectionRec}
+                            onChange={(e) => setInspectionRec(e.target.value as any)}
+                            className="w-full border border-gray-200 rounded-lg p-2.5 bg-white font-semibold text-slate-800"
+                          >
+                            <option value="approve">Approve Loss Payout (Qualifies under Policy)</option>
+                            <option value="revise">Revise Assessment Threshold</option>
+                            <option value="reject">Reject Claim (Damage below deductible / excluded peril)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block font-bold text-gray-500 uppercase mb-1">Field Inspection Report & Signature Notes</label>
+                          <textarea
+                            rows={3}
+                            required
+                            value={inspectionNotes}
+                            onChange={(e) => setInspectionNotes(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg p-2.5 bg-white font-semibold text-slate-800"
+                            placeholder="Enter physical observations on crop standing, soil moisture, pest marks..."
+                          />
+                        </div>
+
+                        <div className="flex gap-3 justify-end pt-3 border-t border-gray-100">
+                          <button
+                            type="button"
+                            onClick={() => setInspectingClaim(null)}
+                            className="px-4 py-2 border border-gray-200 rounded-xl text-gray-500 font-bold hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={isSubmittingInspection}
+                            className="px-5 py-2 bg-[#166534] hover:bg-[#14532d] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                          >
+                            {isSubmittingInspection ? 'Certifying...' : 'Sign & Certify Inspection Report ✓'}
                           </button>
                         </div>
                       </form>

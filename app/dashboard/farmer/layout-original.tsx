@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import HeaderWrapper from '../../components/Header/HeaderWrapper';
-import { LayoutDashboard, Layers, ScrollText, CloudSun, Store, TrendingUp, Lock, Users, Calendar } from 'lucide-react';
+import { LayoutDashboard, Layers, ScrollText, CloudSun, Store, TrendingUp, Lock, Users, Calendar, ShieldCheck } from 'lucide-react';
 
 type NavItem = {
   label: string;
@@ -78,6 +78,7 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
         },
         { label: 'Digital Farm Pooling', href: '/dashboard/farmer/pooling', icon: Users },
         { label: 'Farm Management', href: '/dashboard/farmer/farm-management', icon: Calendar },
+        { label: 'Crop Insurance', href: '/dashboard/farmer/insurance', icon: ShieldCheck },
         { label: 'Farm Finance & P&L', href: '/dashboard/farmer/finance', icon: TrendingUp },
         { label: 'Government Schemes', href: '/dashboard/farmer/schemes', icon: ScrollText },
       ]
