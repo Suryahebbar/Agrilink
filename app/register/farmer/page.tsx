@@ -47,10 +47,35 @@ export default function RegisterFarmerPage() {
       return;
     }
 
+    // Validate Full Name
+    if (!fullName.trim() || fullName.trim().length < 3) {
+      setError('Please enter a valid full name (at least 3 characters).');
+      return;
+    }
+
     // Validate DOB format dd/mm/yyyy
     const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
     if (!dobRegex.test(dob)) {
       setError('Please enter Date of Birth in DD/MM/YYYY format.');
+      return;
+    }
+
+    // Validate Aadhaar (12 numeric digits)
+    if (!/^\d{12}$/.test(aadharNumber)) {
+      setError('Please enter a valid 12-digit Aadhaar number.');
+      return;
+    }
+
+    // Validate Mobile Number (10 numeric digits starting with 6, 7, 8, 9)
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+      setError('Please enter a valid 10-digit Indian mobile number.');
+      return;
+    }
+
+    // Validate Email Address
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError('Please enter a valid email address.');
       return;
     }
 

@@ -16,8 +16,35 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitStatus('idle');
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    if (formData.phone && !/^\+?[0-9\s-]{10,14}$/.test(formData.phone.trim())) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    if (!formData.subject) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    if (!formData.message.trim() || formData.message.trim().length < 10) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       // Simulate API call

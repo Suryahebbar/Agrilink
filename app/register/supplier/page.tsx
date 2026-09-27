@@ -23,11 +23,37 @@ export default function RegisterSupplierPage() {
     setError(null);
     setMessage(null);
 
+    // Validate Company Name
+    if (!companyName.trim() || companyName.trim().length < 2) {
+      setError('Please enter a valid company/business name (at least 2 characters).');
+      return;
+    }
+
+    // Validate Business Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(businessEmail.trim())) {
+      setError('Please enter a valid business email address.');
+      return;
+    }
+
+    // Validate UPI ID format (e.g., name@bank)
+    const upiRegex = /^[\w.-]+@[\w.-]+$/;
+    if (!upiRegex.test(upiId.trim())) {
+      setError('Please enter a valid UPI ID format (e.g., yourname@bank).');
+      return;
+    }
+
+    // Validate Password Strength
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+
     try {
       const res = await fetch('/api/auth/register-supplier', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyName, businessEmail, upiId, password }),
+        body: JSON.stringify({ companyName: companyName.trim(), businessEmail: businessEmail.trim().toLowerCase(), upiId: upiId.trim(), password }),
       });
 
       const data = await res.json();
@@ -40,7 +66,7 @@ export default function RegisterSupplierPage() {
         console.log('Dev OTP:', { otp: data.otp });
       }
     } catch (err) {
-      setError('Something went wrong');
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

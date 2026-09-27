@@ -234,7 +234,20 @@ export default function CheckoutPage() {
         await placeOrderSaved()
         return
       }
-      error('Please fill all shipping details')
+      error('Please fill all required shipping details.')
+      return
+    }
+
+    // Phone validation (10 digits)
+    const cleanPhone = effective.phone.replace(/\D/g, '')
+    if (cleanPhone.length < 10) {
+      error('Please provide a valid 10-digit delivery phone number.')
+      return
+    }
+
+    // Pincode validation (6 digits if provided)
+    if (effective.pincode && !/^\d{6}$/.test(effective.pincode.trim())) {
+      error('Please enter a valid 6-digit Indian PIN code.')
       return
     }
 
