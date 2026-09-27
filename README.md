@@ -168,6 +168,24 @@ npm run lint
 
 ---
 
+## Village Plot Digitizer Tool
+
+A browser-based digitization utility to trace farmland plot boundaries directly over scanned village cadastral maps (Akarband / Grama Naksha), tag survey numbers and land ownership records, and synchronize or export them as GeoJSON.
+
+### Running the Village Digitizer
+
+Serve the standalone digitizer project directory locally:
+
+```bash
+cd village-digitizer-project
+python -m http.server 8000
+```
+*(Alternatively, you can use `npx serve .` or `python3 -m http.server 8000`)*
+
+Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
+---
+
 ## API Overview: Village Digitizer Plot Sync
 
 The Village Digitizer module exposes RESTful endpoints for GIS map digitizers to batch synchronize cadastral plots:
@@ -180,3 +198,4 @@ The Village Digitizer module exposes RESTful endpoints for GIS map digitizers to
 ## License
 
 This project is licensed under the MIT License.
+
