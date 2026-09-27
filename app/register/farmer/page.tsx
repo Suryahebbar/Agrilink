@@ -62,7 +62,7 @@ export default function RegisterFarmerPage() {
       const res = await fetch('/api/auth/register-farmer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName, dob, aadharNumber, phone, email: email || undefined }),
+        body: JSON.stringify({ fullName, dob, aadharNumber, phone, email }),
       });
 
       const data = await res.json();
@@ -72,10 +72,10 @@ export default function RegisterFarmerPage() {
         setUserId(data.userId);
         
         if (data.otpWarning) {
-          setError(`OTP dispatch notice: ${data.otpWarning}`);
-          setMessage('Farmer registration initiated with warnings (see notice above).');
+          setError(`Notice: ${data.otpWarning}`);
+          setMessage(`OTP sent to ${email} (with notice).`);
         } else {
-          setMessage('OTP sent to your Aadhaar-linked mobile number.');
+          setMessage(`6-digit verification code sent to your email: ${email}`);
         }
 
         setOtpStage(true);
@@ -109,7 +109,7 @@ export default function RegisterFarmerPage() {
       if (!res.ok) {
         setError(data.message || 'OTP verification failed');
       } else {
-        setMessage('Aadhaar Verification Successful! Identity verified. Please set your account password.');
+        setMessage('Email Verification Successful! Please set your account password.');
         setPasswordStage(true);
       }
     } catch (err) {
@@ -149,7 +149,7 @@ export default function RegisterFarmerPage() {
       } else {
         setMessage('Registration Complete!');
         setVerifiedCredentials({
-          username: phone,
+          username: email || phone,
           password: 'As configured by you'
         });
         setPasswordStage(false);
@@ -174,7 +174,7 @@ export default function RegisterFarmerPage() {
             </div>
             <h1 className="text-2xl font-bold text-[#1f3b2c]">Farmer Registration</h1>
             <p className="text-xs text-[#6b7280] mt-1">
-              Verify your identity using Aadhaar secure verification
+              Create your account with secure Email Verification
             </p>
           </div>
 
@@ -304,7 +304,7 @@ export default function RegisterFarmerPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Aadhaar-linked Mobile Number</label>
+                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Mobile Number</label>
                 <div className="relative">
                   <span className="absolute left-3 top-2.5 text-sm text-gray-500 font-mono">+91</span>
                   <input
@@ -321,13 +321,14 @@ export default function RegisterFarmerPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Email Address (Optional)</label>
+                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Email Address (For Verification & Notifications)</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email (optional)"
+                  placeholder="name@example.com"
                   className="w-full rounded-lg border border-[#e2d4b7] bg-white px-3.5 py-2.5 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#166534]/20 focus:border-[#166534] transition-all"
+                  required
                 />
               </div>
 
@@ -346,7 +347,7 @@ export default function RegisterFarmerPage() {
                     Terms & Conditions
                     <FileText className="w-3 h-3 inline" />
                   </Link>{' '}
-                  and consent to secure Aadhaar identity verification.
+                  and consent to account registration.
                 </label>
               </div>
 
@@ -355,19 +356,19 @@ export default function RegisterFarmerPage() {
                 disabled={loading}
                 className="mt-4 w-full rounded-xl bg-[#166534] py-3 text-sm font-semibold text-white hover:bg-[#14532d] shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
               >
-                {loading ? 'Processing Aadhaar...' : 'Verify Aadhaar & Continue'}
+                {loading ? 'Sending Verification OTP...' : 'Send Email OTP & Continue'}
               </button>
             </form>
           ) : (
             /* OTP Verification Stage */
             <form onSubmit={handleVerifyOtp} className="space-y-5 animate-fadeIn">
               <div className="p-4 bg-[#fcf8ee] border border-[#e2d4b7] rounded-xl text-xs text-[#4b5563] space-y-1">
-                <p>We've sent a 6-digit OTP code to the Aadhaar-linked mobile number ending in <strong>{phone.slice(-4)}</strong>.</p>
-                <p className="text-[11px] text-gray-500">Please enter the code below to verify your identity.</p>
+                <p>We've sent a 6-digit OTP code to your registered email: <strong>{email}</strong>.</p>
+                <p className="text-[11px] text-gray-500">Please check your inbox or spam folder and enter the code below.</p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Verification Code (OTP)</label>
+                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Verification Code (Email OTP)</label>
                 <input
                   type="text"
                   maxLength={6}

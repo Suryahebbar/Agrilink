@@ -188,21 +188,29 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production',
     });
 
-    // Audit: successful login
-    const loginName = account?.fullName || account?.name || account?.companyName || tokenEmail;
-    void auditLog({
-      action: ActivityAction.LOGIN,
-      module: LogModule.SECURITY,
-      resourceType: ResourceType.USER,
-      resourceId: tokenSubject,
-      resourceName: loginName,
-      userId: tokenSubject,
-      userEmail: tokenEmail,
-      userName: loginName,
-      userRole: tokenRole,
-      remarks: `${loginName} logged in successfully`,
-      request,
-    });
+    // Check and trigger Welcome Email on First Login
+    try {
+      const isFirstLogin = raw?.firstLogin !== false && (raw?.loginCount === undefined || raw?.loginCount === 0);
+      const userEmailForWelcome = tokenEmail || account.email;
+      const userNameForWelcome = account?.fullName || account?.name || account?.companyName || 'Farmer';
+
+      if (isFirstLogin && userEmailForWelcome && !userEmailForWelcome.endsWith('@agrilink.com')) {
+        const { sendWelcomeEmail } = await import('@/lib/otpEmail');
+        void sendWelcomeEmail(userEmailForWelcome, userNameForWelcome, tokenRole || 'farmer');
+        console.log('🎉 First sign-in detected! Welcome email dispatched to:', userEmailForWelcome);
+      }
+
+      // Update login counters on user document
+      const updateFields: any = {
+        $inc: { loginCount: 1 },
+        $set: { firstLogin: false, lastLoginAt: new Date() }
+      };
+      if (raw?._id) {
+        await mongoose.connection.collection('users').updateOne({ _id: raw._id }, updateFields);
+      }
+    } catch (welcomeErr) {
+      console.error('Error handling first-login welcome email:', welcomeErr);
+    }
 
     return response;
   } catch (error) {

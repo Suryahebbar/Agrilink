@@ -25,6 +25,9 @@ export interface IUser extends Document {
   experience?: number;
   createdBy?: string;
   status?: string;
+  firstLogin?: boolean;
+  lastLoginAt?: Date;
+  loginCount?: number;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -83,6 +86,10 @@ const userSchema = new Schema<IUser>(
     experience: { type: Number },
     createdBy: { type: String },
     status: { type: String, enum: ['active', 'suspended', 'inactive'], default: 'active' },
+    // Login tracking & Welcome notification
+    firstLogin: { type: Boolean, default: true },
+    lastLoginAt: { type: Date },
+    loginCount: { type: Number, default: 0 },
   },
   {
     timestamps: true,
@@ -97,11 +104,12 @@ const userSchema = new Schema<IUser>(
 
 // Hash password before saving
 userSchema.pre('save', async function (next: any) {
-  if (!this.isModified('password')) return next();
+  const self = this as any;
+  if (!self.isModified('password') || !self.password) return next();
   
   try {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    self.password = await bcrypt.hash(self.password, salt);
     next();
   } catch (error: any) {
     next(error);
@@ -110,7 +118,7 @@ userSchema.pre('save', async function (next: any) {
 
 // Compare password method
 userSchema.methods.comparePassword = async function (
-  this: HydratedDocument<IUser>,
+  this: any,
   candidatePassword: string
 ): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password);

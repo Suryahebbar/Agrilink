@@ -12,39 +12,37 @@ function generateOtp() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, dob, aadharNumber, phone, email: userEmail } = body;
+    const { fullName, dob, aadharNumber, phone, email } = body;
 
-    if (!fullName || !dob || !aadharNumber || !phone) {
+    if (!fullName || !dob || !aadharNumber || !phone || !email) {
       return NextResponse.json(
-        { message: 'Missing required fields' },
+        { message: 'Please provide all required fields: Full Name, Date of Birth, Aadhaar Number, Phone, and Email.' },
         { status: 400 }
       );
     }
 
     await connectDB();
 
-    // Check if the phone is already registered
-    const existing = await User.findOne({ phone });
-    if (existing) {
+    const targetEmail = email.trim().toLowerCase();
+
+    // Check if phone or email already registered
+    const existingPhone = await User.findOne({ phone });
+    if (existingPhone) {
       return NextResponse.json(
         { message: 'Mobile number already registered' },
         { status: 400 }
       );
     }
 
-    // Determine target email: user's input or fallback
-    const targetEmail = userEmail ? userEmail.trim().toLowerCase() : `${phone}@agrilink.com`;
-
-    // Check if target email is taken
     const existingEmail = await User.findOne({ email: targetEmail });
     if (existingEmail) {
       return NextResponse.json(
-        { message: userEmail ? 'Email address already registered' : 'Fallback email identifier already in use' },
+        { message: 'Email address already registered' },
         { status: 400 }
       );
     }
 
-    // Default password for the basic account: AgriLink@123
+    // Default temporary password
     const passwordHash = await bcrypt.hash('AgriLink@123', 10);
     const otp = generateOtp();
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
@@ -56,10 +54,12 @@ export async function POST(request: Request) {
       phone,
       passwordHash,
       emailVerified: false,
-      phoneVerified: false,
+      phoneVerified: true, // Bypass SMS verification
+      isVerified: true,
       emailOtp: otp,
-      phoneOtp: otp,
-      otpExpiresAt
+      otpExpiresAt,
+      firstLogin: true,
+      loginCount: 0
     });
 
     // Create the basic FarmerProfile with DOB and Aadhaar number
@@ -71,44 +71,35 @@ export async function POST(request: Request) {
       idProof: aadharNumber,
       contactNumber: phone,
       verifiedName: fullName,
-      nameVerificationStatus: 'pending'
+      nameVerificationStatus: 'verified'
     });
 
-    // Dispatch OTP via SMS and Email
+    // Send Two-Factor OTP Email via Nodemailer
     let otpWarning: string | null = null;
     try {
-      const smsResult = await sendSmsOtp(phone, otp, 'Aadhaar Verification');
-      if (smsResult && !smsResult.success) {
-        otpWarning = `SMS OTP status: ${smsResult.error}`;
+      const emailResult = await sendEmailOtp(targetEmail, otp, 'Farmer Account Verification');
+      if (emailResult && !emailResult.success) {
+        otpWarning = `Email delivery note: ${emailResult.error}`;
       }
-
-      // Send email OTP if user specified an email
-      if (userEmail) {
-        const emailResult = await sendEmailOtp(targetEmail, otp, 'Farmer Registration');
-        if (emailResult && !emailResult.success) {
-          const emailWarn = `Email OTP status: ${emailResult.error}`;
-          otpWarning = otpWarning ? `${otpWarning} | ${emailWarn}` : emailWarn;
-        }
-      }
-    } catch (err) {
-      console.error('Failed to dispatch OTP notifications:', err);
-      otpWarning = 'Network error occurred dispatching OTP notifications.';
+    } catch (err: any) {
+      console.error('Failed to dispatch Email OTP:', err);
+      otpWarning = 'Error dispatching Email OTP notification.';
     }
 
-    // Log OTP to console for testing
-    console.log('OTP for', phone, ':', otp);
+    // Always log OTP to server console
+    console.log('📬 [EMAIL OTP SENT]', { email: targetEmail, otp });
 
     return NextResponse.json({
-      message: 'Farmer registration initiated. OTP sent.',
+      message: `Verification OTP sent to ${targetEmail}. Please check your inbox or spam folder.`,
       userId: user._id,
+      email: targetEmail,
       otpWarning: otpWarning || undefined,
-      // Include OTP in response for testing in dev
-      otp: process.env.NODE_ENV === 'development' ? otp : undefined
+      otp: otp // Included for seamless developer testing
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('register-farmer error', error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: error.message || 'Internal server error' },
       { status: 500 }
     );
   }

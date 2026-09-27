@@ -39,6 +39,10 @@ export interface IUser extends Document {
   experience?: number;
   address?: string;
   createdBy?: string;
+  // Login tracking & Welcome notification
+  firstLogin?: boolean;
+  lastLoginAt?: Date;
+  loginCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -81,6 +85,10 @@ const UserSchema = new Schema<IUser>(
     experience: { type: Number },
     address: { type: String },
     createdBy: { type: String },
+    // Login tracking & Welcome notification
+    firstLogin: { type: Boolean, default: true },
+    lastLoginAt: { type: Date },
+    loginCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
