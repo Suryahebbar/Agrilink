@@ -486,6 +486,45 @@ button.danger:hover {
   color: #e64a19;
 }
 
+/* Action Buttons for rows */
+.btn-icon-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-icon-action.edit-info {
+  color: var(--primary-dark);
+  border-color: #a5d6a7;
+  background: #f1f8f1;
+}
+
+.btn-icon-action.edit-info:hover {
+  background: #e2f0e2;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.btn-icon-action.del {
+  color: var(--danger-color);
+  border-color: #ffcdd2;
+  background: #fff5f5;
+}
+
+.btn-icon-action.del:hover {
+  background: #ffebee;
+  border-color: var(--danger-color);
+  transform: translateY(-1px);
+}
+
 /* Agreement Checklist */
 .parcel-checkbox-list {
   display: flex;

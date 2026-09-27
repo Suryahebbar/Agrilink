@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCropHandlers();
   setupSearch();
   setupAgreementHandlers();
+  setupSelectedCardHandlers();
 
   document.getElementById('cancelEditBtn').addEventListener('click', cancelPlot);
 
@@ -214,6 +215,36 @@ function drawFeature(points, strokeColor, fillColor, closed, label, lineWidth = 
   }
 }
 
+// --- Point-in-Polygon & Distance Hit Tests ---
+function pointInPolygon(pt, polygon) {
+  const x = pt[0], y = pt[1];
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i][0], yi = polygon[i][1];
+    const xj = polygon[j][0], yj = polygon[j][1];
+    const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+function distToSegment(p, v, w) {
+  const l2 = (v[0] - w[0]) ** 2 + (v[1] - w[1]) ** 2;
+  if (l2 === 0) return Math.hypot(p[0] - v[0], p[1] - v[1]);
+  let t = ((p[0] - v[0]) * (w[0] - v[0]) + (p[1] - v[1]) * (w[1] - v[1])) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p[0] - (v[0] + t * (w[0] - v[0])), p[1] - (v[1] + t * (w[1] - v[1])));
+}
+
+function distToLine(pt, line) {
+  let minDist = Infinity;
+  for (let i = 0; i < line.length - 1; i++) {
+    const d = distToSegment(pt, line[i], line[i + 1]);
+    if (d < minDist) minDist = d;
+  }
+  return minDist;
+}
+
 // --- Interaction & Event Handlers ---
 let wasPanning = false;
 
@@ -230,6 +261,42 @@ canvas.addEventListener('click', (e) => {
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   const pt = screenToImg(x, y);
+
+  // If we haven't started drawing a new feature, check if clicking on an existing feature
+  if (currentPoints.length === 0) {
+    // Check lines first (within tolerance ~12px in screen space)
+    const tolerance = 14 / scale;
+    let clickedFeature = null;
+
+    // Check correction lines
+    for (let i = plots.length - 1; i >= 0; i--) {
+      const p = plots[i];
+      if (p.type === 'line' && p.points && p.points.length >= 2) {
+        if (distToLine(pt, p.points) <= tolerance) {
+          clickedFeature = p;
+          break;
+        }
+      }
+    }
+
+    // Check land parcels (polygons)
+    if (!clickedFeature) {
+      for (let i = plots.length - 1; i >= 0; i--) {
+        const p = plots[i];
+        if (p.type === 'polygon' && p.points && p.points.length >= 3) {
+          if (pointInPolygon(pt, p.points)) {
+            clickedFeature = p;
+            break;
+          }
+        }
+      }
+    }
+
+    if (clickedFeature) {
+      selectAndCenterFeature(clickedFeature, false);
+      return;
+    }
+  }
 
   currentPoints.push(pt);
   updateStatus();
@@ -682,7 +749,10 @@ document.getElementById('savePlotBtn').addEventListener('click', () => {
   // Clean up
   currentPoints = [];
   tempCrops = [];
+  editingPlotId = null;
   document.getElementById('formArea').style.display = 'none';
+  document.getElementById('cancelEditBtn').style.display = 'none';
+  document.getElementById('savePlotBtn').textContent = 'Save Feature';
 
   // Reset form inputs (keep default admin locations)
   ['f_survey', 'f_surnoc', 'f_hissa', 'f_ulpin', 'f_olc',
@@ -702,6 +772,166 @@ function setupSearch() {
   });
 }
 
+// --- Edit & Delete Feature Logic ---
+function startEditingPlot(p) {
+  if (!p) return;
+  
+  editingPlotId = p.id;
+  selectedPlotId = p.id;
+  document.getElementById('savePlotBtn').textContent = 'Update Feature';
+  document.getElementById('cancelEditBtn').style.display = 'inline-block';
+  
+  // Hide selected card to avoid duplication
+  hideSelectedPlotCard();
+
+  // Load administrative details
+  document.getElementById('f_district').value = p.administrative?.district || 'Shivamogga';
+  document.getElementById('f_taluk').value = p.administrative?.taluk || 'Thirthahalli';
+  document.getElementById('f_hobli').value = p.administrative?.hobli || 'Mandagadde';
+  document.getElementById('f_village').value = p.administrative?.village || 'CHIKSIKENCHIGUDDE';
+  document.getElementById('f_survey').value = p.administrative?.survey || '';
+  document.getElementById('f_surnoc').value = p.administrative?.surnoc || '';
+  document.getElementById('f_hissa').value = p.administrative?.hissa || '';
+  document.getElementById('f_ulpin').value = p.administrative?.ulpin || '';
+  document.getElementById('f_olc').value = p.administrative?.olc || '';
+  
+  // Load owner details
+  if (p.owner) {
+    document.getElementById('f_owner').value = p.owner.name || '';
+    document.getElementById('f_father').value = p.owner.father || '';
+    document.getElementById('f_khata').value = p.owner.khata || '';
+    document.getElementById('f_ownership_type').value = p.owner.ownership_type || 'Patta';
+    document.getElementById('f_address').value = p.owner.address || '';
+  }
+  
+  // Load land details
+  if (p.land) {
+    document.getElementById('f_total_area').value = p.land.total_area || '';
+    document.getElementById('f_cultivable_area').value = p.land.cultivable_area || '';
+    document.getElementById('f_pot_kharab_a').value = p.land.pot_kharab_a || '';
+    document.getElementById('f_pot_kharab_b').value = p.land.pot_kharab_b || '';
+    document.getElementById('f_revenue').value = p.land.revenue || '';
+    document.getElementById('f_jodi').value = p.land.jodi || '';
+    document.getElementById('f_cess').value = p.land.cess || '';
+    document.getElementById('f_water_rate').value = p.land.water_rate || '';
+    document.getElementById('f_soil').value = p.land.soil || '';
+    document.getElementById('f_land_type').value = p.land.land_type || 'Dry';
+    document.getElementById('f_irrigation_source').value = p.land.irrigation_source || '';
+    document.getElementById('f_trees').value = p.land.trees || '';
+  }
+  
+  // Load GIS fields
+  if (p.gis) {
+    document.getElementById('f_geojson').value = p.gis.geojson_geom ? JSON.stringify(p.gis.geojson_geom) : '{}';
+    document.getElementById('f_centroid').value = p.gis.centroid ? p.gis.centroid.join(', ') : '';
+    document.getElementById('f_bbox').value = p.gis.bbox ? `(${p.gis.bbox[0]}, ${p.gis.bbox[1]}) to (${p.gis.bbox[2]}, ${p.gis.bbox[3]})` : '';
+    document.getElementById('f_pixel_area').value = p.type === 'line' ? 'N/A (LineString)' : `${p.gis.area} sq px`;
+    document.getElementById('f_pixel_perimeter').value = `${p.gis.perimeter} px`;
+    document.getElementById('f_side_lengths').value = JSON.stringify(p.gis.side_lengths || []);
+    document.getElementById('f_latitude').value = p.gis.latitude || '';
+    document.getElementById('f_longitude').value = p.gis.longitude || '';
+  }
+  
+  currentPoints = p.points ? p.points.slice() : [];
+  tempCrops = p.crops ? p.crops.slice() : [];
+  renderCropsTable();
+  
+  // Show form tab area
+  document.getElementById('formArea').style.display = 'block';
+  document.querySelector('.tab-btn[data-tab="digitize"]').click();
+  document.querySelector('.form-tab-btn[data-form-sec="admin-sec"]').click();
+  
+  const isLine = p.type === 'line';
+  document.getElementById('formTitle').textContent = isLine ? 'Edit Correction Line' : 'Edit Land Parcel Details';
+  
+  const formTabCrops = document.querySelector('.form-tab-btn[data-form-sec="crops-sec"]');
+  const formTabOwner = document.querySelector('.form-tab-btn[data-form-sec="owner-sec"]');
+  const formTabLand = document.querySelector('.form-tab-btn[data-form-sec="land-sec"]');
+
+  if (isLine) {
+    formTabCrops.style.display = 'none';
+    formTabOwner.style.display = 'none';
+    formTabLand.style.display = 'none';
+  } else {
+    formTabCrops.style.display = 'inline-block';
+    formTabOwner.style.display = 'inline-block';
+    formTabLand.style.display = 'inline-block';
+  }
+
+  setStatus(`Editing Survey ${p.administrative?.survey || p.id}. Make changes and click Update Feature.`);
+  draw();
+  renderPlotList();
+}
+
+function deletePlotById(id) {
+  const p = plots.find(plot => plot.id === id);
+  const name = p ? (p.administrative?.survey || (p.type === 'line' ? 'Correction Line' : 'Plot')) : 'this feature';
+  
+  if (confirm(`Delete Survey ${name}? This action cannot be undone.`)) {
+    plots = plots.filter(item => item.id !== id);
+    if (selectedPlotId === id) {
+      selectedPlotId = null;
+      hideSelectedPlotCard();
+    }
+    if (editingPlotId === id) {
+      cancelPlot();
+    }
+    savePlots();
+    renderPlotList();
+    draw();
+    setStatus(`Deleted feature ${name}.`);
+  }
+}
+
+function showSelectedPlotCard(p) {
+  const card = document.getElementById('selectedPlotCard');
+  if (!card) return;
+  const isLine = p.type === 'line';
+  
+  const badge = document.getElementById('selectedBadge');
+  badge.className = `badge ${isLine ? 'line' : 'parcel'}`;
+  badge.textContent = isLine ? 'line' : 'parcel';
+  
+  document.getElementById('selectedSurveyTitle').textContent = isLine ? (p.administrative?.survey || 'Correction Line') : `Survey ${p.administrative?.survey || ' - '}`;
+  document.getElementById('selectedOwnerSubtitle').textContent = isLine ? `LineString · ${p.gis?.perimeter || 0} px` : `Owner: ${p.owner?.name || 'No Owner'} · Extent: ${p.land?.total_area || ' - '}`;
+  
+  card.style.display = 'block';
+}
+
+function hideSelectedPlotCard() {
+  const card = document.getElementById('selectedPlotCard');
+  if (card) card.style.display = 'none';
+}
+
+function setupSelectedCardHandlers() {
+  const closeBtn = document.getElementById('closeSelectedCardBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      selectedPlotId = null;
+      hideSelectedPlotCard();
+      document.querySelectorAll('.plotRow').forEach(r => r.classList.remove('selected-row'));
+      draw();
+    });
+  }
+
+  const editBtn = document.getElementById('editSelectedPlotBtn');
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      if (!selectedPlotId) return;
+      const p = plots.find(plot => plot.id === selectedPlotId);
+      if (p) startEditingPlot(p);
+    });
+  }
+
+  const delBtn = document.getElementById('deleteSelectedPlotBtn');
+  if (delBtn) {
+    delBtn.addEventListener('click', () => {
+      if (!selectedPlotId) return;
+      deletePlotById(selectedPlotId);
+    });
+  }
+}
+
 function renderPlotList() {
   const query = document.getElementById('searchBox').value.toLowerCase().trim();
   const list = document.getElementById('plotList');
@@ -709,11 +939,11 @@ function renderPlotList() {
 
   const filtered = plots.filter(p => {
     if (!query) return true;
-    const survey = p.administrative.survey.toLowerCase();
-    const ownerName = p.owner.name ? p.owner.name.toLowerCase() : '';
-    const village = p.administrative.village.toLowerCase();
-    const district = p.administrative.district.toLowerCase();
-    const type = p.type.toLowerCase();
+    const survey = (p.administrative?.survey || '').toLowerCase();
+    const ownerName = (p.owner?.name || '').toLowerCase();
+    const village = (p.administrative?.village || '').toLowerCase();
+    const district = (p.administrative?.district || '').toLowerCase();
+    const type = (p.type || '').toLowerCase();
     return survey.includes(query) || ownerName.includes(query) || village.includes(query) || district.includes(query) || type.includes(query);
   });
 
@@ -724,29 +954,35 @@ function renderPlotList() {
 
     let metaText = '';
     if (isLine) {
-      metaText = `LineString · ${p.gis.perimeter} px length`;
+      metaText = `LineString · ${p.gis?.perimeter || 0} px length`;
     } else {
-      metaText = `${p.owner.name || 'No Owner'} · Extent: ${p.land.total_area || ' - '} · ${p.crops.length} Crop(s)`;
+      metaText = `${p.owner?.name || 'No Owner'} · Extent: ${p.land?.total_area || ' - '} · ${p.crops ? p.crops.length : 0} Crop(s)`;
     }
 
     row.innerHTML = `
-      <div>
+      <div style="flex:1; min-width:0; padding-right:8px;">
         <div style="display:flex; align-items:center;">
-          <span class="sn">${escapeHtml(p.administrative.survey)}</span>
+          <span class="sn">${escapeHtml(p.administrative?.survey || 'Unknown')}</span>
           <span class="badge ${isLine ? 'line' : 'parcel'}">${isLine ? 'line' : 'parcel'}</span>
         </div>
         <div class="meta">${escapeHtml(metaText)}</div>
       </div>
-      <div style="display:flex; align-items:center; gap:6px;">
-        <button class="edit-info" data-id="${p.id}" style="border:none; background:none; padding:4px; font-size:16px; cursor:pointer;"></button>
-        <button class="del" data-id="${p.id}" style="border:none; background:none; padding:4px; font-size:16px; cursor:pointer;"></button>
+      <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+        <button type="button" class="btn-icon-action edit-info" data-id="${p.id}" title="Edit Plot">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          Edit
+        </button>
+        <button type="button" class="btn-icon-action del" data-id="${p.id}" title="Delete Plot">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete
+        </button>
       </div>
     `;
 
     // Highlight & Pan on click
     row.addEventListener('click', (e) => {
-      if (e.target.classList.contains('del') || e.target.classList.contains('edit-info')) return;
-      selectAndCenterFeature(p);
+      if (e.target.closest('.del') || e.target.closest('.edit-info')) return;
+      selectAndCenterFeature(p, true);
     });
 
     list.appendChild(row);
@@ -758,71 +994,7 @@ function renderPlotList() {
       e.stopPropagation();
       const id = btn.getAttribute('data-id');
       const p = plots.find(plot => plot.id === id);
-      if (!p) return;
-      
-      editingPlotId = p.id;
-      document.getElementById('savePlotBtn').textContent = 'Update Feature';
-      document.getElementById('cancelEditBtn').style.display = 'inline-block';
-      
-      // Load administrative details
-      document.getElementById('f_district').value = p.administrative.district || 'Shivamogga';
-      document.getElementById('f_taluk').value = p.administrative.taluk || 'Thirthahalli';
-      document.getElementById('f_hobli').value = p.administrative.hobli || 'Mandagadde';
-      document.getElementById('f_village').value = p.administrative.village || 'CHIKSIKENCHIGUDDE';
-      document.getElementById('f_survey').value = p.administrative.survey || '';
-      document.getElementById('f_surnoc').value = p.administrative.surnoc || '';
-      document.getElementById('f_hissa').value = p.administrative.hissa || '';
-      document.getElementById('f_ulpin').value = p.administrative.ulpin || '';
-      document.getElementById('f_olc').value = p.administrative.olc || '';
-      
-      // Load owner details
-      if (p.owner) {
-        document.getElementById('f_owner').value = p.owner.name || '';
-        document.getElementById('f_father').value = p.owner.father || '';
-        document.getElementById('f_khata').value = p.owner.khata || '';
-        document.getElementById('f_ownership_type').value = p.owner.ownership_type || 'Patta';
-        document.getElementById('f_address').value = p.owner.address || '';
-      }
-      
-      // Load land details
-      if (p.land) {
-        document.getElementById('f_total_area').value = p.land.total_area || '';
-        document.getElementById('f_cultivable_area').value = p.land.cultivable_area || '';
-        document.getElementById('f_pot_kharab_a').value = p.land.pot_kharab_a || '';
-        document.getElementById('f_pot_kharab_b').value = p.land.pot_kharab_b || '';
-        document.getElementById('f_revenue').value = p.land.revenue || '';
-        document.getElementById('f_jodi').value = p.land.jodi || '';
-        document.getElementById('f_cess').value = p.land.cess || '';
-        document.getElementById('f_water_rate').value = p.land.water_rate || '';
-        document.getElementById('f_soil').value = p.land.soil || '';
-        document.getElementById('f_land_type').value = p.land.land_type || 'Dry';
-        document.getElementById('f_irrigation_source').value = p.land.irrigation_source || '';
-        document.getElementById('f_trees').value = p.land.trees || '';
-      }
-      
-      // Load GIS fields
-      if (p.gis) {
-        document.getElementById('f_geojson').value = p.gis.geojson_geom ? JSON.stringify(p.gis.geojson_geom) : '{}';
-        document.getElementById('f_centroid').value = p.gis.centroid ? p.gis.centroid.join(', ') : '';
-        document.getElementById('f_bbox').value = p.gis.bbox ? `(${p.gis.bbox[0]}, ${p.gis.bbox[1]}) to (${p.gis.bbox[2]}, ${p.gis.bbox[3]})` : '';
-        document.getElementById('f_pixel_area').value = p.type === 'line' ? 'N/A (LineString)' : `${p.gis.area} sq px`;
-        document.getElementById('f_pixel_perimeter').value = `${p.gis.perimeter} px`;
-        document.getElementById('f_side_lengths').value = JSON.stringify(p.gis.side_lengths || []);
-        document.getElementById('f_latitude').value = p.gis.latitude || '';
-        document.getElementById('f_longitude').value = p.gis.longitude || '';
-      }
-      
-      currentPoints = p.points ? p.points.slice() : [];
-      tempCrops = p.crops ? p.crops.slice() : [];
-      renderCropsTable();
-      
-      // Show form tab area
-      document.getElementById('formArea').style.display = 'block';
-      document.querySelector('.tab-btn[data-tab="digitize"]').click();
-      document.querySelector('.form-tab-btn[data-form-sec="admin-sec"]').click();
-      
-      setStatus(`Editing parcel Survey ${p.administrative.survey}. Draw on canvas to redraw coordinates, or edit details and click Update.`);
-      draw();
+      if (p) startEditingPlot(p);
     });
   });
 
@@ -831,17 +1003,7 @@ function renderPlotList() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const id = btn.getAttribute('data-id');
-      if (confirm('Delete this feature?')) {
-        plots = plots.filter(p => p.id !== id);
-        if (selectedPlotId === id) selectedPlotId = null;
-        if (editingPlotId === id) {
-          editingPlotId = null;
-          document.getElementById('savePlotBtn').textContent = 'Save Feature';
-        }
-        savePlots();
-        renderPlotList();
-        draw();
-      }
+      deletePlotById(id);
     });
   });
 
@@ -850,20 +1012,22 @@ function renderPlotList() {
   document.getElementById('countLabel').textContent = `${parcelCount} parcel(s), ${lineCount} correction line(s) saved`;
 }
 
-function selectAndCenterFeature(p) {
+function selectAndCenterFeature(p, pan = true) {
   selectedPlotId = p.id;
   document.querySelectorAll('.plotRow').forEach(r => r.classList.remove('selected-row'));
 
-  // Center on its centroid
-  const centroid = p.gis.centroid;
-  const viewWidth = wrap.clientWidth;
-  const viewHeight = wrap.clientHeight;
+  if (pan && p.gis?.centroid) {
+    const centroid = p.gis.centroid;
+    const viewWidth = wrap.clientWidth;
+    const viewHeight = wrap.clientHeight;
 
-  // Make active focus zoom scale a bit higher to show clearly
-  scale = 0.8;
-  offsetX = viewWidth / 2 - centroid[0] * scale;
-  offsetY = viewHeight / 2 - centroid[1] * scale;
+    // Make active focus zoom scale a bit higher to show clearly
+    scale = 0.8;
+    offsetX = viewWidth / 2 - centroid[0] * scale;
+    offsetY = viewHeight / 2 - centroid[1] * scale;
+  }
 
+  showSelectedPlotCard(p);
   draw();
   renderPlotList();
 }
